@@ -6,7 +6,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
-
+import { Search } from './Search'
 import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -45,7 +45,7 @@ function App() {
     <>
       <main class="container-fluid">
         <BrowserRouter>
-          <div class="row" style={{height: "100vh"}}>
+          <div class="row" style={{ height: "100vh" }}>
             <div class="col-md-2 p-3 text-bg-dark">
               <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 {/* <svg class="bi pe-none me-2" width="40" height="32">
@@ -123,17 +123,17 @@ function App() {
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 </Route>
                 <Route path='/search' element={<PrivateRoute />}>
-                <Route path='/search' element={<Search />} />
-              </Route>
-              <Route path='/:username' element={<PrivateRoute />}>
-                <Route path="/:username" element={<Profile username={islogin}/>} />
+                  <Route path='/search' element={<Search />} />
+                </Route>
+                {/* <Route path='/:username' element={<PrivateRoute />}>
+                <Route path="/:username" element={<Profile username={islogin}/>} /> 
               </Route>
               <Route path='/adm' element={<PrivateRoute />}>
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
               </Route>
               <Route path='/notification' element={<PrivateRoute />}>
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
-              </Route>
+              </Route> */}
               </Routes>
             </div>
           </div>
