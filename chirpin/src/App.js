@@ -6,6 +6,7 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
+import {Search} from './Search'
 import 'bootstrap';
 // Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -125,15 +126,15 @@ function App() {
               <Route path='/search' element={<PrivateRoute />}>
                 <Route path='/search' element={<Search />} />
               </Route>
-              <Route path='/:username' element={<PrivateRoute />}>
-                <Route path="/:username" element={<Profile username={islogin}/>} /> {/*TODO*/}
+              {/* <Route path='/:username' element={<PrivateRoute />}>
+                <Route path="/:username" element={<Profile username={islogin}/>} /> 
               </Route>
               <Route path='/adm' element={<PrivateRoute />}>
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
               </Route>
               <Route path='/notification' element={<PrivateRoute />}>
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
-              </Route>
+              </Route> */}
             </Routes>
           </div>
         </BrowserRouter>
