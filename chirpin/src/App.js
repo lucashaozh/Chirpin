@@ -7,6 +7,7 @@ import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
 import {Search} from './Search'
+import {Notification,SingleNotification} from './Notification';
 import 'bootstrap';
 // Bootstrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -131,10 +132,10 @@ function App() {
               </Route>
               <Route path='/adm' element={<PrivateRoute />}>
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
-              </Route>
-              <Route path='/notification' element={<PrivateRoute />}>
+              </Route>*/}
+              {/* <Route path='/notification' element={<PrivateRoute />}> */}
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
-              </Route> */}
+              {/* </Route>  */}
             </Routes>
           </div>
         </BrowserRouter>
