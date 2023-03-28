@@ -122,36 +122,18 @@ function App() {
               <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}>
                 <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
               </Route>
-              {/* <Route path='/all' element={<PrivateRoute />}>
-            <Route path='/all' element={<All />} />
-          </Route>
-          <Route path='/map' element={<PrivateRoute />}>
-            <Route path='/map' element={<Map />} />
-          </Route>
-          <Route path='/favourite' element={<PrivateRoute />}>
-            <Route path='/favourite' element={<Fav />} />
-          </Route>
-          <Route path='/search' element={<PrivateRoute />}>
-            <Route path='/search' element={<Search />} />
-          </Route>
-          <Route path='/:loc' element={<PrivateRoute />}>
-            <Route path="/:loc" element={<Detail uid={islogin} />} />
-          </Route>
-          <Route path='/search/ByName' element={<PrivateRoute />}>
-            <Route path='/search/ByName' element={<SearchName islogin={islogin} ></SearchName>} />
-          </Route>
-          <Route path='/search/ByLon' element={<PrivateRoute />}>
-            <Route path='/search/ByLon' element={<SearchLon islogin={islogin} ></SearchLon>} />
-          </Route>
-          <Route path='/search/ByLat' element={<PrivateRoute />}>
-            <Route path="/search/ByLat" element={<SearchLat islogin={islogin} ></SearchLat>} />
-          </Route>
-          <Route path='/all_adm' element={<PrivateRoute />}>
-            <Route path='/all_adm' element={<AllAdm islogin={islogin}></AllAdm>} />
-          </Route>
-          <Route path='/user_adm' element={<PrivateRoute />}>
-            <Route path='/user_adm' element={<UserAdm islogin={islogin}></UserAdm>} />
-          </Route> */}
+              <Route path='/search' element={<PrivateRoute />}>
+                <Route path='/search' element={<Search />} />
+              </Route>
+              <Route path='/:username' element={<PrivateRoute />}>
+                <Route path="/:username" element={<Profile username={islogin}/>} /> {/*TODO*/}
+              </Route>
+              <Route path='/adm' element={<PrivateRoute />}>
+                <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
+              </Route>
+              <Route path='/notification' element={<PrivateRoute />}>
+                <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
+              </Route>
             </Routes>
           </div>
         </BrowserRouter>
