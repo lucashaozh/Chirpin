@@ -1,20 +1,20 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import 'mapbox-gl/dist/mapbox-gl.css';
 import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import Map from './Map';
-import { All, Fav } from './All';
-import Detail from './Detail';
-import { getloginfo, Login } from './Login';
-import Navbar from 'react-bootstrap/Navbar';
-import Nav from 'react-bootstrap/Nav';
-import Container from 'react-bootstrap/Container';
+import { getloginfo } from './Login';
 import { Navigate, Outlet } from 'react-router-dom';
-import { Search, SearchName, SearchLon, SearchLat } from './Search';
-import { AllAdm, UserAdm } from './Adm';
 import { logout } from './Login';
+import Login from './Login';
+import Main from './Main';
+import 'bootstrap';
+// Bootstrap CSS
+import "bootstrap/dist/css/bootstrap.min.css";
+// Bootstrap Bundle JS
+import "bootstrap/dist/js/bootstrap.bundle.min";
 
-// export const BACK_END = 'http://ec2-54-146-195-100.compute-1.amazonaws.com:8000/'
+import "./App.css"
+
+
 export const BACK_END = 'http://localhost:8000/'
 
 function PrivateRoute() {
@@ -22,13 +22,15 @@ function PrivateRoute() {
   return auth ? <Outlet /> : <Navigate to='/login' />;
 }
 
-function LoginRoute({ ifLogout, onChangeLogin}) {
+function LoginRoute({ ifLogout, onChangeLogin }) {
   useEffect(() => {
-    if (ifLogout)  { console.log("Log out"); logout(); onChangeLogin(); }
+    if (ifLogout) { console.log("Log out"); logout(); onChangeLogin(); }
   });
   const auth = getloginfo();
   return !auth ? <Outlet /> : <Navigate to='/' />;
 }
+
+
 
 function App() {
   const [islogin, setLogin] = useState(getloginfo() ? getloginfo()['uid'] : false);
@@ -40,47 +42,87 @@ function App() {
     else { setLogin(false); setMode(false) }
   };
 
-  // function getCookie(cookieName) {
-  //   let cookie = {};
-  //   document.cookie.split(';').forEach(function (el) {
-  //     let [key, value] = el.split('=');
-  //     cookie[key.trim()] = value;
-  //   })
-  //   return cookie[cookieName];
-  // }
-
   return (
     <>
-      <BrowserRouter>
-
-        
-
-      <div style={{height:80}}>
-        <Navbar bg="dark" variant="dark" style={{width:'100%',height:70}}>
-          <Container>
-            <Nav className='me-auto'>
-              {mode === 'admin' && <Navbar.Brand><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/all_adm'>Location List</Link></Navbar.Brand>}
-              {mode === 'admin' && <Navbar.Brand><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/user_adm'>User List</Link></Navbar.Brand>}
-              {mode === 'user' && <Navbar.Brand><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/all'>Home</Link></Navbar.Brand>}
-              {mode === 'user' && <Nav.Link><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/map'>Map</Link></Nav.Link>}
-              {mode === 'user' && <Nav.Link><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/search'>Search</Link></Nav.Link>}
-              {mode === 'user' && <Nav.Link><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/favourite'>Favourite Locations</Link></Nav.Link>}
-            </Nav>
-            <Nav className="justify-content-end">
-              {islogin && <Navbar.Text>{mode === 'admin' ? "Admin" : "Sign in as: "}</Navbar.Text>}
-              <Nav.Link><Link style={{ color: 'inherit', textDecoration: 'inherit' }} to='/login'>{islogin ? (islogin + '\tLogout') : "Login"}</Link></Nav.Link>
-            </Nav>
-          </Container>
-        </Navbar>
-        </div>
-        <Routes>
-          <Route path='/' element={<PrivateRoute />}>
-            <Route path='/' element={<All />} />
-          </Route>
-          <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate}/>}>
-            <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
-          </Route>
-          <Route path='/all' element={<PrivateRoute />}>
+      <main class="d-flex flex-nowrap">
+        <BrowserRouter>
+          <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark" style={{ width: "300px" }}>
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+              {/* <svg class="bi pe-none me-2" width="40" height="32">
+                <use xlinkHref="#bootstrap" />
+              </svg> */}
+              <span class="fs-4">Sidebar</span>
+            </a>
+            <hr />
+            <ul class="nav nav-pills flex-column mb-auto">
+              <li class="nav-item">
+                <a href="#" class="nav-link active" aria-current="page">
+                  {/* <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlinkHref="#home" />
+                  </svg> */}
+                  Home
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  {/* <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlinkHref="#speedometer2" />
+                  </svg> */}
+                  Dashboard
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  {/* <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlinkHref="#table" />
+                  </svg> */}
+                  Orders
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  {/* <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlinkHref="#grid" />
+                  </svg> */}
+                  Products
+                </a>
+              </li>
+              <li>
+                <a href="#" class="nav-link text-white">
+                  {/* <svg class="bi pe-none me-2" width="16" height="16">
+                    <use xlinkHref="#people-circle" />
+                  </svg> */}
+                  Customers
+                </a>
+              </li>
+            </ul>
+            <hr />
+            <div class="dropdown">
+              <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                data-bs-toggle="dropdown" aria-expanded="false">
+                <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2" />
+                <strong>mdo</strong>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
+                <li><a class="dropdown-item" href="#">New project...</a></li>
+                <li><a class="dropdown-item" href="#">Settings</a></li>
+                <li><a class="dropdown-item" href="#">Profile</a></li>
+                <li>
+                  <hr class="dropdown-divider" />
+                </li>
+                <li><a class="dropdown-item" href="#">Sign out</a></li>
+              </ul>
+            </div>
+          </div>
+          <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
+            <Routes>
+              <Route path='/' element={<PrivateRoute />}>
+                <Route path='/' element={<Main />} />
+              </Route>
+              <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}>
+                <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
+              </Route>
+              {/* <Route path='/all' element={<PrivateRoute />}>
             <Route path='/all' element={<All />} />
           </Route>
           <Route path='/map' element={<PrivateRoute />}>
@@ -109,9 +151,11 @@ function App() {
           </Route>
           <Route path='/user_adm' element={<PrivateRoute />}>
             <Route path='/user_adm' element={<UserAdm islogin={islogin}></UserAdm>} />
-          </Route>
-        </Routes>
-      </BrowserRouter>
+          </Route> */}
+            </Routes>
+          </div>
+        </BrowserRouter>
+      </main>
     </>
   );
 }
