@@ -5,14 +5,14 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-function Search(){
+function SearchUser(){
         
         return(
             <>
             <div class="input-group">
-            <input type="search" class="form-control rounded" placeholder="Please Select what you want to search" aria-label="Search" aria-describedby="search-addon" />
+            <input type="search" class="form-control rounded" placeholder="Search for users" aria-label="Search" aria-describedby="search-addon" />
             <Dropdown as={ButtonGroup}>
-            <Button variant="success">Selection</Button>
+            <Button variant="success">Select</Button>
             <Dropdown.Toggle split variant="success" id="dropdown-split-basic" />
             <Dropdown.Menu>
             <Dropdown.Item href='/searchUser'>Search for users</Dropdown.Item>
@@ -40,5 +40,5 @@ function Search(){
     
 }
 
-export default Search;
+export default SearchUser;
     

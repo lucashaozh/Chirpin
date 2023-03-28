@@ -7,6 +7,8 @@ import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
 import Search from './Search'
+import SearchUser from './SearchUser'
+import SearchTweet from './SearchTweet'
 import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -122,6 +124,8 @@ function App() {
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 </Route>
                   <Route path='/search' element={<Search />} />
+                  <Route path='/searchUser' element={<SearchUser />} />
+                  <Route path='/searchTweet' element={<SearchTweet />} />
                 
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 
