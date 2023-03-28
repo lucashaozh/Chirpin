@@ -117,13 +117,13 @@ function App() {
           </div>
           <div class="d-flex flex-column flex-shrink-0 p-3 bg-light">
             <Routes>
-              <Route path='/' element={<PrivateRoute />}>
+              <Route path='/' element={<Route />}>
                 <Route path='/' element={<Main />} />
               </Route>
               <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}>
                 <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
               </Route>
-              <Route path='/search' element={<PrivateRoute />}>
+              <Route path='/search' element={<Route />}>
                 <Route path='/search' element={<Search />} />
               </Route>
               {/* <Route path='/:username' element={<PrivateRoute />}>
