@@ -6,9 +6,14 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
+
+import {Search} from './Search'
+import {Notification,SingleNotification} from './Notification';
+
 import Search from './Search'
 import SearchUser from './SearchUser'
 import SearchTweet from './SearchTweet'
+
 import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
@@ -132,12 +137,12 @@ function App() {
               </Route>
               <Route path='/adm' element={<PrivateRoute />}>
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
-              </Route>
-              <Route path='/notification' element={<PrivateRoute />}>
+              </Route>*/}
+              {/* <Route path='/notification' element={<PrivateRoute />}> */}
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
-              </Route> */}
-              </Routes>
-            </div>
+              {/* </Route>  */}
+            </Routes>
+          </div>
           </div>
         </BrowserRouter>
       </main>
