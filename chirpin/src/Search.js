@@ -41,9 +41,7 @@ class Search extends React.Component{
                 <input id='search_input' type="search" class="form-control rounded" placeholder={(this.state.viewMode == 'search' ? "Please Select what you want to search" : "Please Search")} aria-label="Search" aria-describedby="search-addon" />
                 </div>
                 <div className="row">
-                {this.state.viewMode == "search" && <Trend/>}
-                {this.state.viewMode == "searchuser" && <SearchUser />}
-                {this.state.viewMode == "searchtweet" && <SearchTweet />}
+                <Trend/>
             </div>
             
             </>
