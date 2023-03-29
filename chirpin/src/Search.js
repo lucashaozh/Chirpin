@@ -16,10 +16,10 @@ class Search extends React.Component{
     async clickSearch(){
         var search=document.getElementById('search_input').value
         if(this.state.viewMode == 'searchuser'){
-
+            window.location = '/searchuser/'+search;
         }
         else if(this.state.viewMode  == 'searchtweet'){
-
+            window.location = '/searchtag/'+search;
         }
         else{
             alert("please select what you want to search")
