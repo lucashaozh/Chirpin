@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { timeDifference } from './Utils';
 
+
+const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
+
 function DisplayRichText({ content }) {
     return (
         <>
             <div className="w-100 mceNonEditable">
                 <Editor
-                    apiKey="bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
+                    apiKey= {tinyMCEApiKey}
                     value={content}
                     init={{
                         height: 200,
