@@ -131,16 +131,18 @@ function App() {
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 {/* </Route> */}
                   <Route path='/search' element={<Search />} />
-                {/* </Route> */}
-                {/* <Route path='/:username' element={<PrivateRoute />}> */}
-                {/* <Route path="/:username" element={<Profile username={islogin}/>} />  */}
-                <Route path='/:username' element={<Profile />} />
-                <Route path='/:username/followings' element={<Main />} />
-                <Route path='/:username/followers' element={<Main />} />
-              {/* </Route> */}
-              {/* <Route path='/adm' element={<PrivateRoute />}> */}
-                {/* <Route path='/adm' element={<Adm islogin={islogin}></Adm>} /> */}
-              {/* </Route> */}
+                  <Route path='/searchUser' element={<SearchUser />} />
+                  <Route path='/searchTweet' element={<SearchTweet />} />
+                  <Route path="/:username" element={<Profile />} /> 
+                  <Route path='/:username/followings' element={<Main />} />
+                  <Route path='/:username/followers' element={<Main />} />
+                
+                {/* <Route path='/:username' element={<PrivateRoute />}>
+                <Route path="/:username" element={<Profile username={islogin}/>} /> 
+              </Route>
+              <Route path='/adm' element={<PrivateRoute />}>
+                <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
+              </Route>*/}
               {/* <Route path='/notification' element={<PrivateRoute />}> */}
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
               {/* </Route>  */}
