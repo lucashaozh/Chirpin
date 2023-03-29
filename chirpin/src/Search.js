@@ -11,26 +11,40 @@ class Search extends React.Component{
     constructor(props){
         super(props);
         this.state = {viewMode:"search"}; // two viewmode, notification or message
+        this.clickSearch = this.clickSearch.bind(this)
+    }
+    async clickSearch(){
+        var search=document.getElementById('search_input').value
+        if(this.state.viewMode == 'searchuser'){
+
+        }
+        else if(this.state.viewMode  == 'searchtweet'){
+
+        }
+        else{
+            alert("please select what you want to search")
+        }
+
     }
     render(){
         return(
             <>
             <div class="input-group">
-                <input type="search" class="form-control rounded" placeholder="Please Select what you want to search" aria-label="Search" aria-describedby="search-addon" />
                 <Dropdown as={ButtonGroup}>
-                <Button variant="primary">Search</Button>
+                <Button variant="primary" onClick={this.clickSearch}>Search</Button>
                 <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
                 <Dropdown.Menu>
                 <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchuser' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchuser"})}>Search for users</Dropdown.Item>
                 <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchtweet' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchtweet"})}>Search for tweets</Dropdown.Item>
                 </Dropdown.Menu>
                 </Dropdown>
+                <input id='search_input' type="search" class="form-control rounded" placeholder={(this.state.viewMode == 'search' ? "Please Select what you want to search" : "Please Search")} aria-label="Search" aria-describedby="search-addon" />
                 </div>
                 <div className="row">
                 {this.state.viewMode == "search" && <Trend/>}
                 {this.state.viewMode == "searchuser" && <SearchUser />}
                 {this.state.viewMode == "searchtweet" && <SearchTweet />}
-                </div>
+            </div>
             
             </>
         )   
