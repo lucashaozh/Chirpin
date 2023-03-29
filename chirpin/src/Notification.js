@@ -2,7 +2,7 @@ import * as React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Link} from "react-router-dom";
 import MaterialIcon, {colorPalette} from 'material-icons-react';
-
+import ChatBox from './Chat';
 
 const data = [
     {icon:"thumb_up", action: "liked your tweet", name:"CSCI1", time:"3 min", content:'"laalall"'},
@@ -38,7 +38,7 @@ class Notification extends React.Component{
 class MessageView extends React.Component{
     render(){
         return(
-            <div>message view</div>
+            <div><ChatBox/></div>
         )
     }
 }
