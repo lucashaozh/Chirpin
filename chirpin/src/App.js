@@ -43,53 +43,53 @@ function App() {
 
   return (
     <>
-      <main class="container-fluid">
+      <main className="container-fluid">
         <BrowserRouter>
-          <div class="row" style={{ height: "100vh" }}>
-            <div class="col-md-2 p-3 text-bg-dark">
-              <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                {/* <svg class="bi pe-none me-2" width="40" height="32">
+          <div className="row" style={{ height: "100vh" }}>
+            <div className="col-md-2 p-3 text-bg-dark">
+              <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                {/* <svg className="bi pe-none me-2" width="40" height="32">
                 <use xlinkHref="#bootstrap" />
               </svg> */}
-                <span class="fs-4">Chirpin</span>
+                <span className="fs-4">Chirpin</span>
               </a>
               <hr />
-              <ul class="nav nav-pills flex-column mb-auto">
-                <li class="nav-item">
-                  <a href="#" class="nav-link active" aria-current="page">
-                    {/* <svg class="bi pe-none me-2" width="16" height="16">
+              <ul className="nav nav-pills flex-column mb-auto">
+                <li className="nav-item">
+                  <a href="#" className="nav-link active" aria-current="page">
+                    {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#home" />
                   </svg> */}
                     Home
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="nav-link text-white">
-                    {/* <svg class="bi pe-none me-2" width="16" height="16">
+                  <a href="#" className="nav-link text-white">
+                    {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#speedometer2" />
                   </svg> */}
                     Dashboard
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="nav-link text-white">
-                    {/* <svg class="bi pe-none me-2" width="16" height="16">
+                  <a href="#" className="nav-link text-white">
+                    {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#table" />
                   </svg> */}
                     Orders
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="nav-link text-white">
-                    {/* <svg class="bi pe-none me-2" width="16" height="16">
+                  <a href="#" className="nav-link text-white">
+                    {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#grid" />
                   </svg> */}
                     Products
                   </a>
                 </li>
                 <li>
-                  <a href="#" class="nav-link text-white">
-                    {/* <svg class="bi pe-none me-2" width="16" height="16">
+                  <a href="#" className="nav-link text-white">
+                    {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#people-circle" />
                   </svg> */}
                     Customers
@@ -97,34 +97,34 @@ function App() {
                 </li>
               </ul>
               <hr />
-              <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+              <div className="dropdown">
+                <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src="https://github.com/mdo.png" alt="" width="32" height="32" class="rounded-circle me-2" />
+                  <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
                   <strong>mdo</strong>
                 </a>
-                <ul class="dropdown-menu dropdown-menu-dark text-small shadow">
-                  <li><a class="dropdown-item" href="#">New project...</a></li>
-                  <li><a class="dropdown-item" href="#">Settings</a></li>
-                  <li><a class="dropdown-item" href="#">Profile</a></li>
+                <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
+                  <li><a className="dropdown-item" href="#">New project...</a></li>
+                  <li><a className="dropdown-item" href="#">Settings</a></li>
+                  <li><a className="dropdown-item" href="#">Profile</a></li>
                   <li>
-                    <hr class="dropdown-divider" />
+                    <hr className="dropdown-divider" />
                   </li>
-                  <li><a class="dropdown-item" href="#">Sign out</a></li>
+                  <li><a className="dropdown-item" href="#">Sign out</a></li>
                 </ul>
               </div>
             </div>
-            <div class="col-md-10 p-3 bg-light">
+            <div className="col-md-10 p-3 bg-light">
               <Routes>
-                <Route path='/' element={<PrivateRoute />}>
+                {/* <Route path='/' element={<PrivateRoute />}> */}
                   <Route path='/' element={<Main />} />
-                </Route>
-                <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}>
+                {/* </Route> */}
+                {/* <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}>
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 </Route>
                 <Route path='/search' element={<PrivateRoute />}>
                   <Route path='/search' element={<Search />} />
-                </Route>
+                </Route> */}
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 
               </Route>
