@@ -131,6 +131,9 @@ function App() {
                   <Route path='/search' element={<Search />} />
                   <Route path='/searchUser' element={<SearchUser />} />
                   <Route path='/searchTweet' element={<SearchTweet />} />
+                  <Route path="/:username" element={<Profile />} /> 
+                  <Route path='/:username/followings' element={<Main />} />
+                  <Route path='/:username/followers' element={<Main />} />
                 
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 
