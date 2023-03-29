@@ -18,8 +18,8 @@ class Search extends React.Component{
             <div class="input-group">
                 <input type="search" class="form-control rounded" placeholder="Please Select what you want to search" aria-label="Search" aria-describedby="search-addon" />
                 <Dropdown as={ButtonGroup}>
-                <Button variant="success">Search</Button>
-                <Dropdown.Toggle split variant="success" id="dropdown-split-basic" />
+                <Button variant="primary">Search</Button>
+                <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
                 <Dropdown.Menu>
                 <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchuser' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchuser"})}>Search for users</Dropdown.Item>
                 <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchtweet' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchtweet"})}>Search for tweets</Dropdown.Item>
