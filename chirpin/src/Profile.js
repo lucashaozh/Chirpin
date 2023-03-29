@@ -6,138 +6,164 @@ import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
 import femaleAvatar from './img/femaleAvatar.png';
-// import UserListView from './User';
-// import TweetListView from './Tweet';
+import { useState, useRef } from 'react';
+import UserListView from './User';
+import TweetListView from './Tweet';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { userInfoExample, tweetInfoExample } from './Example';
+import Popup from './Popup';
+import "./css/Profile.css"
 
 class Profile extends React.Component {
 
-    displayFollowings = () => {
-        if (document.getElementById("followings").style.display === 'none') {
-            document.getElementById("followings").style.display = 'block';
-        } else {
-            document.getElementById("followings").style.display = 'none';
-        }
-    };
-
-    displayFollowers = () => {
-        if (document.getElementById("followers").style.display === 'none') {
-            document.getElementById("followers").style.display = 'block';
-        } else {
-            document.getElementById("followers").style.display = 'none';
-        }
-    };
-
-    displayEditProfile = () => {
-        if (document.getElementById("form").style.display === 'none') {
-            document.getElementById("form").style.display = 'block';
-        } else {
-            document.getElementById("form").style.display = 'none';
-        }
-    };
-
-    displayMyTweets = () => {
-        if (document.getElementById("viewTweets").className === "list-group-item list-group-item-action") {
-            console.log("hello")
-            document.getElementById("viewTweets").className = "list-group-item list-group-item-action active"
-            document.getElementById("viewLikes").className = "list-group-item list-group-item-action"
-        }
-    };
-
-    displayLikes = () => {
-        console.log("hi")
-        if (document.getElementById("viewLikes").className === "list-group-item list-group-item-action") {
-            document.getElementById("viewLikes").className = "list-group-item list-group-item-action active"
-            document.getElementById("viewTweets").className = "list-group-item list-group-item-action"
-        }
-    };
+    constructor(props){
+        super(props);
+        this.state = { 
+            viewMode: "MyTweets", 
+            popForm: "off" 
+        };
+    }
 
     render() {
         return (<>
             <Container fluid>
-                <Row>
-                    <Col>
-                        <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                            My Profile
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div className='border' style={{backgroundColor: 'rgb(169, 169, 169)', padding: '10px'}}>
-                            <div style={{display: 'inline-block'}}>
-                                <img src={femaleAvatar} alt='female avatar'></img>
+                <div id="scrollableDiv" className='border' style={{ height: "100vh", overflow: "auto" }}>
+                    <Row>
+                        <Col>
+                            <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
+                                My Profile
                             </div>
-                            <div style={{display: 'inline-block'}}>
-                                <Badge pill bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> Name: CSCI3100 </Badge>
-                                <Badge pill bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> ID: 00000001 </Badge>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <div className='border' style={{backgroundColor: 'rgb(169, 169, 169)', padding: '10px'}}>
+                                <div style={{display: 'inline-block'}}>
+                                    <img src={femaleAvatar} alt='female avatar'></img>
+                                </div>
+                                <div style={{display: 'inline-block'}}>
+                                    <Badge pill bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> Name: CSCI3100 </Badge>
+                                    <Badge pill bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> ID: 00000001 </Badge>
+                                </div>
+                                <div style={{display: 'inline-block'}}>
+                                    <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> Female </Badge>
+                                    <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> #Basketball #Piano </Badge>
+                                </div>
+                                <div class="btn-group-vertical" style={{display: 'inline-block', float: 'right', marginRight: '20px', width: '150px'}}>
+                                    <Button component={Link} to="/csci3100/followings" style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black'}}> Followings: 273 </Button>
+                                    <Button component={Link} to="/csci3100/followers" style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-15px', fontSize: '15px', color: 'black'}}> Followers: 273 </Button>
+                                    <Button onClick={() => this.setState({popForm:"on"})} style={{textTransform: 'none', backgroundColor: 'black', color: 'white', width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> Edit Profile </Button>
+                                </div>
                             </div>
-                            <div style={{display: 'inline-block'}}>
-                                <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> Female </Badge>
-                                <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> Basketball </Badge>
-                                <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> Piano </Badge>
-                            </div>
-                            <div class="btn-group-vertical" style={{display: 'inline-block', float: 'right', marginRight: '20px', width: '150px'}}>
-                                {/* <Badge bg="" style={{backgroundColor: 'rgb(242, 242, 242)', margin: '15px', padding: '15px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '5px', fontSize: '15px', color: 'black'}}> Followings: 273 </Badge> */}
-                                {/* <Badge bg="" style={{backgroundColor: 'rgb(242, 242, 242)', margin: '15px', padding: '15px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '5px', fontSize: '15px', color: 'black'}}> Followers: 273 </Badge> */}
-                                {/* <Badge pill bg="" style={{backgroundColor: 'black', margin: '20px', padding: '15px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '5px', fontSize: '15px'}}> Edit Profile </Badge> */}
-                                {/* <button type='button' onClick={this.displayFollowings} class="btn btn-default" style={{backgroundColor: 'rgb(242, 242, 242)', color: 'black', fontSize: '15px', margin: '10px', padding: '10px', borderRadius: '10px'}}> Followings: 273 </button> */}
-                                {/* <button type='button' onClick={this.displayFollowers} class="btn btn-default" style={{backgroundColor: 'rgb(242, 242, 242)', color: 'black', fontSize: '15px', margin: '10px', padding: '10px', borderRadius: '10px'}}> Followers: 273 </button> */}
-                                {/* <button type='button' onClick={this.displayEditProfile} class="btn btn-default" style={{backgroundColor: 'black', color: 'white', fontSize: '18px', margin: '10px', padding: '10px', borderRadius: '30px'}}> Edit Profile </button> */}
-                                <Button component={Link} to="/csci3100/followings" style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black'}}> Followings: 273 </Button>
-                                <Button component={Link} to="/csci3100/followers" style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-15px', fontSize: '15px', color: 'black'}}> Followers: 273 </Button>
-                                {/* <Button component={Link} to="/csci3100/editProfile" style={{textTransform: 'none', backgroundColor: 'black', color: 'white', fontSize: '18px', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-30px', borderRadius: '30px'}}> Edit Profile </Button> */}
-                                <Button onClick={this.displayEditProfile} style={{textTransform: 'none', backgroundColor: 'black', color: 'white', width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> Edit Profile </Button>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                        <div class="p-4 p-md-5 mb-4 rounded text-bg-white">
+                            <div class="col-md-12 px-0">
+                                <h1 class="display-4 fst-italic"> About </h1>
+                                <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what’s most interesting in this post’s contents.</p>
                             </div>
                         </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div class="list-group list-group-horizontal">
-                            <button id='viewTweets' onClick={this.displayMyTweets} type="button" class="list-group-item list-group-item-action active" aria-current="true" style={{width: '350px'}}> My Tweets </button>
-                            <button id='viewLikes' onClick={this.displayLikes} type="button" class="list-group-item list-group-item-action" aria-current="false"> Likes </button>
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                            {/* <TweetListView /> */}
-                        </div>
-                    </Col>
-                </Row>
-                
-                <div id='form' className='border' style={{display: 'none', padding: '20px', backgroundColor: 'white', position: 'absolute', marginTop: '-400px', marginLeft:'31%'}}>
-                    <form>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="name"> Name </label>
-                            <input type="name" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Enter name" />
-                            <small id="nameHelp" class="form-text text-muted"> Name yourself specially! </small>
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="gender"> Gender </label>
-                            <input type="gender" class="form-control" id="gender" placeholder="Male/Female" />
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="interest1"> Interest 1 </label>
-                            <input type="interest1" class="form-control" id="interest1" placeholder="e.g., Basketball" />
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="interest2"> Interest 2 </label>
-                            <input type="interest2" class="form-control" id="interest2" placeholder="e.g., Basketball" />
-                        </div>
-                        <button type="submit" class="btn btn-primary" style={{margin: '10px'}}> Submit </button>
-                    </form>
+                        </Col>
+                    </Row>
+                    <Row>
+                        <Col>
+                            <div class="btn-group d-flex mb-3" role="group" aria-label="...">
+                                <button type="button" class={"btn btn-" + (this.state.viewMode !== 'MyTweets' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"MyTweets"})}> My Tweets </button>
+                                <button type="button" class={"btn btn-" + (this.state.viewMode !== 'Likes' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"Likes"})}> Likes </button>
+                            </div>
+                            <div className="row">
+                                {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                {this.state.viewMode === "Likes" && <LikesList />}
+                            </div>
+                            <div>
+                                {this.state.popForm === "on" && <Popup
+                                    content={<>
+                                        <form>
+                                            <div class="row mb-3">
+                                                <label for="name" class="col-sm-2 col-form-label"> Name </label>
+                                                <div class="col-sm-10">
+                                                <input type="name" class="form-control" id="name" />
+                                                </div>
+                                            </div>
+                                            <fieldset class="row mb-3">
+                                                <legend class="col-form-label col-sm-2 pt-0"> Gender </legend>
+                                                <div class="col-sm-10">
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios1" value="option1" />
+                                                    <label class="form-check-label" for="gridRadios1">
+                                                    Male
+                                                    </label>
+                                                </div>
+                                                <div class="form-check">
+                                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios2" value="option2" />
+                                                    <label class="form-check-label" for="gridRadios2">
+                                                    Female
+                                                    </label>
+                                                </div>
+                                                <div class="form-check disabled">
+                                                    <input class="form-check-input" type="radio" name="gridRadios" id="gridRadios3" value="option3" />
+                                                    <label class="form-check-label" for="gridRadios3">
+                                                    Others
+                                                    </label>
+                                                </div>
+                                                </div>
+                                            </fieldset>
+                                            <div class="row mb-3">
+                                                <label for="inputEmail3" class="col-sm-2 col-form-label"> Interst Tags </label>
+                                                <div class="col-sm-10">
+                                                <input type="interests" class="form-control" id="interests" placeholder="e.g., #Basketball #Piano" />
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label for="text" class="col-sm-2 col-form-label"> Portrait </label>
+                                                <div class="col-sm-10">
+                                                <input type="file" class="form-control" id="inputGroupFile02" />
+                                                </div>
+                                            </div>
+                                            <div class="row mb-3">
+                                                <label for="inputEmail3" class="col-sm-2 col-form-label"> About </label>
+                                                <div class="col-sm-10">
+                                                <textarea name="Text1" cols="70" rows="5"></textarea>
+                                                </div>
+                                            </div>
+                                            <button type="submit" class="btn btn-primary"> Submit </button>
+                                            </form>
+                                    </>}
+                                    handleClose={() => this.setState({popForm:"off"})}
+                                />}
+                            </div>
+                        </Col>
+                    </Row>
                 </div>
-
-                {/* <div id='followings' className='border' style={{display: 'none', textAlign: 'center', padding: '20px', backgroundColor: 'white', position: 'absolute', marginTop: '-400px'}}>
-                    <UserListView />
-                </div>
-
-                <div id='followers' className='border' style={{display: 'none', textAlign: 'center', padding: '20px', backgroundColor: 'white', position: 'absolute', marginTop: '-400px'}}>
-                    <UserListView />
-                </div> */}
             </Container></>
+        );
+    }
+}
+
+class MyTweetsList extends React.Component {
+    render() {
+        return (
+            <InfiniteScroll dataLength={tweetInfoExample.length} next={null} hasMore={false} scrollableTarget="scrollableDiv"
+                endMessage={<p style={{ textAlign: 'center' }}>
+                    <b>Yay! You have seen it all</b>
+                </p>}>
+                <TweetListView tweetInfos={tweetInfoExample}/>
+            </InfiniteScroll>
+        );
+    }
+}
+
+class LikesList extends React.Component {
+    render() {
+        return (
+            <InfiniteScroll dataLength={tweetInfoExample.length} next={null} hasMore={false} scrollableTarget="scrollableDiv"
+                endMessage={<p style={{ textAlign: 'center' }}>
+                    <b>Yay! You have seen it all</b>
+                </p>}>
+                <TweetListView tweetInfos={tweetInfoExample}/>
+            </InfiniteScroll>
         );
     }
 }
