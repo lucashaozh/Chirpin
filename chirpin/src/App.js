@@ -10,8 +10,6 @@ import Main from './Main';
 import {Notification,SingleNotification} from './Notification';
 
 import Search from './Search'
-import SearchUser from './SearchUser'
-import SearchTweet from './SearchTweet'
 
 import {Profile } from './Profile';
 
@@ -131,8 +129,6 @@ function App() {
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 {/* </Route> */}
                   <Route path='/search' element={<Search />} />
-                  <Route path='/searchUser' element={<SearchUser />} />
-                  <Route path='/searchTweet' element={<SearchTweet />} />
                   <Route path="/:username" element={<Profile />} /> 
                   <Route path='/:username/followings' element={<Main />} />
                   <Route path='/:username/followers' element={<Main />} />
