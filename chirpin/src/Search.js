@@ -6,6 +6,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 import SearchUser from './SearchUser';
 import SearchTweet from './SearchTweet';
+import { Link } from 'react-router-dom';
 
 class Search extends React.Component{
     constructor(props){
@@ -55,21 +56,21 @@ class Trend extends React.Component{
             <div>
             <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
             <div className="card-body">
-            <p className="card-text">#Trend1</p>     
+            <p className="card-text" ><Link to={'/searchtag/' + "trend1"}>#Trend1</Link></p>     
             </div>
             </div>
             <div>
             </div>
             <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
             <div className="card-body">
-            <p className="card-text">#Trend2</p>     
+            <p className="card-text"><Link to={'/searchtag/' + "trend2"}>#Trend2</Link></p>     
             </div>
             </div>
             </div>
             <div>
             <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
             <div className="card-body">
-            <p className="card-text">#Trend3</p>     
+            <p className="card-text"><Link to={'/searchtag/' + "trend3"}>#Trend3</Link></p>     
             </div>
             </div>
             </div>
