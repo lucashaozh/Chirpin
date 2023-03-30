@@ -8,9 +8,11 @@ import Dropdown from 'react-bootstrap/Dropdown';
 function SearchTweet(){
         
     return(
-        <div>
-            search result
-        </div>
+        <>
+        <div>tweet</div>
+        
+         </>
+            
     )   
     
 }

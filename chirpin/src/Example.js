@@ -278,3 +278,61 @@ export const tweetInfoExample = [
     }
 ]
 
+export const deleteUserExample = [
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    },
+    {
+        "uid": 6,
+        "username": "Danny McLoan",
+        "report": 99
+    }
+]
+

@@ -2,6 +2,7 @@ import * as React from 'react';
 import 'bootstrap/dist/css/bootstrap.css';
 import {Link} from "react-router-dom";
 // import MaterialIcon, {colorPalette} from 'material-icons-react';
+import ChatBox from './Chat';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faUser} from '@fortawesome/free-solid-svg-icons';
 

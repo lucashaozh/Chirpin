@@ -8,9 +8,11 @@ import Dropdown from 'react-bootstrap/Dropdown';
 function SearchUser(){
         
         return(
-            <div>
-                search result
-            </div>
+            <>
+            <div> user </div>
+            
+            </>
+            
         )   
     
 }

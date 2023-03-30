@@ -3,7 +3,7 @@ position: fixed;
 bottom: 20px;
 right: 20px;
 width: 350px;
-height: 500px;
+height: 520px;
 background-color: white;
 border-radius: 20px;
 box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
@@ -76,5 +76,15 @@ border: none;
 border-radius: 20px;
 background-color: #1da1f2;
 color: white;
+cursor: pointer;
+}
+
+.withdraw-button {
+padding: 5px;
+margin-left: 5px;
+border: none;
+border-radius: 10px;
+background-color: #f0f0f0;
+color: #1da1f2;
 cursor: pointer;
 }
