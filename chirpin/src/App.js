@@ -55,12 +55,8 @@ function App() {
         <BrowserRouter>
           <div className="row" style={{ height: "100vh" }}>
             <div className="col-md-2 p-3 text-bg-dark">
-              <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                {/* <svg className="bi pe-none me-2" width="40" height="32">
-                <use xlinkHref="#bootstrap" />
-              </svg> */}
-                <span className="fs-4">Chirpin</span>
-              </a>
+              
+              <img style={{ width: 200, height: 200 }} src={[require('./img/logo.png')]} alt='logo.png'></img>
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
