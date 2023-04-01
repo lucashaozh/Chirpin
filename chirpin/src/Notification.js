@@ -5,16 +5,16 @@ import {Link} from "react-router-dom";
 import ChatBox from './Chat';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faUser} from '@fortawesome/free-solid-svg-icons';
+import { notificationExample } from './Example';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
-
-
-const data = [
-    {icon:faThumbsUp, action: "liked your tweet", name:"CSCI1", time:"3 min", content:'"laalall"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
-    {icon:faThumbsDown, action: "disliked your tweet", name:"CSCI2", time:"3 min", content:'"lalalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
-    {icon:faUser, action: "started following you", name:"CSCI3", time:"3 min", content:'', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
-    {icon:faComment, action: "commented on your tweet", name:"CSCI4", time:"3 min", content:'"lalalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
-    {icon:faRetweet, action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
-]
+const iconMap = {
+    "like": faThumbsUp,
+    "dislike": faThumbsDown,
+    "comment": faComment,
+    "retweet": faRetweet,
+    "follow": faUser
+}
 
 
 class Notification extends React.Component{
@@ -30,8 +30,17 @@ class Notification extends React.Component{
                 <button type="button" class={"btn btn-" + (this.state.viewMode != 'message' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"message"})}>Message</button>
             </div>
             <div className="row">
-                {this.state.viewMode == "notification" && <NotificationListView />}
+            <div id="scrollableNotification" style={{ height: "95vh", overflow: "auto" }}>
+                
+                {this.state.viewMode == "notification" && 
+                    <InfiniteScroll dataLength={notificationExample.length} next={null} hasMore={false} scrollableTarget="scrollableNotification"
+                        endMessage={<p style={{ textAlign: 'center' }}><b>No more notifications</b></p>}>
+                        <NotificationListView />
+                    </InfiniteScroll>
+                }
+            </div>
                 {this.state.viewMode == "message" && <MessageView />}
+            
             </div>
             </div>
         )
@@ -50,8 +59,14 @@ class MessageView extends React.Component{
 class NotificationListView extends React.Component{
     render(){
         return(
-            <div>
-                {data.map((note,index)=><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/>)}
+            <div className='list-group w-auto'>
+                {notificationExample.map((note,index)=>
+                note.icon!="follow" ?
+                <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>
+                :
+                <SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/>)
+                }
+                
             </div>
         )
     }
@@ -63,10 +78,12 @@ class SingleNotification extends React.Component{
     }
     render(){
         return(
-            <div class="card col-12">
+            <div class="card list-group-item d-flex">
                 <div class="card-body">
-                    <div className="d-inline-block m-2"> <FontAwesomeIcon color='grey' icon={this.props.icon} size='small'/> </div>
-                    <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
+                    <div className="d-inline-block m-2"> <FontAwesomeIcon color='grey' icon={iconMap[this.props.icon]} size='small'/> </div>
+                    <Link to={'/' + this.props.name}>
+                        <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
+                    </Link>
                     <p class="card-text d-inline-block m-2">{this.props.name} {this.props.action} {this.props.content}</p>
                     <p class="card-text"><small class="text-muted">Last updated {this.props.time} ago</small></p>
                 </div>
