@@ -11,6 +11,10 @@ function ChatBox() {
     messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
   }, [messages]);
  
+  useEffect(() => { // reset messages when selected receiver changes
+    setMessages([]);
+  }, [selectedReceiver]);
+  
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
@@ -27,7 +31,8 @@ function ChatBox() {
       id: Date.now(),
       text: inputValue,
       sent: true,
-      receiver: selectedReceiver
+      receiver: selectedReceiver,
+      sentAt: new Date()
     };
     setMessages((messages) => [...messages, newMessage]);
     setInputValue('');
