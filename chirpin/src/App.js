@@ -6,6 +6,8 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
+// import Admin from './Admin';
+import TweetDetail from './TweetDetail';
 
 import {Notification,SingleNotification} from './Notification';
 
@@ -118,7 +120,8 @@ function App() {
                   <Route path='/:username/followers' element={<Main />} />
                   <Route path='/searchuser/:username' element={<SearchUser />} />
                   <Route path='/searchtag/:username' element={<SearchTweet />} />
-                  <Route path='/admin' element={<Admin />} />
+                  <Route path='/tweet/:tweetid' element={<TweetDetail />} />
+                  {/* <Route path='/admin' element={<Admin />} /> */}
                 
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 

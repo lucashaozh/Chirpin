@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react';
 import UserListView from './User';
-import TweetListView from './Tweet';
+import {TweetListView} from './Tweet';
 import { Editor } from '@tinymce/tinymce-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { userInfoExample, tweetInfoExample } from './Example';
