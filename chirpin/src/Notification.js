@@ -51,7 +51,7 @@ class Notification extends React.Component{
 class MessageView extends React.Component{
     render(){
         return(
-            <div>message view</div>
+            <div><ChatBox/></div>
         )
     }
 }
