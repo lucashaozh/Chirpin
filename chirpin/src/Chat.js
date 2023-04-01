@@ -1,19 +1,24 @@
 import React, { useState, useRef, useEffect } from 'react';
 import "./css/Chatbox.css";
-
+ 
 function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
+  const [selectedReceiver, setSelectedReceiver] = useState(null);
   const messageContainerRef = useRef(null);
-
+ 
   useEffect(() => {
     messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
   }, [messages]);
-
+ 
   const handleInputChange = (event) => {
     setInputValue(event.target.value);
   };
 
+  const handleReceiverClick = (receiver) => {
+    setSelectedReceiver(receiver);
+  };
+ 
   const handleSendButtonClick = () => {
     if (inputValue === '') {
       return;
@@ -22,29 +27,39 @@ function ChatBox() {
       id: Date.now(),
       text: inputValue,
       sent: true,
+      receiver: selectedReceiver
     };
     setMessages((messages) => [...messages, newMessage]);
     setInputValue('');
   };
-
+ 
   const handleInputKeyPress = (event) => {
     if (event.key === 'Enter') {
       handleSendButtonClick();
     }
   };
-
+ 
   const handleWithdrawButtonClick = (messageId) => {
     setMessages((messages) =>
       messages.filter((message) => message.id !== messageId)
     );
   };
-
+ 
   return (
     <div className="chat-box">
-      <div className="chat-header">
-        <h3>Chat</h3>
-        <button className="close-button">&times;</button>
+    
+      <div className="receivers">
+        <div className={`receiver ${selectedReceiver === 'John' ? 'selected' : ''}`} onClick={() => handleReceiverClick('John')}>
+          John
+        </div>
+        <div className={`receiver ${selectedReceiver === 'Mary' ? 'selected' : ''}`} onClick={() => handleReceiverClick('Mary')}>
+          Mary
+        </div>
+        <div className={`receiver ${selectedReceiver === 'Steve' ? 'selected' : ''}`} onClick={() => handleReceiverClick('Steve')}>
+          Steve
+        </div>
       </div>
+
       <div className="chat-body" ref={messageContainerRef}>
         {messages.map((message) => (
           <div
@@ -57,7 +72,7 @@ function ChatBox() {
                 className="withdraw-button"
                 onClick={() => handleWithdrawButtonClick(message.id)}
               >
-                ❌
+                
               </button>
             )}
           </div>
@@ -79,5 +94,5 @@ function ChatBox() {
     </div>
   );
 }
-
+ 
 export default ChatBox;
