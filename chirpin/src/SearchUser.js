@@ -6,14 +6,23 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 
-function SearchUser(){
+class SearchUser extends React.Component{
         
+    constructor(props){
+        super(props);
+        this.state = {
+            username: window.location.pathname.split('/')[2]
+        };
+    }
+    
+    render(){
         return(
-            <>
-            <UserListView userInfos={userInfoExample}/>
-            </>
-            
-        )   
+        <>
+        <div>{this.state.username}</div>
+        <UserListView userInfos={userInfoExample}/>            
+        </>       
+        ) 
+    }  
     
 }
 
