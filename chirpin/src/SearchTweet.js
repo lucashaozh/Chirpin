@@ -1,5 +1,5 @@
 import React from 'react';
-import TweetListView from './Tweet';
+import {TweetListView} from './Tweet';
 import UserListView from './User';
 import { userInfoExample, tweetInfoExample } from './Example';
 import Button from 'react-bootstrap/Button';
