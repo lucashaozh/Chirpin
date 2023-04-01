@@ -8,7 +8,7 @@ import Button from '@material-ui/core/Button';
 import femaleAvatar from './img/femaleAvatar.png';
 import { useState, useRef } from 'react';
 import UserListView from './User';
-import TweetListView from './Tweet';
+import {TweetListView} from './Tweet';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { userInfoExample, tweetInfoExample } from './Example';
 import { getloginfo } from './Login';

@@ -166,7 +166,8 @@ export const userInfoExample = [
 
 
 export const tweetInfoExample = [
-    {
+    {   
+        "tid": 0,
         "likeInfo": { likeCount: 12, bLikeByUser: true },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 0, username: "user0" },
@@ -177,6 +178,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
     },
     {
+        "tid": 1,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 1, username: "user1" },
@@ -187,6 +189,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
+        "tid": 2,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -197,6 +200,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 3,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -207,6 +211,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 4,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -217,6 +222,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 5,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -227,6 +233,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 6,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -237,6 +244,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 7,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -247,6 +255,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 8,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -257,6 +266,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 9,
         "likeInfo": { likeCount: 120, bLikeByUser: true },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 66, username: "Active User" },
@@ -267,6 +277,7 @@ export const tweetInfoExample = [
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
         {
+        "tid": 10,
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -336,3 +347,25 @@ export const deleteUserExample = [
     }
 ]
 
+export const notificationExample=[
+    {icon:"like", tweetid: 1, action: "liked your tweet", name:"CSCI1", time:"3 min", content:'"laalall"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"dislike", tweetid: 2,action: "disliked your tweet", name:"CSCI2", time:"3 min", content:'"lalalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"follow", action: "started following you", name:"CSCI3", time:"3 min", content:'', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"comment", tweetid: 2,action: "commented on your tweet", name:"CSCI4", time:"3 min", content:'"lalalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"retweet", tweetid: 3,action: "retweeted your tweet", name:"CSCI5", time:"3 min", content: '"alalal"', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+    {icon:"follow", tweetid: 1,action: "started following you", name:"CSCI3", time:"3 min", content:'', potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"},
+]
+
+export const commentExample = [
+    {name:"CSCI", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"},  
+    {name:"CSCI1", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"},    
+    {name:"CSCI2", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"},   
+    {name:"CSCI3", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"},    
+    {name:"CSCI6", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"},   
+    {name:"CSCI7", content:"lalalal this is a long comment  ", potrait:"https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",time:"3 min"}   
+]
