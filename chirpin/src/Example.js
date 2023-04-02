@@ -174,7 +174,7 @@ export const tweetInfoExample = [
         "content": '<h1><span style="background-color: rgb(236, 240, 241);">Hello World!</span></h1><p><code>int x = 2</code></p><p><strong>Bold Text</strong></p><h3><strong>Another Title</strong></h3><p><span style="background-color: rgb(255, 255, 255); color: rgb(45, 194, 107);"><strong>What a nice day! Text with different colors</strong></span></p>',
         "commentCount": 0,
         "retweetCount": 0,
-        "time": "2023-04-01 13:37:00",
+        "time": "2023-04-02 15:54:00",
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
         "tags": ["#tag1", "#tag2", "#tag3"]
     },
