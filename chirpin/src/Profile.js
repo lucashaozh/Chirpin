@@ -13,6 +13,8 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { userInfoExample, tweetInfoExample } from './Example';
 import { getloginfo } from './Login';
 import cookie from 'react-cookies';
+import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class Profile extends React.Component {
 
@@ -52,16 +54,16 @@ class Profile extends React.Component {
         }
     }
 
+    // handleReportClick = () => {
+    //     // if (this.state.report === false) {
+    //         document.getElementById("report").innerText = "Reported"
+    //         document.getElementById("report").className = "btn btn-light"
+    //         this.state.report = true
+    //     // }
+    // }
+
     handleReportClick = () => {
-        if (this.state.report === true) {
-            document.getElementById("report").innerText = "Report"
-            document.getElementById("report").className = "btn btn-warning"
-            this.state.report = false
-        } else {
-            document.getElementById("report").innerText = "Unreport"
-            document.getElementById("report").className = "btn btn-light"
-            this.state.report = true
-        }
+        // TODO: report tweet to DB
     }
 
     render() {
@@ -71,10 +73,10 @@ class Profile extends React.Component {
                     <Row>
                         <Col>
                         {
-                            this.state.target === 'jiyi' && // TO DO: Modify this line when checking cookies
+                            (this.state.target === 'jiyi' && // TO DO: Modify this line when checking cookies
                             <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
                                 My Profile
-                            </div> ||
+                            </div>) ||
                             <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
                                 Other's Profile
                             </div>
@@ -115,8 +117,8 @@ class Profile extends React.Component {
                                         <button type="button" onClick={this.handleBlockClick} className="btn btn-dark" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
                                             Block
                                         </button>
-                                        <button type="button" onClick={this.handleReportClick} className="btn btn-warning" id="report" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
-                                            Report
+                                        <button type="button" className="btn btn-warning" data-bs-toggle="modal" data-bs-target="#report-user" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
+                                            Report 
                                         </button>
                                     </div>
                                 }
@@ -136,7 +138,7 @@ class Profile extends React.Component {
                     </Row>
                     
                     {
-                        this.state.target === 'jiyi' && // TO DO: Modify this line when checking cookies
+                        (this.state.target === 'jiyi' && // TO DO: Modify this line when checking cookies
                         <Row>
                             <Col>
                                 <div class="btn-group d-flex mb-3" role="group" aria-label="...">
@@ -188,7 +190,7 @@ class Profile extends React.Component {
                                     </div>
                                 </div>
                             </Col>
-                        </Row> ||
+                        </Row>) ||
                         <Row>
                             <Col>
                                 <div class="btn-group d-flex mb-3" role="group" aria-label="...">
@@ -196,6 +198,24 @@ class Profile extends React.Component {
                                 </div>
                                 <div className="row">
                                     {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                </div>
+
+                                <div className="modal fade" id="report-user" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                    <div className="modal-dialog modal-dialog-centered">
+                                        <div className="modal-content">
+                                            <div className="modal-header">
+                                                <h1 className="modal-title fs-5" id="staticBackdropLabel"><FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>Warning</h1>
+                                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div className="modal-body">
+                                                Are you sure to report this user?
+                                            </div>
+                                            <div className="modal-footer">
+                                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                                                <button type="button" className="btn btn-primary" onClick={this.handleReportClick}>Confirm</button>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </Col>
                         </Row>
