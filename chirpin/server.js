@@ -55,6 +55,8 @@ db.once('open', function () {
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         gender: { type: String, required: true },
         interest: [{ type: String, required: true }],
+        follower_counter: { type: Number },
+        following_counter: { type: Number },
         tweet: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         follower: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -102,6 +104,8 @@ db.once('open', function () {
             username: "user_01",
             gender: "Female",
             interest: ["Basketball", "Piano"],
+            follower_counter: 0,
+            following_counter: 0,
             tweet: [],
             folloer: [],
             following: [],
@@ -116,6 +120,30 @@ db.once('open', function () {
         }).catch((err) => {
             console.error(err);
         });
+    });
+
+    // get basic user information: 
+    app.get('/user', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        User.find((err, users) => {
+            if (err) {
+                res.status(404).send(err);
+            } else if (!users || users.length == 0) {
+                res.status(404).send("No user found");
+            } else {
+                let userlist = [];
+                for (let i = 0; i < users.length; i++) {
+                    let userobj = {
+                        "id": users[i].id,
+                        "pwd": users[i].pwd
+                    }
+                    userlist.push(userobj);
+                }
+                console.log(userlist);
+                res.set('Content-Type', 'application/json');
+                res.status(200).send(JSON.stringify(userlist));
+            }
+        })
     });
 });
 
