@@ -6,12 +6,12 @@ import { Navigate, Outlet } from 'react-router-dom';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
+// import Admin from './Admin';
+import TweetDetail from './TweetDetail';
 
 import {Notification,SingleNotification} from './Notification';
 
 import Search from './Search'
-import SearchUser from './SearchUser'
-import SearchTweet from './SearchTweet'
 
 import {Profile } from './Profile';
 
@@ -20,6 +20,8 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 
 import "./css/App.css"
+import SearchTweet from './SearchTweet';
+import SearchUser from './SearchUser';
 
 
 export const BACK_END = 'http://localhost:8000/'
@@ -53,18 +55,14 @@ function App() {
     <>
       <main className="container-fluid">
         <BrowserRouter>
-          <div className="row">
-            <div className="col-md-2 p-3 text-bg-dark" style={{ height: "100vh" }}>
-              <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
-                {/* <svg className="bi pe-none me-2" width="40" height="32">
-                <use xlinkHref="#bootstrap" />
-              </svg> */}
-                <span className="fs-4">Chirpin</span>
-              </a>
+          <div className="row" style={{ height: "100vh" }}>
+            <div className="col-md-2 p-3 text-bg-dark">
+              
+              <img style={{ width: 200, height: 200 }} src={[require('./img/logo.png')]} alt='logo.png'></img>
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <a href="#" className="nav-link active" aria-current="page">
+                  <a href="/" className="nav-link" aria-current="page">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#home" />
                   </svg> */}
@@ -72,35 +70,27 @@ function App() {
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="nav-link text-white">
+                  <a href="/search" className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#speedometer2" />
                   </svg> */}
-                    Dashboard
+                    Search
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="nav-link text-white">
+                  <a href="/notification" className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#table" />
                   </svg> */}
-                    Orders
+                    Notification
                   </a>
                 </li>
                 <li>
-                  <a href="#" className="nav-link text-white">
+                  <a href="/myprofile" className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#grid" />
                   </svg> */}
-                    Products
-                  </a>
-                </li>
-                <li>
-                  <a href="#" className="nav-link text-white">
-                    {/* <svg className="bi pe-none me-2" width="16" height="16">
-                    <use xlinkHref="#people-circle" />
-                  </svg> */}
-                    Customers
+                    Profile
                   </a>
                 </li>
               </ul>
@@ -109,16 +99,10 @@ function App() {
                 <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                  <strong>mdo</strong>
+                  <strong>more</strong>
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-                  <li><a className="dropdown-item" href="#">New project...</a></li>
-                  <li><a className="dropdown-item" href="#">Settings</a></li>
-                  <li><a className="dropdown-item" href="#">Profile</a></li>
-                  <li>
-                    <hr className="dropdown-divider" />
-                  </li>
-                  <li><a className="dropdown-item" href="#">Sign out</a></li>
+                  <li><a className="dropdown-item" href="/login">Sign out</a></li>
                 </ul>
               </div>
             </div>
@@ -131,11 +115,13 @@ function App() {
                   <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 {/* </Route> */}
                   <Route path='/search' element={<Search />} />
-                  <Route path='/searchUser' element={<SearchUser />} />
-                  <Route path='/searchTweet' element={<SearchTweet />} />
                   <Route path="/:username" element={<Profile />} /> 
                   <Route path='/:username/followings' element={<Main />} />
                   <Route path='/:username/followers' element={<Main />} />
+                  <Route path='/searchuser/:username' element={<SearchUser />} />
+                  <Route path='/searchtag/:username' element={<SearchTweet />} />
+                  <Route path='/tweet/:tweetid' element={<TweetDetail />} />
+                  {/* <Route path='/admin' element={<Admin />} /> */}
                 
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 

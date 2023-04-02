@@ -1,66 +1,103 @@
-import React from 'react';
-import TweetListView from './Tweet';
-import UserListView from './User';
-import Button from 'react-bootstrap/Button';
-import ButtonGroup from 'react-bootstrap/ButtonGroup';
-import Dropdown from 'react-bootstrap/Dropdown';
-import "./css/Chatbox.css"
+import React, { useState, useRef, useEffect } from 'react';
+import "./css/Chatbox.css";
+ 
+function ChatBox() {
+  const [messages, setMessages] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+  const [selectedReceiver, setSelectedReceiver] = useState(null);
+  const messageContainerRef = useRef(null);
+ 
+  useEffect(() => {
+    messageContainerRef.current.scrollTop = messageContainerRef.current.scrollHeight;
+  }, [messages]);
+ 
+  useEffect(() => { // reset messages when selected receiver changes
+    setMessages([]);
+  }, [selectedReceiver]);
+  
+  const handleInputChange = (event) => {
+    setInputValue(event.target.value);
+  };
 
-
-function Chat() {
-  const chatBox = document.querySelector('.chat-box');
-  const closeButton = document.querySelector('.close-button');
-  const messageContainer = document.querySelector('.message-container');
-  const messageInput = document.querySelector('.message-input');
-  const sendButton = document.querySelector('.send-button');
-
-  closeButton.addEventListener('click', () => {
-    chatBox.style.display = 'none';
-  });
-
-  sendButton.addEventListener('click', sendMessage);
-
-  messageInput.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-      sendMessage();
-    }
-  });
-
-  function sendMessage() {
-    const message = messageInput.value;
-    if (message === '') {
+  const handleReceiverClick = (receiver) => {
+    setSelectedReceiver(receiver);
+  };
+ 
+  const handleSendButtonClick = () => {
+    if (inputValue === '') {
       return;
     }
-    const messageElement = document.createElement('div');
-    messageElement.classList.add('message');
-    messageElement.textContent = message;
-    messageContainer.appendChild(messageElement);
-    messageInput.value = '';
-    messageInput.focus();
-    messageContainer.scrollTop = messageContainer.scrollHeight;
-    messageElement.classList.add('sent');
-  }
+    const newMessage = {
+      id: Date.now(),
+      text: inputValue,
+      sent: true,
+      receiver: selectedReceiver,
+      sentAt: new Date()
+    };
+    setMessages((messages) => [...messages, newMessage]);
+    setInputValue('');
+  };
+ 
+  const handleInputKeyPress = (event) => {
+    if (event.key === 'Enter') {
+      handleSendButtonClick();
+    }
+  };
+ 
+  const handleWithdrawButtonClick = (messageId) => {
+    setMessages((messages) =>
+      messages.filter((message) => message.id !== messageId)
+    );
+  };
+ 
   return (
-    <>
-      <div class="chat-box">
-        <div class="chat-header">
-          <h3>Chat</h3>
-          <span class="close-button">&times;</span>
+    <div className="chat-box">
+    
+      <div className="receivers">
+        <div className={`receiver ${selectedReceiver === 'John' ? 'selected' : ''}`} onClick={() => handleReceiverClick('John')}>
+          John
         </div>
-        <div class="chat-body">
-          <div class="message-container"></div>
+        <div className={`receiver ${selectedReceiver === 'Mary' ? 'selected' : ''}`} onClick={() => handleReceiverClick('Mary')}>
+          Mary
         </div>
-        <div class="chat-footer">
-          <input type="text" class="message-input" placeholder="Type your message...">
-          </input>
-          <button class="send-button">Send</button>
+        <div className={`receiver ${selectedReceiver === 'Steve' ? 'selected' : ''}`} onClick={() => handleReceiverClick('Steve')}>
+          Steve
         </div>
       </div>
-    </>
-  )
+
+      <div className="chat-body" ref={messageContainerRef}>
+        {messages.map((message) => (
+          <div
+            key={message.id}
+            className={`message ${message.sent ? 'sent' : ''}`}
+          >
+            {message.text}
+            {message.sent && (
+              <button
+                className="withdraw-button"
+                onClick={() => handleWithdrawButtonClick(message.id)}
+              >
+                
+              </button>
+            )}
+          </div>
+        ))}
+      </div>
+      <div className="chat-footer">
+        <input
+          type="text"
+          className="message-input"
+          placeholder="Type your message..."
+          value={inputValue}
+          onChange={handleInputChange}
+          onKeyPress={handleInputKeyPress}
+        />
+        <button className="send-button" onClick={handleSendButtonClick}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
 }
-
-
-
-
-export default Chat;
+ 
+export default ChatBox;
