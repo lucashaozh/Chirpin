@@ -121,30 +121,6 @@ db.once('open', function () {
             console.error(err);
         });
     });
-
-    // get basic user information: 
-    app.get('/user', (req, res) => {
-        res.set('Content-Type', 'text/plain');
-        User.find((err, users) => {
-            if (err) {
-                res.status(404).send(err);
-            } else if (!users || users.length == 0) {
-                res.status(404).send("No user found");
-            } else {
-                let userlist = [];
-                for (let i = 0; i < users.length; i++) {
-                    let userobj = {
-                        "id": users[i].id,
-                        "pwd": users[i].pwd
-                    }
-                    userlist.push(userobj);
-                }
-                console.log(userlist);
-                res.set('Content-Type', 'application/json');
-                res.status(200).send(JSON.stringify(userlist));
-            }
-        })
-    });
 });
 
 const server = app.listen(8000);
