@@ -55,6 +55,7 @@ db.once('open', function () {
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         gender: { type: String, required: true },
         interest: [{ type: String, required: true }],
+        about: { type: String },
         follower_counter: { type: Number },
         following_counter: { type: Number },
         tweet: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
@@ -95,32 +96,106 @@ db.once('open', function () {
             username: "user_01",
             pwd: "123456",
             identity: "user"
-        }).catch((err) => {
-            console.error(err);
-        });
-
-        User.create({
-            uid: userID,
-            username: "user_01",
-            gender: "Female",
-            interest: ["Basketball", "Piano"],
-            follower_counter: 0,
-            following_counter: 0,
-            tweet: [],
-            folloer: [],
-            following: [],
-            tweet_reported: [],
-            user_reported: [],
-            report_counter: 0,
-            tweet_liked: [],
-            tweet_disliked: [],
-            portrait: "test"
+        }).then((user) => {
+            User.create({
+                uid: user.uid,
+                username: user.username,
+                gender: "Female",
+                interest: ["Basketball", "Piano"],
+                about: "This is for test. This is for test. This is for test. This is for test. This is for test.",
+                follower_counter: 0,
+                following_counter: 0,
+                tweet: [],
+                folloer: [],
+                following: [],
+                tweet_reported: [],
+                user_reported: [],
+                report_counter: 0,
+                tweet_liked: [],
+                tweet_disliked: [],
+                portrait: "test"
+            }).then(c => {
+                console.log(c);
+            })
         }).then(() => {
             res.sendStatus(200);
         }).catch((err) => {
             console.error(err);
         });
     });
+
+    // create tweet for testing
+    app.get('/test/createTweet', (req, res) => {
+        var tweetID = new mongoose.Types.ObjectId();
+        Tweet.create({
+            tid: tweetID,
+            username: "user_01",
+            tweet_content: 'This is just for test. This is just for test. This is just for test. This is just for test. This is just for test.',
+            tag: ["#tag1", "#tag2", "#tag3"],
+            comment: [],
+            like: [],
+            dislike_counter: 12,
+            report_counter: 4,
+            tweet_liked: [],
+            tweet_disliked: [],
+            portrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        }).then((tweetobj) => {
+            console.log(tweetobj._id);
+            User.updateOne({ username: tweetobj.username }, { $push: { tweet: tweetobj._id } }).then(c => {
+                console.log(c);
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            console.error(err);
+        });
+    });
+
+/* -------------------------------------------------------------- */
+/* ------------------------Profile (JI Yi)------------------------*/
+/* ---------------------------------------------------------------*/
+
+    // get basic user information
+    app.get('/profile/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).populate('tweet').exec().then((user) => {
+            console.log(user);
+            res.send(user);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    // update user information
+    app.put('/profile/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let updateName = req.body.name;
+        let updateGender = req.body.gender;
+        let updateInterest = req.body.interest;
+        let updatePortrait = req.body.portrait;
+        let updateAbout = req.body.about;
+
+        User.findOne({ 'username': username }).then((user) => {
+            user.username = updateName;
+            user.gender = updateGender;
+            user.interest = updateInterest;
+            user.portrait = updatePortrait;
+            user.about = updateAbout;
+            user.save();
+            res.status(200).send(JSON.stringify(user));
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+/* -------------------------------------------------------------- */
+/* ------------------------Input Your Part------------------------*/
+/* ---------------------------------------------------------------*/
+
 });
 
 const server = app.listen(8000);
