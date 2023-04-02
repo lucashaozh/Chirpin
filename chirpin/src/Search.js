@@ -31,15 +31,15 @@ class Search extends React.Component{
         return(
             <>
             <div class="input-group">
+                <input id='search_input' type="search" class="form-control rounded" placeholder={(this.state.viewMode == 'search' ? "Please Select what you want to search" : "Please Search")} aria-label="Search" aria-describedby="search-addon" />
                 <Dropdown as={ButtonGroup}>
                 <Button variant="primary" onClick={this.clickSearch}>Search</Button>
                 <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
                 <Dropdown.Menu>
-                <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchuser' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchuser"})}>Search for users</Dropdown.Item>
-                <Dropdown.Item class={"btn btn-" + (this.state.viewMode != 'searchtweet' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"searchtweet"})}>Search for tweets</Dropdown.Item>
+                <Dropdown.Item  onClick={() => this.setState({viewMode:"searchuser"})}>Search for users</Dropdown.Item>
+                <Dropdown.Item  onClick={() => this.setState({viewMode:"searchtweet"})}>Search for tweets</Dropdown.Item>
                 </Dropdown.Menu>
                 </Dropdown>
-                <input id='search_input' type="search" class="form-control rounded" placeholder={(this.state.viewMode == 'search' ? "Please Select what you want to search" : "Please Search")} aria-label="Search" aria-describedby="search-addon" />
                 </div>
                 <div className="row">
                 <Trend/>

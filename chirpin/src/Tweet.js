@@ -113,6 +113,15 @@ function TweetCard({ tweetInfo }) {
                 <div className="col-10">
                     <div className="row">
                         <div className="col-12 mb-2">
+                            <div className="d-flex justify-content-start">
+                                {tags.map((tag, index) => {
+                                    return (
+                                        <span className="badge bg-primary m-1" key={index}>{tag}</span>
+                                    );
+                                })}
+                            </div>
+                        </div>
+                        <div className="col-12 mb-2">
                             <DisplayRichText content={tweetContent} />
                         </div>
                         <div className="col-12">
@@ -132,16 +141,22 @@ function TweetCard({ tweetInfo }) {
                                 <span className="ms-1 opacity-75">{dislikeInfo.dislikeCount}</span>
                             </span>
                             <span className="m-1">
-                                <button type="button" className="btn btn-outline-primary disabled btn-floating">
+
+                                <button type="button" className="btn btn-outline-primary  btn-floating" data-bs-toggle="modal" data-bs-target="#tweetCommentForm" data-bs-whatever="@mdo">
                                     <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
                                 </button>
                                 <span className="ms-1 opacity-75">{commentCount}</span>
                             </span>
                             <span className="m-1">
-                                <button type="button" className="btn btn-outline-primary disabled btn-floating">
+                                <button type="button" className="btn btn-outline-primary  btn-floating" data-bs-toggle="modal" data-bs-target="#tweetForwardForm" data-bs-whatever="@mdo">
                                     <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                                 </button>
                                 <span className="ms-1 opacity-75">{retweetCount}</span>
+                            </span>
+                            <span className="m-1">
+                                <button type="button" className="btn btn-primary btn-floating" data-bs-toggle="modal" data-bs-target="#report-popup">
+                                    <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
+                                </button>
                             </span>
                         </div>
                     </div>

@@ -38,8 +38,8 @@ class Notification extends React.Component{
                         <NotificationListView />
                     </InfiniteScroll>
                 }
-            </div>
                 {this.state.viewMode == "message" && <MessageView />}
+            </div>
             
             </div>
             </div>

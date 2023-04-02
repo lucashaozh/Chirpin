@@ -121,50 +121,85 @@ class Profile extends React.Component {
                                     </div>
                                 }
                             </div>
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div class="list-group list-group-horizontal">
-                            <button id='viewTweets' onClick={this.displayMyTweets} type="button" class="list-group-item list-group-item-action active" aria-current="true" style={{width: '350px'}}> My Tweets </button>
-                            <button id='viewLikes' onClick={this.displayLikes} type="button" class="list-group-item list-group-item-action" aria-current="false"> Likes </button>
-                        </div>
-                    </Col>
-                </Row>
-                <Row>
-                    <Col>
-                        <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                            {/* <TweetListView /> */}
-                        </div>
-                    </Col>
-                </Row>
-                
-                <div id='form' className='border' style={{display: 'none', padding: '20px', backgroundColor: 'white', position: 'absolute', marginTop: '-400px', marginLeft:'31%'}}>
-                    <form>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="name"> Name </label>
-                            <input type="name" class="form-control" id="name" aria-describedby="nameHelp" placeholder="Enter name" />
-                            <small id="nameHelp" class="form-text text-muted"> Name yourself specially! </small>
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="gender"> Gender </label>
-                            <input type="gender" class="form-control" id="gender" placeholder="Male/Female" />
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="interest1"> Interest 1 </label>
-                            <input type="interest1" class="form-control" id="interest1" placeholder="e.g., Basketball" />
-                        </div>
-                        <div class="form-group" style={{margin: '10px'}}>
-                            <label for="interest2"> Interest 2 </label>
-                            <input type="interest2" class="form-control" id="interest2" placeholder="e.g., Basketball" />
-                        </div>
-                        <button type="submit" class="btn btn-primary" style={{margin: '10px'}}> Submit </button>
-                    </form>
-                </div>
+                        </Col>
+                    </Row>
 
-                {/* <div id='followings' className='border' style={{display: 'none', textAlign: 'center', padding: '20px', backgroundColor: 'white', position: 'absolute', marginTop: '-400px'}}>
-                    <UserListView />
+                    <Row>
+                        <Col>
+                        <div class="p-4 p-md-5 mb-4 rounded text-bg-white">
+                            <div class="col-md-12 px-0">
+                                <h1 class="display-4 fst-italic"> About </h1>
+                                <p class="lead my-3">Multiple lines of text that form the lede, informing new readers quickly and efficiently about what’s most interesting in this post’s contents.</p>
+                            </div>
+                        </div>
+                        </Col>
+                    </Row>
+                    
+                    {
+                        this.state.target === 'jiyi' && // TO DO: Modify this line when checking cookies
+                        <Row>
+                            <Col>
+                                <div class="btn-group d-flex mb-3" role="group" aria-label="...">
+                                    <button type="button" class={"btn btn-" + (this.state.viewMode !== 'MyTweets' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"MyTweets"})}> My Tweets </button>
+                                    <button type="button" class={"btn btn-" + (this.state.viewMode !== 'Likes' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"Likes"})}> Likes </button>
+                                </div>
+
+                                <div className="row">
+                                    {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                    {this.state.viewMode === "Likes" && <LikesList />}
+                                </div>
+
+                                <div class="modal fade" id="editProfileForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                    <div class="modal-dialog">
+                                        <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h1 class="modal-title fs-5" id="exampleModalLabel"> Edit Profile </h1>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <form>
+                                            <div class="mb-3">
+                                                <label for="name" class="col-form-label"> Name: </label>
+                                                <input type="text" class="form-control" id="name" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="gender" class="col-form-label"> Gender: </label>
+                                                <input type="text" class="form-control" id="gender" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="interest" class="col-form-label"> Interests: </label>
+                                                <input type="text" class="form-control" id="interest" placeholder="e.g., #Basketball #Piano" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="text" class="col-sm-2 col-form-label"> Portrait: </label>
+                                                <input type="file" class="form-control" id="inputGroupFile02" />
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="about-text" class="col-form-label"> About: </label>
+                                                <textarea class="form-control" id="about-text" rows="4"></textarea>
+                                            </div>
+                                            </form>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Submit </button>
+                                        </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </Col>
+                        </Row> ||
+                        <Row>
+                            <Col>
+                                <div class="btn-group d-flex mb-3" role="group" aria-label="...">
+                                    <button type="button" class={"btn btn-primary w-100"}> Tweets </button>
+                                </div>
+                                <div className="row">
+                                    {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                </div>
+                            </Col>
+                        </Row>
+                    }
                 </div>
             </Container></>
         );
