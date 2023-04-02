@@ -173,8 +173,9 @@ export const tweetInfoExample = [
         "content": '<h1><span style="background-color: rgb(236, 240, 241);">Hello World!</span></h1><p><code>int x = 2</code></p><p><strong>Bold Text</strong></p><h3><strong>Another Title</strong></h3><p><span style="background-color: rgb(255, 255, 255); color: rgb(45, 194, 107);"><strong>What a nice day! Text with different colors</strong></span></p>',
         "commentCount": 0,
         "retweetCount": 0,
-        "time": "2021-05-01 12:00:00",
+        "time": "2023-04-01 13:37:00",
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
     },
     {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
@@ -184,7 +185,8 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
     },
     {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
@@ -194,9 +196,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -204,9 +208,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -214,9 +220,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -224,9 +232,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -234,9 +244,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -244,9 +256,11 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
@@ -254,27 +268,36 @@ export const tweetInfoExample = [
         "commentCount": 0,
         "retweetCount": 0,
         "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 120, bLikeByUser: true },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 66, username: "Active User" },
         "content": '<p>This is the initial content of the editor.</p><p>&nbsp;</p><p><strong>Test bold text</strong></p><p>&nbsp;</p><p><em>test em text</em></p><p>&nbsp;</p><p><span style="color: rgb(224, 62, 45);"><em>red color</em></span></p>',
         "commentCount": 0,
         "retweetCount": 0,
-        "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "time": "2023-04-01 13:37:00",
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     },
-        {
+    {
         "likeInfo": { likeCount: 0, bLikeByUser: false },
         "dislikeInfo": { dislikeCount: 0, bDislikeByUser: false },
         "user": { uid: 2, username: "user2" },
         "content": "This is a tweet from user2. Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.Test long long long tweet.",
         "commentCount": 0,
         "retweetCount": 0,
-        "time": "2021-05-01 12:00:00",
-        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+        "time": "2023-04-01 12:00:00",
+        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+        "tags": ["#tag1", "#tag2", "#tag3"]
+
     }
 ]
 
+export const tagsExample = [
+    "javascript", "html", "react", "software engineering", "web development", "css", "nodejs", "programming", "web design"
+]

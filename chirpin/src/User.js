@@ -21,9 +21,9 @@ function UserCard({ userInfo }) {
 
     const handleFollow = () => {
         if (isFollowing) {
-            setFollowingCount(followingCount - 1);
+            setFollowerCount(followerCount - 1);
         } else {
-            setFollowingCount(followingCount + 1);
+            setFollowerCount(followerCount + 1);
         }
         setIsFollowing(!isFollowing);
     }
@@ -34,14 +34,14 @@ function UserCard({ userInfo }) {
                 <div className="card-body p-4 row">
                     <div className="d-flex text-black">
                         <div className="col-4 flex-shrink-0">
-                            <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                            <img src={portraitUrl}
                                 alt="Generic placeholder image" className="img-fluid"
                                 style={{ width: "150px", borderRadius: "10px" }} />
                         </div>
                         <div className="col-8 ms-3">
                             <h5 className="mb-1">{username}</h5>
                             <p className="mb-2 pb-1" style={{ color: "#2b2a2a" }}>Senior Journalist</p>
-                            <div className="row d-flex justify-content-center rounded-3 p-2 m-2"
+                            <div className="row d-flex justify-content-center rounded-3 py-1 m-1"
                                 style={{ backgroundColor: "#efefef" }}>
                                 <div className="col-md-6">
                                     <p className="small text-muted mb-1 overflow-hidden d-flex flex-nowrap">Followings</p>
@@ -53,7 +53,7 @@ function UserCard({ userInfo }) {
                                 </div>
                             </div>
                             <div className="d-flex m-2 justify-content-center">
-                                <button type="button" className={"btn btn-" + (isFollowing ? "" : "outline-") + "primary flex-grow-1"} onClick={handleFollow}>Follow</button>
+                                <button type="button" className={"btn btn-" + (isFollowing ? "" : "outline-") + "primary flex-grow-1"} onClick={handleFollow}>{isFollowing ? "Unfollow" : "Follow"}</button>
                             </div>
                         </div>
                     </div>
@@ -64,20 +64,34 @@ function UserCard({ userInfo }) {
 }
 
 function UserListView({ userInfos }) {
-    const [userInfoList, setUserList] = useState(splitList(userInfos, 3));
+    const [userInfoList, setUserList] = useState();
+
+
+    const horizontalBarStyle = {
+        overflowX: "auto",
+        whiteSpace: "nowrap"
+    }
+
+    const horizontalColStyle = {
+        display: "inline-block",
+        float: "none",
+    }
+
     return (
         <>
-            {userInfoList.map((userInfoGroup, row) => {
-                return (
-                    <div className="row container-fluid" key={row}>
-                        {userInfoGroup.map((userInfo, col) => {
-                            return (
-                                userInfo && <UserCard userInfo={userInfo} key={col} />
-                            )
-                        })}
-                    </div>
-                )
-            })}
+            {
+                splitList(userInfos, 3).map((userInfoGroup, row) => {
+                    return (
+                        <div className="row container-fluid" key={row}>
+                            {userInfoGroup.map((userInfo, col) => {
+                                return (
+                                    userInfo && <UserCard userInfo={userInfo} key={col} />
+                                )
+                            })}
+                        </div>
+                    )
+                })
+            }
         </>
     )
 }

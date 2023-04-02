@@ -10,22 +10,34 @@ export function timeDifference(time) {
     let diffInMonth = diffInDay / 30;
     let diffInYear = diffInMonth / 12;
     if (diffInYear >= 1) {
-        return Math.floor(diffInYear) + " years ago";
+        if (diffInYear >= 2) {
+            return Math.floor(diffInYear) + " years ago";
+        } else { return "1 year ago"; }
     }
     if (diffInMonth >= 1) {
-        return Math.floor(diffInMonth) + " months ago";
+        if (diffInMonth >= 2) {
+            return Math.floor(diffInMonth) + " months ago";
+        } else { return "1 month ago"; }
     }
     if (diffInDay >= 1) {
-        return Math.floor(diffInDay) + " days ago";
+        if (diffInDay >= 2) {
+            return Math.floor(diffInDay) + " days ago";
+        } else { return "1 day ago"; }
     }
     if (diffInHour >= 1) {
-        return Math.floor(diffInHour) + " hours ago";
+        if (diffInHour >= 2) {
+            return Math.floor(diffInHour) + " hours ago";
+        } else { return "1 hour ago"; }
     }
     if (diffInMin >= 1) {
-        return Math.floor(diffInMin) + " minutes ago";
+        if (diffInMin >= 2) {
+            return Math.floor(diffInMin) + " minutes ago";
+        } else { return "1 minute ago"; }
     }
     if (diffInSec >= 1) {
-        return Math.floor(diffInSec) + " seconds ago";
+        if (diffInMin >= 2) {
+            return Math.floor(diffInSec) + " seconds ago";
+        } else { return "1 second ago"; }
     }
     return "just now";
 }
@@ -38,4 +50,12 @@ export function splitList(list, n) {
     }
     console.log(result);
     return result;
+}
+
+export function randomSelect(list, n) {
+    // shuffle the list
+    let shuffledList = list.sort(() => Math.random() - 0.5);
+    // select the first n elements
+    let selectedList = shuffledList.slice(0, n);
+    return selectedList;
 }

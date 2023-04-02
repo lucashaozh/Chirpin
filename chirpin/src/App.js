@@ -53,8 +53,8 @@ function App() {
     <>
       <main className="container-fluid">
         <BrowserRouter>
-          <div className="row" style={{ height: "100vh" }}>
-            <div className="col-md-2 p-3 text-bg-dark">
+          <div className="row">
+            <div className="col-md-2 p-3 text-bg-dark" style={{ height: "100vh" }}>
               <a href="/" className="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
                 {/* <svg className="bi pe-none me-2" width="40" height="32">
                 <use xlinkHref="#bootstrap" />
