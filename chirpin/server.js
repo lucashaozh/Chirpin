@@ -61,11 +61,12 @@ db.once('open', function () {
         tweet: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         follower: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         following: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        tweet_reported: [{ type: String }],
-        user_reported: [{ type: String }],
+        tweet_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
+        user_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
+        user_blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         report_counter: { type: Number, required: true},
         tweet_liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
-        tweet_disliked: [{ type: String }],
+        tweet_disliked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         portrait: { type: String, required: true }
     });
 
@@ -93,7 +94,7 @@ db.once('open', function () {
         var userID = new mongoose.Types.ObjectId();
         Account.create({
             uid: userID,
-            username: "user_01",
+            username: "user_02",
             pwd: "123456",
             identity: "user"
         }).then((user) => {
@@ -106,9 +107,10 @@ db.once('open', function () {
                 follower_counter: 0,
                 following_counter: 0,
                 tweet: [],
-                folloer: [],
+                follower: [],
                 following: [],
                 tweet_reported: [],
+                user_blocked: [],
                 user_reported: [],
                 report_counter: 0,
                 tweet_liked: [],
@@ -192,8 +194,155 @@ db.once('open', function () {
         });
     });
 
+    // get followings
+    app.get('/profile/:username/followings', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).populate('following').exec().then((user) => {
+            console.log(user.following);
+            res.send(user.following);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    // get followers
+    app.get('/profile/:username/followers', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).populate('follower').exec().then((user) => {
+            console.log(user.follower);
+            res.send(user.follower);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    // update the followings and followers after clicking the "Follow" button
+    app.put('/profile/:username/:target/follow', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let target = req.params['target'];
+        User.findOne({ 'username': username }).then((user) => {
+            User.findOne({ 'username': target }).then((target) => {
+                user.following.push(target._id);
+                target.follower.push(user._id);
+                user.following_counter += 1;
+                target.follower_counter += 1;
+                user.save();
+                target.save();
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.send(err);
+        })
+    });
+
+    // update the followings and followers after clicking the "Unfollow" button
+    app.put('/profile/:username/:target/unfollow', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let target = req.params['target'];
+        User.findOne({ 'username': username }).then((user) => {
+            User.findOne({ 'username': target }).then((target) => {
+                user.following.remove(target._id);
+                target.follower.remove(user._id);
+                user.following_counter -= 1;
+                target.follower_counter -= 1;
+                user.save();
+                target.save();
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.send(err);
+        })
+    });
+
+    // update the user blocked after clicking the "Block" button
+    app.put('/profile/:username/:target/block', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let target = req.params['target'];
+        User.findOne({ 'username': username }).then((user) => {
+            User.findOne({ 'username': target }).then((target) => {
+                user.user_blocked.push(target._id);
+                user.save();
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.send(err);
+        })
+    });
+
+    // update the user blocked after clicking the "Unblock" button
+    app.put('/profile/:username/:target/unblock', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let target = req.params['target'];
+        User.findOne({ 'username': username }).then((user) => {
+            User.findOne({ 'username': target }).then((target) => {
+                user.user_blocked.remove(target._id);
+                user.save();
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.send(err);
+        })
+    });
+
+    // update report after clicking the "report" button
+    app.put('/profile/:username/:target/report', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        let target = req.params['target'];
+        User.findOne({ 'username': username }).then((user) => {
+            User.findOne({ 'username': target }).then((target) => {
+                user.user_reported.push(target._id);
+                target.report_counter += 1;
+                user.save();
+                target.save();
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            res.send(err);
+        })
+    });
+
+    // get tweets posted
+    app.get('/profile/:username/tweets', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).populate('tweet').exec().then((user) => {
+            console.log(user.tweet);
+            res.send(user.tweet);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+     // get tweets liked
+     app.get('/profile/:username/likes', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).populate('tweet_liked').exec().then((user) => {
+            console.log(user.tweet_liked);
+            res.send(user.tweet_liked);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
 /* -------------------------------------------------------------- */
-/* ------------------------Input Your Part------------------------*/
+/* ------------------------Write Your Part------------------------*/
 /* ---------------------------------------------------------------*/
 
 });
