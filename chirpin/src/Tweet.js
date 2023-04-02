@@ -103,7 +103,10 @@ function TweetCard({ tweetInfo }) {
                 <div className="col-2">
                     <div>
                         <div className="d-flex justify-content-center">
-                            <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid" style={{ width: "100px", height: "100px", borderRadius: "50px" }} />
+                            {/* link to the user profile */}
+                            <Link to={"/" + tweetUserInfo.username}>
+                                <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid" style={{ width: "100px", height: "100px", borderRadius: "50px" }} />
+                            </Link>
                         </div>
                         <h3 className="my-2 text-bold text-center">{tweetUserInfo.username}</h3>
                         <hr />
