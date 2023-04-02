@@ -53,26 +53,32 @@ class Trend extends React.Component{
     render(){
         return(
             <>
+            <div class="list-group w-800">
+            <a href="/searchtag/trend1" class="list-group-item list-group-item-action d-flex" aria-current="true">
+            <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
             <div>
-            <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
-            <div className="card-body">
-            <p className="card-text" ><Link to={'/searchtag/' + "trend1"}>#Trend1</Link></p>     
+            <h6 class="mb-0">#Trend1</h6>
             </div>
             </div>
+            </a>
+            </div>
+            <div class="list-group w-800">
+            <a href="/searchtag/trend2" class="list-group-item list-group-item-action d-flex" aria-current="true">
+            <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
             <div>
-            </div>
-            <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
-            <div className="card-body">
-            <p className="card-text"><Link to={'/searchtag/' + "trend2"}>#Trend2</Link></p>     
+            <h6 class="mb-0">#Trend2</h6>
             </div>
             </div>
+            </a>
             </div>
+            <div class="list-group w-800">
+            <a href="/searchtag/trend3" class="list-group-item list-group-item-action d-flex" aria-current="true">
+            <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
             <div>
-            <div className="card col-md-12 mt-3 mb-3" style={{ width: '25rem' }}>
-            <div className="card-body">
-            <p className="card-text"><Link to={'/searchtag/' + "trend3"}>#Trend3</Link></p>     
+            <h6 class="mb-0">#Trend3</h6>
             </div>
             </div>
+            </a>
             </div>
             </>
         )
