@@ -214,7 +214,34 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
             </div>
 
             {/* forward tweet */}
-            <div className="modal fade" id="tweetForwardForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <ForwardForm/>
+        </div>
+    )
+}
+
+function ForwardForm(){
+    const editorRef = useRef(null);
+    const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
+    const log = () => {
+        if (editorRef.current) {
+            console.log(editorRef.current.getContent());
+        }
+    };
+
+    const handleFocus = () => {
+        if (editorRef.current.getContent() === initialContent) {
+            editorRef.current.setContent('');
+        }
+    };
+
+    const handleBlur = () => {
+        if (editorRef.current.getContent() === '') {
+            editorRef.current.setContent(initialContent);
+        }
+    };
+
+    return(
+        <div className="modal fade" id="tweetForwardForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div className="modal-dialog">
                     <div className="modal-content">
                         <div className="modal-header">
@@ -222,7 +249,56 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
                             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
                         <div className="modal-body">
-                            <textarea className="form-control" id='new-comment' rows='5'></textarea>
+                        <Editor
+                            apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
+                            onInit={(evt, editor) => editorRef.current = editor}
+                            initialValue={initialContent}
+                            onFocus={handleFocus}
+                            onBlur={handleBlur}
+                            init={{
+                                min_height: 250,
+                                max_height: 750,
+                                menubar: true,
+                                plugins: 'advcode table advlist lists image media anchor link autoresize',
+                                toolbar: 'blocks bold forecolor backcolor | bullist numlist | link image media | table',
+                                image_title: true,
+                                automatic_uploads: true,
+                                file_picker_types: 'image',
+                                /* and here's our custom image picker*/
+                                file_picker_callback: (cb, value, meta) => {
+                                    const input = document.createElement('input');
+                                    input.setAttribute('type', 'file');
+                                    input.setAttribute('accept', 'image/*');
+
+                                    input.addEventListener('change', (e) => {
+                                        const file = e.target.files[0];
+
+                                        const reader = new FileReader();
+                                        reader.addEventListener('load', () => {
+                                            /*
+                                            Note: Now we need to register the blob in TinyMCEs image blob
+                                            registry. In the next release this part hopefully won't be
+                                            necessary, as we are looking to handle it internally.
+                                            */
+                                            const id = 'blobid' + (new Date()).getTime();
+                                            console.log(Editor.editorUpload);
+                                            const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;;
+
+                                            const base64 = reader.result.split(',')[1];
+                                            const blobInfo = blobCache.create(id, file, base64);
+                                            blobCache.add(blobInfo);
+
+                                            /* call the callback and populate the Title field with the file name */
+                                            cb(blobInfo.blobUri(), { title: file.name });
+                                        });
+                                        reader.readAsDataURL(file);
+                                    });
+
+                                    input.click();
+                                },
+                                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                            }}
+                        />
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
@@ -231,7 +307,6 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
                     </div>
                 </div>
             </div>
-        </div>
     )
 }
 
