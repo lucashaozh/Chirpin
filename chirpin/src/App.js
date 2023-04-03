@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate, Outlet, useLocation, NavLink } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, Outlet, NavLink } from 'react-router-dom';
 import { getLoginInfo } from './Login';
 import { logout } from './Login';
 import Login from './Login';
@@ -14,8 +14,8 @@ import { Profile } from './Profile';
 import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
-
 import "./css/App.css"
+
 import SearchTweet from './SearchTweet';
 import SearchUser from './SearchUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -40,14 +40,13 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
 
 
 function App() {
-  const [islogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['uid'] : false);
+  const [isLogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['uid'] : false);
   const [mode, setMode] = useState(getLoginInfo() ? getLoginInfo()['mode'] : false);
-  // const routeLocation = useLocation();
 
-  const switchloginstate = () => {
-    let loginfo = getLoginInfo();
-    console.log("login State: " + (loginfo ? loginfo['uid'] : "not login"));
-    if (getLoginInfo()) { setLogin(loginfo['uid']); setMode(loginfo['mode']) }
+  const switchLoginState = () => {
+    let logInfo = getLoginInfo();
+    console.log("login State: " + (logInfo ? logInfo['uid'] : "not login"));
+    if (getLoginInfo()) { setLogin(logInfo['uid']); setMode(logInfo['mode']) }
     else { setLogin(false); setMode(false) }
   };
 
@@ -55,7 +54,7 @@ function App() {
     <>
       <main className="container-fluid">
         <BrowserRouter>
-          <div className="row" style={{ height: "100vh" }}>
+          <div className="row"  style={{height: "100vh"}}>
             <div className="col-md-2 p-3 text-bg-dark">
               <div className="d-flex justify-content-center text-center">
                 <img className="w-75 d-flex justify-content-center" src={[require('./img/logo.png')]} alt='logo.png'></img>
@@ -95,13 +94,13 @@ function App() {
                 </ul>
               </div>
             </div>
-            <div className="col-md-10 p-3 bg-light">
+            <div className="col-md-10 p-3 bg-light overflow-auto">
               <Routes>
                 {/* <Route path='/' element={<PrivateRoute />}> */}
                 <Route path='/' element={<Main />} />
                 {/* </Route> */}
                 {/* <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}> */}
-                <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
+                <Route path='/login' element={<Login onChangeLogin={switchLoginState} />} />
                 {/* </Route> */}
                 <Route path='/search' element={<Search />} />
                 <Route path="/:username" element={<Profile />} />
@@ -119,7 +118,7 @@ function App() {
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
               </Route>*/}
                 {/* <Route path='/notification' element={<PrivateRoute />}> */}
-                <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
+                <Route path='/notification' element={<Notification islogin={isLogin}></Notification>} />
                 {/* </Route>  */}
               </Routes>
             </div>
