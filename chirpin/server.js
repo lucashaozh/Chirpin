@@ -72,9 +72,9 @@ db.once('open', function () {
 
     const NotificationSchema = mongoose.Schema({
         uid: { type: String, required: true }, //who is receiving this notifications
-        actor_id: { type: int, required: true }, // who is sending this notification
+        actor_id: { type: Number, required: true }, // who is sending this notification
         action: { type: String, required: true }, // follow, like, comment, retweet
-        tid: { type: int, required: false }, // which tweet is involved, null for follow action
+        tid: { type: Number, required: false }, // which tweet is involved, null for follow action
         time: { type: Date, required: true }
     });
 
@@ -163,7 +163,26 @@ db.once('open', function () {
     });
 
     // create notification for testing
-  
+    app.get('/test/createNotification', (req, res) => {
+        var notificationID = new mongoose.Types.ObjectId();
+        Notification.create({
+            nid: notificationID,
+            uid: 1,
+            actor_id: 2,
+            action: "like",
+            tid: 1,
+            time: new Date()
+        }).then((noteobj) => {
+            console.log(noteobj._id);
+            Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                console.log(c);
+            });
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            console.error(err);
+        });
+    });
 
 /* -------------------------------------------------------------- */
 /* ------------------------Profile (JI Yi)------------------------*/
