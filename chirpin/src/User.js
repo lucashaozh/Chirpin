@@ -29,7 +29,7 @@ function UserCard({ userInfo }) {
     }
 
     return (
-        <div className="p-3 col-4">
+        <div className="p-2 col-4">
             <div className="card" style={{ borderRadius: "15px" }}>
                 <div className="card-body p-4 row">
                     <div className="d-flex text-black">
@@ -64,30 +64,19 @@ function UserCard({ userInfo }) {
 }
 
 function UserListView({ userInfos }) {
-    const [userInfoList, setUserList] = useState();
-
-
-    const horizontalBarStyle = {
-        overflowX: "auto",
-        whiteSpace: "nowrap"
-    }
-
-    const horizontalColStyle = {
-        display: "inline-block",
-        float: "none",
-    }
-
     return (
         <>
             {
                 splitList(userInfos, 3).map((userInfoGroup, row) => {
                     return (
-                        <div className="row container-fluid" key={row}>
-                            {userInfoGroup.map((userInfo, col) => {
-                                return (
-                                    userInfo && <UserCard userInfo={userInfo} key={col} />
-                                )
-                            })}
+                        <div className='container-fluid' key={row}>
+                            <div className="row m-1 ">
+                                {userInfoGroup.map((userInfo, col) => {
+                                    return (
+                                        userInfo && <UserCard userInfo={userInfo} key={col} />
+                                    )
+                                })}
+                            </div>
                         </div>
                     )
                 })

@@ -15,7 +15,7 @@ import {
 }
 from 'mdb-react-ui-kit';
 
-export const getloginfo = () => {
+export const getLoginInfo = () => {
   return cookie.load('userInfo');
 };
 

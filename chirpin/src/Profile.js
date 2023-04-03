@@ -11,7 +11,7 @@ import UserListView from './User';
 import {TweetListView} from './Tweet';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { userInfoExample, tweetInfoExample } from './Example';
-import { getloginfo } from './Login';
+import { getLoginInfo } from './Login';
 import cookie from 'react-cookies';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
