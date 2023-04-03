@@ -1,16 +1,15 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom';
-import { getloginfo } from './Login';
-import { Navigate, Outlet } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Link, Navigate, Outlet, useLocation, NavLink } from 'react-router-dom';
+import { getLoginInfo } from './Login';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
 import TweetDetail from './TweetDetail';
-import {Notification,SingleNotification} from './Notification';
+import { Notification, SingleNotification } from './Notification';
 import Search from './Search'
 import { Admin } from './Admin';
-import {Profile } from './Profile';
+import { Profile } from './Profile';
 
 import 'bootstrap';
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -19,12 +18,14 @@ import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/App.css"
 import SearchTweet from './SearchTweet';
 import SearchUser from './SearchUser';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faBell, faHome, faSearch, faUser } from '@fortawesome/free-solid-svg-icons';
 
 
 export const BACK_END = 'http://localhost:8000/'
 
 function PrivateRoute() {
-  const auth = getloginfo();
+  const auth = getLoginInfo();
   return auth ? <Outlet /> : <Navigate to='/login' />;
 }
 
@@ -32,19 +33,21 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
   useEffect(() => {
     if (ifLogout) { console.log("Log out"); logout(); onChangeLogin(); }
   });
-  const auth = getloginfo();
+  const auth = getLoginInfo();
   return !auth ? <Outlet /> : <Navigate to='/' />;
 }
 
 
 
 function App() {
-  const [islogin, setLogin] = useState(getloginfo() ? getloginfo()['uid'] : false);
-  const [mode, setMode] = useState(getloginfo() ? getloginfo()['mode'] : false)
+  const [islogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['uid'] : false);
+  const [mode, setMode] = useState(getLoginInfo() ? getLoginInfo()['mode'] : false);
+  // const routeLocation = useLocation();
+
   const switchloginstate = () => {
-    let loginfo = getloginfo();
+    let loginfo = getLoginInfo();
     console.log("login State: " + (loginfo ? loginfo['uid'] : "not login"));
-    if (getloginfo()) { setLogin(loginfo['uid']); setMode(loginfo['mode']) }
+    if (getLoginInfo()) { setLogin(loginfo['uid']); setMode(loginfo['mode']) }
     else { setLogin(false); setMode(false) }
   };
 
@@ -54,41 +57,30 @@ function App() {
         <BrowserRouter>
           <div className="row" style={{ height: "100vh" }}>
             <div className="col-md-2 p-3 text-bg-dark">
-              
-              <img style={{ width: 200, height: 200 }} src={[require('./img/logo.png')]} alt='logo.png'></img>
+              <div className="d-flex justify-content-center text-center">
+                <img className="w-75 d-flex justify-content-center" src={[require('./img/logo.png')]} alt='logo.png'></img>
+              </div>
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <a href="/" className="nav-link" aria-current="page">
-                    {/* <svg className="bi pe-none me-2" width="16" height="16">
-                    <use xlinkHref="#home" />
-                  </svg> */}
-                    Home
-                  </a>
+                  <NavLink to="/" className="nav-link text-white" activeClassName="active">
+                    <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
+                  </NavLink>
                 </li>
                 <li>
-                  <a href="/search" className="nav-link">
-                    {/* <svg className="bi pe-none me-2" width="16" height="16">
-                    <use xlinkHref="#speedometer2" />
-                  </svg> */}
-                    Search
-                  </a>
+                  <NavLink to="/search" className="nav-link text-white" activeClassName="active">
+                    <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
+                  </NavLink>
                 </li>
                 <li>
-                  <a href="/notification" className="nav-link">
-                    {/* <svg className="bi pe-none me-2" width="16" height="16">
-                    <use xlinkHref="#table" />
-                  </svg> */}
-                    Notification
-                  </a>
+                  <NavLink to="/notification" className="nav-link text-white" activeClassName="active">
+                    <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
+                  </NavLink>
                 </li>
                 <li>
-                  <a href="/myprofile" className="nav-link">
-                    {/* <svg className="bi pe-none me-2" width="16" height="16">
-                    <use xlinkHref="#grid" />
-                  </svg> */}
-                    Profile
-                  </a>
+                  <NavLink to="/myprofile" className="nav-link text-white" activeClassName="active">
+                    <span><FontAwesomeIcon icon={faUser} className='me-2' />Profile</span>
+                  </NavLink>
                 </li>
               </ul>
               <hr />
@@ -106,31 +98,31 @@ function App() {
             <div className="col-md-10 p-3 bg-light">
               <Routes>
                 {/* <Route path='/' element={<PrivateRoute />}> */}
-                  <Route path='/' element={<Main />} />
+                <Route path='/' element={<Main />} />
                 {/* </Route> */}
                 {/* <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}> */}
-                  <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
+                <Route path='/login' element={<Login onChangeLogin={switchloginstate} />} />
                 {/* </Route> */}
-                  <Route path='/search' element={<Search />} />
-                  <Route path="/:username" element={<Profile />} /> 
-                  <Route path='/:username/followings' element={<Main />} />
-                  <Route path='/:username/followers' element={<Main />} />
-                  <Route path='/searchuser/:username' element={<SearchUser />} />
-                  <Route path='/searchtag/:username' element={<SearchTweet />} />
-                  <Route path='/tweet/:tweetid' element={<TweetDetail />} />
-                  <Route path='/admin' element={<Admin />} />
-                
+                <Route path='/search' element={<Search />} />
+                <Route path="/:username" element={<Profile />} />
+                <Route path='/:username/followings' element={<Main />} />
+                <Route path='/:username/followers' element={<Main />} />
+                <Route path='/searchuser/:username' element={<SearchUser />} />
+                <Route path='/searchtag/:username' element={<SearchTweet />} />
+                <Route path='/tweet/:tweetid' element={<TweetDetail />} />
+                <Route path='/admin' element={<Admin />} />
+
                 {/* <Route path='/:username' element={<PrivateRoute />}>
                 <Route path="/:username" element={<Profile username={islogin}/>} /> 
               </Route>
               <Route path='/adm' element={<PrivateRoute />}>
                 <Route path='/adm' element={<Adm islogin={islogin}></Adm>} />
               </Route>*/}
-              {/* <Route path='/notification' element={<PrivateRoute />}> */}
+                {/* <Route path='/notification' element={<PrivateRoute />}> */}
                 <Route path='/notification' element={<Notification islogin={islogin}></Notification>} />
-              {/* </Route>  */}
-            </Routes>
-          </div>
+                {/* </Route>  */}
+              </Routes>
+            </div>
           </div>
         </BrowserRouter>
       </main>

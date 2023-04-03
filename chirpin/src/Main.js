@@ -1,94 +1,94 @@
 import { useState, useRef } from 'react';
 import UserListView from './User';
-import {TweetListView} from './Tweet';
+import { TweetListView } from './Tweet';
 import { Editor } from '@tinymce/tinymce-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { userInfoExample, tweetInfoExample, tagsExample} from './Example';
+import { userInfoExample, tweetInfoExample, tagsExample } from './Example';
 import { randomSelect } from './Utils';
 
 
 function NewPost() {
     const editorRef = useRef(null);
+    const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
     const log = () => {
         if (editorRef.current) {
             console.log(editorRef.current.getContent());
         }
     };
+
+    const handleFocus = () => {
+        if (editorRef.current.getContent() === initialContent) {
+            editorRef.current.setContent('');
+        }
+    };
+
+    const handleBlur = () => {
+        if (editorRef.current.getContent() === '') {
+            editorRef.current.setContent(initialContent);
+        }
+    };
+
+
     return (
-        <>
-            <Editor
-                apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
-                onInit={(evt, editor) => editorRef.current = editor}
-                initialValue="<p>This is the initial content of the editor.</p>"
-                init={{
-                    min_height: 250,
-                    max_height: 750,
-                    menubar: true,
-                    plugins: 'advcode table advlist lists image media anchor link autoresize mentions',
-                    toolbar: 'blocks bold forecolor backcolor | bullist numlist | link image media | table',
-                    image_title: true,
-                    automatic_uploads: true,
-                    file_picker_types: 'image',
-                    mentions: {
-                        delimiter: '#',
-                        insertHTML: (item) => {
-                            return `<a href="#">${item.value}</a>`;
-                        },
-                        source: (query, renderList) => {
-                            const hashtags = [
-                                'react',
-                                'javascript',
-                                'html',
-                                'css',
-                                'webdev',
-                                'coding'
-                            ];
-                            let matches = [];
-                            hashtags.forEach((hashtag) => {
-                                if (hashtag.includes(query)) {
-                                    matches.push({ value: hashtag });
-                                }
-                            });
-                            renderList(matches);
-                        }
-                    },
-                    /* and here's our custom image picker*/
-                    file_picker_callback: (cb, value, meta) => {
-                        const input = document.createElement('input');
-                        input.setAttribute('type', 'file');
-                        input.setAttribute('accept', 'image/*');
+        <div className='container-fluid'>
+            <div className='card p-2 m-2 mb-4'/*  style={{ borderRadius: "30px" }} */>
+                <div className='card-body p-1 mx-1 mb-2 row'>
+                    <Editor
+                        apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
+                        onInit={(evt, editor) => editorRef.current = editor}
+                        initialValue={initialContent}
+                        onFocus={handleFocus}
+                        onBlur={handleBlur}
+                        init={{
+                            min_height: 250,
+                            max_height: 750,
+                            menubar: true,
+                            plugins: 'advcode table advlist lists image media anchor link autoresize',
+                            toolbar: 'blocks bold forecolor backcolor | bullist numlist | link image media | table',
+                            image_title: true,
+                            automatic_uploads: true,
+                            file_picker_types: 'image',
+                            /* and here's our custom image picker*/
+                            file_picker_callback: (cb, value, meta) => {
+                                const input = document.createElement('input');
+                                input.setAttribute('type', 'file');
+                                input.setAttribute('accept', 'image/*');
 
-                        input.addEventListener('change', (e) => {
-                            const file = e.target.files[0];
+                                input.addEventListener('change', (e) => {
+                                    const file = e.target.files[0];
 
-                            const reader = new FileReader();
-                            reader.addEventListener('load', () => {
-                                /*
-                                  Note: Now we need to register the blob in TinyMCEs image blob
-                                  registry. In the next release this part hopefully won't be
-                                  necessary, as we are looking to handle it internally.
-                                */
-                                const id = 'blobid' + (new Date()).getTime();
-                                console.log(Editor.editorUpload);
-                                const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;;
+                                    const reader = new FileReader();
+                                    reader.addEventListener('load', () => {
+                                        /*
+                                          Note: Now we need to register the blob in TinyMCEs image blob
+                                          registry. In the next release this part hopefully won't be
+                                          necessary, as we are looking to handle it internally.
+                                        */
+                                        const id = 'blobid' + (new Date()).getTime();
+                                        console.log(Editor.editorUpload);
+                                        const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;;
 
-                                const base64 = reader.result.split(',')[1];
-                                const blobInfo = blobCache.create(id, file, base64);
-                                blobCache.add(blobInfo);
+                                        const base64 = reader.result.split(',')[1];
+                                        const blobInfo = blobCache.create(id, file, base64);
+                                        blobCache.add(blobInfo);
 
-                                /* call the callback and populate the Title field with the file name */
-                                cb(blobInfo.blobUri(), { title: file.name });
-                            });
-                            reader.readAsDataURL(file);
-                        });
+                                        /* call the callback and populate the Title field with the file name */
+                                        cb(blobInfo.blobUri(), { title: file.name });
+                                    });
+                                    reader.readAsDataURL(file);
+                                });
 
-                        input.click();
-                    },
-                    content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-                }}
-            />
-            <button type="button" className="btn btn-primary m-3" onClick={log}>New post</button>
-        </>
+                                input.click();
+                            },
+                            content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                        }}
+                    />
+                </div>
+                <div className='d-flex justify-content-end'>
+                    <button type="button" className="btn btn-primary mx-2" onClick={log}>New post</button>
+                </div>
+            </div>
+        </div>
     );
 }
 
@@ -96,6 +96,7 @@ function NewPost() {
 
 function Main() {
     const [viewMode, setViewMode] = useState("following");
+    // TODO set the dataLength
     const [dataLength, setDataLength] = useState(Math.max(userInfoExample.length, tweetInfoExample.length));
 
     return (<div>

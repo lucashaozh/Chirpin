@@ -1,9 +1,10 @@
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { timeDifference } from './Utils';
 import { Link } from "react-router-dom";
+import { Modal } from "bootstrap"
 
 
 const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
@@ -34,10 +35,13 @@ function DisplayRichText({ content }) {
 
 
 
-function TweetCard({ tweetInfo }) {
+function TweetCard({ tweetInfo, isDetailPage = true }) {
     const [likeInfo, setLikeInfo] = useState(tweetInfo['likeInfo']);
     const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
     const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
+    const [isReported, setIsReported] = useState(false);
+
+
     const tweetUserInfo = tweetInfo['user'];
     const commentCount = tweetInfo['commentCount'];
     const retweetCount = tweetInfo['retweetCount'];
@@ -45,7 +49,7 @@ function TweetCard({ tweetInfo }) {
     const portraitUrl = tweetInfo['portraitUrl'];
     const tags = tweetInfo['tags'];
 
-    // update time interval every second (Copilot写的我也不知道干嘛的)
+    // update time interval every second
     useEffect(() => {
         const interval = setInterval(() => {
             setTimeInterval(timeDifference(tweetInfo['time']));
@@ -95,6 +99,8 @@ function TweetCard({ tweetInfo }) {
 
     const handleTweetReport = () => {
         // TODO: report tweet to DB
+        setIsReported(true);
+        // setIsModalOpen(false);
     }
 
     return (
@@ -102,10 +108,10 @@ function TweetCard({ tweetInfo }) {
             <div className="card-body row">
                 <div className="col-2">
                     <div>
-                        <div className="d-flex justify-content-center">
+                        <div className="d-flex justify-content-center text-center">
                             {/* link to the user profile */}
                             <Link to={"/" + tweetUserInfo.username}>
-                                <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid" style={{ width: "100px", height: "100px", borderRadius: "50px" }} />
+                                <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid rounded-circle w-75" />
                             </Link>
                         </div>
                         <h3 className="my-2 text-bold text-center">{tweetUserInfo.username}</h3>
@@ -128,9 +134,12 @@ function TweetCard({ tweetInfo }) {
                             <DisplayRichText content={tweetContent} />
                         </div>
                         <div className="col-12">
-                            <span className="m-1">
-                                <button type="button" className="btn btn-primary btn-floating">View Full Tweet</button>
-                            </span>
+
+                            {!isDetailPage && <span className="m-1">
+                                <Link to={"/tweet/" + tweetInfo["tid"]}>
+                                    <button type="button" className="btn btn-primary btn-floating">View Full Tweet</button>
+                                </Link>
+                            </span>}
                             <span className="m-1">
                                 <button type="button" className={"btn btn-" + (likeInfo.bLikeByUser ? "" : "outline-") + "primary btn-floating"} onClick={clickLikeTweet}>
                                     <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
@@ -145,19 +154,19 @@ function TweetCard({ tweetInfo }) {
                             </span>
                             <span className="m-1">
 
-                                <button type="button" className="btn btn-outline-primary  btn-floating" data-bs-toggle="modal" data-bs-target="#tweetCommentForm" data-bs-whatever="@mdo">
+                                <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target="#tweetCommentForm" data-bs-whatever="@mdo">
                                     <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
                                 </button>
                                 <span className="ms-1 opacity-75">{commentCount}</span>
                             </span>
                             <span className="m-1">
-                                <button type="button" className="btn btn-outline-primary  btn-floating" data-bs-toggle="modal" data-bs-target="#tweetForwardForm" data-bs-whatever="@mdo">
+                                <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target="#tweetForwardForm" data-bs-whatever="@mdo">
                                     <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                                 </button>
                                 <span className="ms-1 opacity-75">{retweetCount}</span>
                             </span>
                             <span className="m-1">
-                                <button type="button" className="btn btn-primary btn-floating" data-bs-toggle="modal" data-bs-target="#report-popup">
+                                <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
                                     <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                                 </button>
                             </span>
@@ -179,45 +188,45 @@ function TweetCard({ tweetInfo }) {
                         </div>
                         <div className="modal-footer">
                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                            <button type="button" className="btn btn-primary" onClick={handleTweetReport}>Yes</button>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleTweetReport}>Yes</button>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* comment form for tweet's comment*/}
-            <div class="modal fade" id="tweetCommentForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5"> Tweet your comment </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="tweetCommentForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5"> Tweet your comment </h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div className="modal-body">
                             <textarea className="form-control" id='new-comment' rows='5'></textarea>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
                         </div>
                     </div>
                 </div>
             </div>
 
             {/* forward tweet */}
-            <div class="modal fade" id="tweetForwardForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h1 class="modal-title fs-5"> Forward </h1>
-                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <div className="modal fade" id="tweetForwardForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <h1 className="modal-title fs-5"> Forward </h1>
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                         </div>
-                        <div class="modal-body">
+                        <div className="modal-body">
                             <textarea className="form-control" id='new-comment' rows='5'></textarea>
                         </div>
-                        <div class="modal-footer">
-                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-                            <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
                         </div>
                     </div>
                 </div>
@@ -231,7 +240,7 @@ function TweetListView({ tweetInfos }) {
         <>
             <div className="container-fluid">
                 {tweetInfos.map((tweetInfo, index) =>
-                    <TweetCard tweetInfo={tweetInfo} key={index} />
+                    <TweetCard tweetInfo={tweetInfo} isDetailPage={false} key={index} />
                 )}
             </div >
         </>)
