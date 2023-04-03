@@ -5,6 +5,7 @@ import { userInfoExample, tweetInfoExample } from './Example';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
+import InfiniteScroll from 'react-infinite-scroll-component';
 
 class SearchUser extends React.Component{
         
@@ -19,7 +20,13 @@ class SearchUser extends React.Component{
         return(
         <>
         <div>{this.state.username}</div>
-        <UserListView userInfos={userInfoExample}/>            
+        
+        <div id='scrollableusers'style={{ height: "95vh", overflow: "auto" }}>
+        <InfiniteScroll dataLength={userInfoExample.length} next={null} hasMore={false} scrollableTarget="scrollableusers"
+                        endMessage={<p style={{ textAlign: 'center' }}><b>No more Users</b></p>}>
+            <UserListView userInfos={userInfoExample}/>   
+        </InfiniteScroll>
+        </div>            
         </>       
         ) 
     }  

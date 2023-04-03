@@ -59,45 +59,45 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <a href="/" className="nav-link" aria-current="page">
+                  <Link to={"/"} className="nav-link" aria-current="page">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#home" />
                   </svg> */}
                     Home
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/search" className="nav-link">
+                  <Link to={"/search"} className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#speedometer2" />
                   </svg> */}
                     Search
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/notification" className="nav-link">
+                  <Link to={"/notification"} className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#table" />
                   </svg> */}
                     Notification
-                  </a>
+                  </Link>
                 </li>
                 <li>
-                  <a href="/myprofile" className="nav-link">
+                  <Link to={"/myprofile"} className="nav-link">
                     {/* <svg className="bi pe-none me-2" width="16" height="16">
                     <use xlinkHref="#grid" />
                   </svg> */}
                     Profile
-                  </a>
+                  </Link>
                 </li>
               </ul>
               <hr />
               <div className="dropdown">
-                <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
+                <Link to={"#"} className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
                   <strong>more</strong>
-                </a>
+                </Link>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
                   <li><a className="dropdown-item" href="/login">Sign out</a></li>
                 </ul>
