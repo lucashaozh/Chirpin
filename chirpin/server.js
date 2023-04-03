@@ -19,14 +19,14 @@ db.once('open', function () {
     console.log("Connection is open...");
 
     const AccountSchema = mongoose.Schema({
-        uid: { type: String, required: true, unique: true },
+        uid: { type: Number, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         pwd: { type: String, required: true },
         identity: { type: String, required: true }
     });
 
     const TweetSchema = mongoose.Schema({
-        tid: { type: String, required: true, unique: true },
+        tid: { type: Number, required: true, unique: true },
         username: { type: String, required: true },
         tweet_content: { type: String, required: true },
         tag: [{ type: String, required: true }],
@@ -51,7 +51,7 @@ db.once('open', function () {
     });
 
     const UserSchema = mongoose.Schema({
-        uid: { type: String, required: true, unique: true },
+        uid: { type: Number, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         gender: { type: String, required: true },
         interest: [{ type: String, required: true }],
@@ -70,9 +70,18 @@ db.once('open', function () {
         portrait: { type: String, required: true }
     });
 
+    const NotificationSchema = mongoose.Schema({
+        uid: { type: String, required: true }, //who is receiving this notifications
+        actor_id: { type: int, required: true }, // who is sending this notification
+        action: { type: String, required: true }, // follow, like, comment, retweet
+        tid: { type: int, required: false }, // which tweet is involved, null for follow action
+        time: { type: Date, required: true }
+    });
+
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
+    const Notification = mongoose.model('Notification', NotificationSchema);
 
     // create admin for testing
     app.get('/test/createAdmin', (req, res) => {
@@ -152,6 +161,9 @@ db.once('open', function () {
             console.error(err);
         });
     });
+
+    // create notification for testing
+  
 
 /* -------------------------------------------------------------- */
 /* ------------------------Profile (JI Yi)------------------------*/
