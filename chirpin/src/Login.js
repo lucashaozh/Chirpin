@@ -67,9 +67,9 @@ function Login() {
 
           <div className="d-flex justify-content-between mx-4 mb-4">
             <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
-            <a href="!#">Forgot password?</a>
+            <a href="/login" onClick={()=>alert("Please contact the administrator")}>Forgot password?</a>
           </div>
-
+          <MDBBtn className="mb-4 w-100">Sign in</MDBBtn>
         </MDBTabsPane>
 
         <MDBTabsPane show={justifyActive === 'tab2'}>

@@ -87,11 +87,12 @@ function App() {
                 <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                  <strong>more</strong>
+                  <strong>setting</strong>
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
-                  <li><a className="dropdown-item" href="/login">Sign out</a></li>
-                </ul>
+                  <li><a className="dropdown-item" href="/login">Sign out</a></li> 
+                  <li><a type="button" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#changepasswordForm" data-bs-whatever="@mdo" >Change Password</a></li>                  
+                </ul>  
               </div>
             </div>
             <div className="col-md-10 p-3 bg-light overflow-auto">
@@ -125,6 +126,27 @@ function App() {
           </div>
         </BrowserRouter>
       </main>
+
+      {/* change password form*/}
+      <div className="modal fade" id="changepasswordForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div className="modal-dialog">
+                    <div className="modal-content">
+                        <div className="modal-header">
+                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                        </div>
+                        <div className="modal-body">
+                          <div class="mb-3">
+                          <label for="name" class="col-form-label"> Input New Password: </label>
+                          <input type="text" class="form-control" id="newpwd" />
+                          </div>
+                        </div>
+                        <div className="modal-footer">
+                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                            <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Submit </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
     </>
   );
 }
