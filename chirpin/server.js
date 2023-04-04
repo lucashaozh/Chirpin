@@ -3,10 +3,10 @@ const app = express();
 
 // const cors = require('cors'); app.use(cors());
 
-// const bodyParser = require('body-parser');
-// app.use(bodyParser.urlencoded({ extended: false }));
+const bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
 
-// app.use(express.json());
+app.use(express.json());
 
 const mongoose = require('mongoose');
 // const send = require('express/lib/response');
@@ -27,13 +27,14 @@ db.once('open', function () {
 
     const TweetSchema = mongoose.Schema({
         tid: { type: String, required: true, unique: true },
-        username: { type: String, required: true },
+        // username: { type: String, required: true },
+        owner: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         tweet_content: { type: String, required: true },
         tag: [{ type: String, required: true }],
         comment: [{
             username: { type: String, required: true },
             content: { type: String, required: true },
-            floor: { type: Number, required: true},
+            floor: { type: Number, required: true },
             time: { type: Date, required: true }
         }],
         parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' },
@@ -42,12 +43,12 @@ db.once('open', function () {
             username: { type: String, required: true },
         }],
         dislike_counter: { type: Number, required: true },
-        report_counter: { type: Number,  required: true },
+        report_counter: { type: Number, required: true },
         retweet: [{
             time: { type: Date, required: true },
             username: { type: String, required: true }
         }],
-        post_time: { type: Date }
+        post_time: { type: Date, required: true },
     });
 
     const UserSchema = mongoose.Schema({
@@ -64,7 +65,7 @@ db.once('open', function () {
         tweet_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         user_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         user_blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        report_counter: { type: Number, required: true},
+        report_counter: { type: Number, required: true },
         tweet_liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         tweet_disliked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         portrait: { type: String, required: true }
@@ -153,9 +154,9 @@ db.once('open', function () {
         });
     });
 
-/* -------------------------------------------------------------- */
-/* ------------------------Profile (JI Yi)------------------------*/
-/* ---------------------------------------------------------------*/
+    /* -------------------------------------------------------------- */
+    /* ------------------------Profile (JI Yi)------------------------*/
+    /* ---------------------------------------------------------------*/
 
     // get basic user information
     app.get('/profile/:username', (req, res) => {
@@ -328,8 +329,8 @@ db.once('open', function () {
         });
     });
 
-     // get tweets liked
-     app.get('/profile/:username/likes', (req, res) => {
+    // get tweets liked
+    app.get('/profile/:username/likes', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweet_liked').exec().then((user) => {
@@ -341,10 +342,261 @@ db.once('open', function () {
         });
     });
 
-/* -------------------------------------------------------------- */
-/* ------------------------Write Your Part------------------------*/
-/* ---------------------------------------------------------------*/
+    /* -------------------------------------------------------------- */
+    /* ---------------------------Main ZSH----------------------------*/
+    /* ---------------------------------------------------------------*/
 
+    // get all tweets
+    app.get('/tweets', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Tweet.find().then((tweets) => {
+            console.log(tweets);
+            res.send(tweets);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+
+    // get all users
+    app.get('/users', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        User.find().then((users) => {
+            console.log(users);
+            res.send(users);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+    // get all the followings' tweets of the user
+    app.get('/followings/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        // consecutive populate: first find the user, then populate the following field, then populate the tweet field
+        User.findOne({ 'username': req.params['username'] }).populate('following').exec().then((user) => {
+            let following = user.following;
+            let tweets = [];
+            console.log(following);
+            for (let i = 0; i < following.length; i++) {
+                tweets.push(following[i].tweet);
+            }
+            console.log(tweets);
+            // populate the tweet field of the tweet
+            Tweet.find().where('_id').in(tweets).populate('owner').exec().then((tweets) => {
+                console.log(tweets);
+                res.send(tweets);
+            }).catch((err) => {
+                res.send(err);
+            });
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+
+    // tweet body example
+    /*
+    {
+        "username": "user1",
+        "tweet_content": "hello world",
+        "tag": ["tag1", "tag2", "tag3"],
+    }
+    */
+
+
+    // create a new tweet from body
+    app.post('/new-tweet', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        // find the user
+        User.find({ 'username': req.body['username'] }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            // create a new tweet
+            let time = new Date();
+            let tweet = {
+                tid: new mongoose.Types.ObjectId(),
+                owner: user._id,
+                tweet_content: req.body.tweet_content,
+                tag: req.body.tag,
+                dislike_counter: 0,
+                report_counter: 0,
+                post_time: time
+            }
+            Tweet.create(tweet).then((tweet) => {
+                console.log(tweet);
+                res.sendStatus(201);
+            }).catch((err) => {
+                res.send(err);
+            });
+        });
+    });
+
+    /* 
+    POST /tweet/:tid/:username/like (increase the like count +1, add the tid to the user’s liked-list)
+    POST /tweet/:tid/:username/cancel-like (like count -1, remove the tid from the user’s liked-list)
+    POST /tweet/:tid/:username/dislike (increase the dislike count +1, add the tid to the user’s disliked-list)
+    POST /tweet/:tid/:username/cancel-dislike (dislikelike count -1, remove the tid from the user’s disliked-list)
+    POST /tweet/:tid/:username/report (increase the tweet’s report count +1, add the tid to the user’s report-list)
+    */
+
+    // like a tweet
+    app.put('/tweet/:tid/:username/like', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        // find the user
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                let time = new Date();
+                if (user.tweet_liked == null) { user.tweet_liked = []; }
+                if (tweet.like == null) { tweet.like = []; }
+                // check if the user has liked the tweet
+                let likedTweets = user.tweet_liked;
+                if (likedTweets.includes(tid)) {
+                    return res.status(400).send('User have already liked this tweet');
+                }
+                user.tweet_liked.push(tweet._id);
+                tweet.like.push({ username: username, time: time });
+                // remove from the dislike list
+                if (user.tweet_disliked && user.tweet_disliked.includes(tweet._id)) {
+                    console.log("Remove tweet {" + tweet._id + "} from " + username + " dislike list");
+                    user.tweet_disliked.remove(tweet._id);
+                    tweet.dislike_counter--;
+                }
+                user.save();
+                tweet.save();
+                console.log("Like successfully");
+                return res.status(201).send('Like successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Like Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+
+    // cancel like a tweet
+    app.put('/tweet/:tid/:username/cancel-like', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                if (user.tweet_liked == null || !user.tweet_liked.includes(tid) || tweet.like == null || tweet.like.includes(username)) {
+                    return res.status(400).send('User have not liked this tweet');
+                }
+                user.tweet_liked.remove(tweet._id);
+                tweet.like = tweet.like.filter(item => item.username !== username);
+                user.save();
+                tweet.save();
+                console.log("Cancel like successfully");
+                return res.status(201).send('Cancel like successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Cancel Like Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+
+
+    // dislike a tweet
+    app.put('/tweet/:tid/:username/dislike', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                if (user.tweet_disliked == null) { user.tweet_disliked = []; }
+                // check if the user has disliked the tweet
+                let dislikedTweets = user.tweet_disliked;
+                if (dislikedTweets.includes(tid)) {
+                    return res.status(400).send('User have already disliked this tweet');
+                }
+                // if the user has liked the tweet, remove it from the liked list
+                if (user.tweet_liked && user.tweet_liked.includes(tweet._id)) {
+                    console.log("Remove tweet {" + tweet._id + "} from " + username + " like list");
+                    user.tweet_liked.remove(tweet._id);
+                    tweet.like = tweet.like.filter(item => item.username !== username);
+                }
+                user.tweet_disliked.push(tweet._id);
+                tweet.dislike_counter++;
+                user.save();
+                tweet.save();
+                console.log("Dislike successfully");
+                return res.status(201).send('Dislike successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Dislike Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+    
+
+    // cancel dislike a tweet
+    app.put('/tweet/:tid/:username/cancel-dislike', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                if (user.tweet_disliked == null || !user.tweet_disliked.includes(tid)) {
+                    return res.status(400).send('User have not disliked this tweet');
+                }
+                user.tweet_disliked.remove(tweet._id);
+                tweet.dislike_counter--;
+                user.save();
+                tweet.save();
+                console.log("Cancel dislike successfully");
+                return res.status(201).send('Cancel dislike successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Cancel dislike Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+
+    // report a tweet
+    app.put('/tweet/:tid/:username/report', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                if (user.tweet_reported == null) { user.tweet_reported = []; }
+                // check if the user has reported the tweet
+                let reportedTweets = user.tweet_reported;
+                if (reportedTweets.includes(tid)) {
+                    return res.status(400).send('User have already reported this tweet');
+                }
+                user.tweet_reported.push(tweet._id);
+                tweet.report_counter++;
+                user.save();
+                tweet.save();
+                console.log("Report successfully");
+                return res.status(201).send('Report successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Report Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+
+    /* -------------------------------------------------------------- */
+    /* ------------------------Write Your Part------------------------*/
+    /* ---------------------------------------------------------------*/
 });
 
 const server = app.listen(8000);
