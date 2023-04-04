@@ -1,6 +1,9 @@
 import * as React from 'react';
 import {Link} from "react-router-dom";
 import {commentExample} from "./Example";
+import {faStairs, FaStairs} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+
 
 
 class Comment extends React.Component{
@@ -9,10 +12,16 @@ class Comment extends React.Component{
     }
     render(){
         return(
-            <div data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo"data-target="#GSCCModal">
-            <div class="list-group-item d-flex" onClick={()=>console.log('click')}>
-                
+            // <div data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo"data-target="#GSCCModal">
+            <div class="list-group-item d-flex"> 
 
+                {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
+                                            {this.props.floor}
+                </button> */}
+                <div data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo"data-target="#GSCCModal" onClick={()=>console.log(this.props.floor)}>
+                    <FontAwesomeIcon icon={faStairs}></FontAwesomeIcon>
+                    <div>{this.props.floor}</div>
+                </div>
                 <Link to={'/' + this.props.name}>
                      <img className="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
                 </Link>
@@ -23,12 +32,7 @@ class Comment extends React.Component{
                     </div>
                     <small className="opacity-50 text-nowrap">{this.props.time}</small>
                 </div>
-                {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
-                                            comment
-                </button> */}
-            
-            </div> 
-            <CommentForm/>  
+                <CommentForm floor={this.props.floor}/>  
             </div>
         )
     }
@@ -39,7 +43,7 @@ class CommentList extends React.Component{
         return(
             <div className="list-group w-auto">
                 {commentExample.map((comment,index)=>
-                    <Comment key={index} name={comment.name} content={comment.content} potrait={comment.potrait} time={comment.time}/>
+                    <Comment key={index} name={comment.name} content={comment.content} potrait={comment.potrait} time={comment.time} floor={comment.floor}/>
                 )}
             </div>
         )
@@ -48,6 +52,9 @@ class CommentList extends React.Component{
 
 {/** this is used to comment comment */}
 class CommentForm extends React.Component{
+    constructor(props){
+        super(props);
+    }
     render(){
         return(
             // <div>
@@ -57,7 +64,7 @@ class CommentForm extends React.Component{
                 <div class="modal-dialog">
                     <div class="modal-content">
                     <div class="modal-header">
-                        <h1 class="modal-title fs-5"> Reply </h1>
+                        <h1 class="modal-title fs-5"> Re floor {this.props.floor}</h1>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                     </div>
                     <div class="modal-body">
