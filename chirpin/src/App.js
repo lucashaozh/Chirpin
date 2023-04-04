@@ -40,13 +40,13 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
 
 
 function App() {
-  const [isLogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['uid'] : false);
+  const [isLogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['username'] : false);
   const [mode, setMode] = useState(getLoginInfo() ? getLoginInfo()['mode'] : false);
 
   const switchLoginState = () => {
     let logInfo = getLoginInfo();
-    console.log("login State: " + (logInfo ? logInfo['uid'] : "not login"));
-    if (getLoginInfo()) { setLogin(logInfo['uid']); setMode(logInfo['mode']) }
+    console.log("login State: " + (logInfo ? logInfo['username'] : "not login"));
+    if (getLoginInfo()) { setLogin(logInfo['username']); setMode(logInfo['mode']) }
     else { setLogin(false); setMode(false) }
   };
 
@@ -77,7 +77,7 @@ function App() {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to="/myprofile" className="nav-link text-white" activeClassName="active">
+                  <NavLink to={"/"+getLoginInfo()['username']} className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faUser} className='me-2' />Profile</span>
                   </NavLink>
                 </li>
