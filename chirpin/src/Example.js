@@ -382,10 +382,10 @@ export const notificationExample = [
 ]
 
 export const commentExample = [
-    { name: "CSCI", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
-    { name: "CSCI1", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
-    { name: "CSCI2", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
-    { name: "CSCI3", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
-    { name: "CSCI6", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
-    { name: "CSCI7", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" }
+    { floor:1, name: "CSCI", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
+    { floor:2, name: "CSCI1", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
+    { floor:3, name: "CSCI2", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
+    { floor:4, name: "CSCI3", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
+    { floor:5, name: "CSCI6", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" },
+    { floor:6, name: "CSCI7", content: "lalalal this is a long comment  ", potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp", time: "3 min" }
 ]
