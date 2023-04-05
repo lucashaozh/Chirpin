@@ -1,7 +1,7 @@
 const express = require('express');
 const app = express();
 
-// const cors = require('cors'); app.use(cors());
+const cors = require('cors'); app.use(cors());
 
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -53,8 +53,8 @@ db.once('open', function () {
     const UserSchema = mongoose.Schema({
         uid: { type: Number, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
-        gender: { type: String, required: true },
-        interest: [{ type: String, required: true }],
+        gender: { type: String },
+        interest: [{ type: String}],
         about: { type: String },
         follower_counter: { type: Number },
         following_counter: { type: Number },
@@ -64,10 +64,10 @@ db.once('open', function () {
         tweet_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         user_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         user_blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        report_counter: { type: Number, required: true },
+        report_counter: { type: Number },
         tweet_liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         tweet_disliked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
-        portrait: { type: String, required: true }
+        portrait: { type: String }
     });
 
     const NotificationSchema = mongoose.Schema({
@@ -625,8 +625,189 @@ db.once('open', function () {
     });
 
     /* -------------------------------------------------------------- */
-    /* ------------------------Write Your Part------------------------*/
+    /* ------------------------User/admin Operation JIANG Hongxu------------------------*/
     /* ---------------------------------------------------------------*/
+    
+    //create a user by signing up or admin adding
+    app.post('/createuser', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Account.create({
+            uid:1,
+            username: req.body['newusername'],
+            pwd: req.body['newpwd'],
+            identity:'user'
+        }).then((acc) => {
+            if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+            //console.log(acc);
+            let user = {
+                username: req.body['newusername'],
+                uid: 1,
+                gender: '',
+                interest:[],
+                about:'',
+                follow_counter:0,
+                following_counter:0,
+                tweet:[],
+                follow:[],
+                following:[],
+                tweet_reported:[],
+                user_reported:[],
+                uesr_blocked:[],
+                report_counter:0,
+                tweet_liked:[],
+                tweet_disliked:[],
+                portrait:''
+            }
+            User.create(user).then((user)=>{
+                console.log(user);
+                res.sendStatus(201);
+            }).catch((err) => {
+                res.send(err);
+            });
+
+        });
+    });
+
+    //user/admin authentication
+    app.post('/login/user', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let _username = req.body['username'];
+        let _pwd = req.body['pwd'];
+        Account.findOne({ username: _username }).then((val) => {
+            if(val.identity=='user'){
+                if (val != null && _pwd == val.pwd) {
+                    res.status(200).send('Login As User Successfully!\n');
+                } 
+                else {
+                    console.log("incorrect");
+                    res.status(404).send("Incorrect Username or Password.\n");
+                }
+            }
+            else if(val.identity=='admin'){
+                console.log(3)
+                if (val != null && _pwd == val.pwd) {
+                    res.status(200).send('Login As Amin Successfully!\n');
+                } 
+                else {
+                    res.status(404).send("Incorrect Username or Password.\n");
+                }
+            }  
+            }).catch((err)=>{
+                res.send(err);
+            });
+        });
+    
+
+    //change pwd by user
+    app.put('/changepwd', (req, res) => {
+        res.set('Content-Type', 'text-plain');
+        let username = req.body.username;
+        let newpwd = req.body.newpwd;
+
+        Account.findOne({ username: username }).then ((acc) => {
+            if (!acc) {
+                res.sendStatus(404);
+            } else if (newpwd != '') {
+                acc.pwd = newpwd;
+                acc.save();
+                res.sendStatus(200);
+            }
+            else{
+                return res.send('User does not exist').status(404);
+            }
+        }).catch((err)=>{
+            res.send(err);
+        });
+    });
+
+    //delete a user
+    app.delete('/user/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        Account.deleteOne({username:username}).then((acc)=>{
+            if(!acc){return res.send('User does not exist').status(404);}
+            else {
+                console.log("Successfully delete user " + username+"in Account db");
+            }
+            User.deleteOne({ username: username }).then((user) => {
+                if(!user){return res.send('User does not exist').status(404);}
+                else {
+                    console.log("Successfully delete user " + username+"in User db");
+                    res.send("Successfully delete user " + username+"in User db").status(204);
+                }
+            }).catch((err)=>{
+            res.send(err);
+            });
+        });
+    });
+    
+
+    //update user information by admin
+    app.put('/update', (req, res) => {
+        res.set('Content-Type', 'text-plain');
+        let oldusername = req.body.username
+        let newusername = req.body.newusername;
+        let newpwd = req.body.newpwd;
+
+        Account.findOne({ username: oldusername }).then((acc) => {
+            if (!acc) {
+                res.sendStatus(404);
+            } else {
+                if (newpwd != ''&& newusername !=''){
+                    acc.pwd = newpwd;
+                    acc.username=newusername;
+                    console.log("change the pwd and username in Account db");
+                    acc.save();
+                }
+                else if(newpwd != ''){
+                    acc.pwd = newpwd;
+                    console.log("change the pwd in Account db");
+                    acc.save();
+                }
+                else if(newusername != ''){
+                    acc.username = newusername;
+                    console.log("change the username in Account db");
+                    acc.save();
+                }
+            }
+            User.findOne({ username: oldusername }).then((user) => {
+            if (!user) {
+                res.sendStatus(404);
+            } else if(newusername !=''){
+                user.username=newusername;
+                console.log("change the username in User db");
+                user.save();
+                res.sendStatus(200);
+            }
+        }).catch((err)=>{
+           res.send(err); 
+            });
+        });
+    });
+
+    //get all the accounts for testing
+    app.get('/acc', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Account.find().then((users) => {
+            console.log(users);
+            res.send(users);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+    //delete an account for testing
+    app.delete('/acc/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        Account.deleteOne({username:username}).then((acc)=>{
+            console.log("Successfully delete user " + username);
+            res.status(204).send("Successfully delete user " + username);
+        }).catch((err)=>{
+            res.send(err);
+        });
+    });
+
 });
 
 const server = app.listen(8000);

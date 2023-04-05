@@ -50,6 +50,15 @@ function App() {
     else { setLogin(false); setMode(false) }
   };
 
+  const changePwd = () =>{
+    let ousername = document.getElementById("originalusername");
+    let newpwd = document.getElementById("changedpwd");
+    const uesrinfo = {
+      uername:ousername,
+      newpwd:newpwd
+    };
+  }
+
   return (
     <>
       <main className="container-fluid">
@@ -77,9 +86,9 @@ function App() {
                   </NavLink>
                 </li>
                 <li>
-                  <NavLink to={"/"+getLoginInfo()['username']} className="nav-link text-white" activeClassName="active">
+                  {mode=='user'&& <NavLink to={"/"+getLoginInfo()['username']} className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faUser} className='me-2' />Profile</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
               </ul>
               <hr />
@@ -136,8 +145,10 @@ function App() {
                         </div>
                         <div className="modal-body">
                           <div class="mb-3">
+                          <label for="name" class="col-form-label"> Input your username: </label>
+                          <input type="text" class="form-control" id="originalusername" />
                           <label for="name" class="col-form-label"> Input New Password: </label>
-                          <input type="text" class="form-control" id="newpwd" />
+                          <input type="text" class="form-control" id="changedpwd" />
                           </div>
                         </div>
                         <div className="modal-footer">

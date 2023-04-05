@@ -1,5 +1,5 @@
-import * as React from 'react';
 import cookie from 'react-cookies';
+import * as React from 'react';
 import {
   MDBContainer,
   MDBTabs,
@@ -40,8 +40,18 @@ class Login extends React.Component {
      this.setState({justifyActive:value});
    };
 
+  handleUserSignup = (event) => {
+    const username = document.getElementById("newusername").value;
+    const newpwd = document.getElementById("newpwd").value;
+    const userInfor = {
+      newusername: username,
+      newpwd: newpwd
+    };
+
+  } 
+
   handleUserSubmit = (event) => {
-    const username = document.getElementById("uname").value;
+    const username = document.getElementById("username").value;
     const pwd = document.getElementById("pwd").value;
     const userInfo = {
       username: username,
@@ -96,7 +106,7 @@ class Login extends React.Component {
               <p>Sign in</p>
             </div>
 
-            <MDBInput wrapperClass='mb-4' label='Username' id='uname' type='text'/>
+            <MDBInput wrapperClass='mb-4' label='Username' id='username' type='text'/>
             <MDBInput wrapperClass='mb-4' label='Password' id='pwd' type='password'/>
 
             <div className="d-flex justify-content-between mx-4 mb-4">
@@ -112,14 +122,14 @@ class Login extends React.Component {
               <p>Sign up</p>
             </div>
 
-            <MDBInput wrapperClass='mb-4' label='Username' id='form1' type='text'/>
-            <MDBInput wrapperClass='mb-4' label='Password' id='form1' type='password'/>
+            <MDBInput wrapperClass='mb-4' label='Username' id='newusername' type='text'/>
+            <MDBInput wrapperClass='mb-4' label='Password' id='newpwd' type='password'/>
 
             <div className='d-flex justify-content-center mb-4'>
               <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
             </div>
 
-            <button className="mb-4 w-100"style={{backgroundColor:"#007bff", color:"white",fontSize:"17px",borderRadius: "4px",border:"white"}}>Sign up</button>
+            <button className="mb-4 w-100"style={{backgroundColor:"#007bff", color:"white",fontSize:"17px",borderRadius: "4px",border:"white"}} onClick={this.handleUserSignup}>Sign up</button>
 
           </MDBTabsPane>
 
