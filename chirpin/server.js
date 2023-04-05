@@ -744,9 +744,6 @@ db.once('open', function () {
         });
     });
 
-
-
-
     /* -------------------------------------------------------------- */
     /* ------------------------User/admin Operation JIANG Hongxu------------------------*/
     /* ---------------------------------------------------------------*/
@@ -934,6 +931,39 @@ db.once('open', function () {
         });
     });
 
+    /* -------------------------------------------------------------- */
+    /* ------------------------Search JIANG Hongxu------------------------*/
+    /* ---------------------------------------------------------------*/
+    //search for users (whose username contains the keywords)
+    app.get('/searchuser/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        User.find({ 'username': {$regex:req.params['username']} }).then((user) => {
+            if(!user){
+                res.sendStatus(404);
+            }
+            else{
+                console.log(user);
+                res.send(user);
+            }
+            }).catch((err) => {
+                res.send(err);
+            });
+        })
+    //search for tweets whose tags contain the tag.    
+    app.get('/searchtag/:tag', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Tweet.find({ 'tags': {$all:['#'+req.params['tag']]} }).then((tweet) => {
+            if(!tweet){
+                console.log("no such tweet");
+                res.sendStatus(404);
+            }
+            else{
+                console.log(tweet);
+                res.send(tweet);
+            }
+            }).catch((err) => {
+                res.send(err);
+            });
+        })     
 });
-
 const server = app.listen(8000);
