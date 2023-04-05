@@ -10,7 +10,7 @@ app.use(express.json());
 
 const mongoose = require('mongoose');
 // const send = require('express/lib/response');
-
+console.log("Connecting to MongoDB...");
 mongoose.connect('mongodb+srv://csci3100e1:csci3100e1@chirpin.pjvjlns.mongodb.net/Chirpin?authMechanism=DEFAULT');
 
 const db = mongoose.connection;
@@ -19,19 +19,20 @@ db.once('open', function () {
     console.log("Connection is open...");
 
     const AccountSchema = mongoose.Schema({
-        uid: { type: Number, required: true, unique: true },
+        uid: { type: String, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         pwd: { type: String, required: true },
         identity: { type: String, required: true }
     });
 
     const TweetSchema = mongoose.Schema({
-        tid: { type: Number, required: true, unique: true },
+        tid: { type: String, required: true, unique: true },
         poster: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
         tweet_content: { type: String, required: true },
         tag: [{ type: String, required: true }],
         comment: [{
-            username: { type: String, required: true },
+            username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
+            portrait: {type: String}, 
             content: { type: String, required: true },
             floor: { type: Number, required: true },
             time: { type: Date, required: true }
@@ -51,7 +52,7 @@ db.once('open', function () {
     });
 
     const UserSchema = mongoose.Schema({
-        uid: { type: Number, required: true, unique: true },
+        uid: { type: String, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         gender: { type: String, required: true },
         interest: [{ type: String, required: true }],
@@ -71,10 +72,10 @@ db.once('open', function () {
     });
 
     const NotificationSchema = mongoose.Schema({
-        uid: { type: String, required: true }, //who is receiving this notifications
-        actor_id: { type: Number, required: true }, // who is sending this notification
+        uid: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, //who is receiving this notifications
+        actor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // who is sending this notification
         action: { type: String, required: true }, // follow, like, comment, retweet
-        tid: { type: Number, required: false }, // which tweet is involved, null for follow action
+        tid: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet'}, // which tweet is involved, null for follow action
         time: { type: Date, required: true }
     });
 
@@ -103,14 +104,14 @@ db.once('open', function () {
         var userID = new mongoose.Types.ObjectId();
         Account.create({
             uid: userID,
-            username: "user_02",
+            username: "user_03",
             pwd: "123456",
             identity: "user"
         }).then((user) => {
             User.create({
                 uid: user.uid,
                 username: user.username,
-                gender: "Female",
+                gender: "Male",
                 interest: ["Basketball", "Piano"],
                 about: "This is for test. This is for test. This is for test. This is for test. This is for test.",
                 follower_counter: 0,
@@ -140,16 +141,16 @@ db.once('open', function () {
         var tweetID = new mongoose.Types.ObjectId();
         Tweet.create({
             tid: tweetID,
-            username: "user_01",
             tweet_content: 'This is just for test. This is just for test. This is just for test. This is just for test. This is just for test.',
-            tag: ["#tag1", "#tag2", "#tag3"],
+            poster: '642d3b6df94b01dddd7f2d99',
+            tag: ['#tag1', "#tag2"],
             comment: [],
+            parent: null,
             like: [],
-            dislike_counter: 12,
-            report_counter: 4,
-            tweet_liked: [],
-            tweet_disliked: [],
-            portrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+            dislike_counter: 0,
+            report_counter: 0,
+            retweet: [],
+            post_time: new Date(),
         }).then((tweetobj) => {
             console.log(tweetobj._id);
             User.updateOne({ username: tweetobj.username }, { $push: { tweet: tweetobj._id } }).then(c => {
@@ -623,6 +624,128 @@ db.once('open', function () {
             return res.status(500).send(err);
         });
     });
+
+
+    /* -------------------------------------------------------------- */
+    /* ----------------------Comment/Tweet Detail LZQ-----------------*/
+    /* ---------------------------------------------------------------*/
+
+
+    //add a new comment
+    app.post('/tweet/:tid/:username/comment', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        // find the user
+        User.findOne({ 'username': username }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            else {console.log('User found')}
+            Tweet.findById(tid).then((tweet) => {
+                if (!tweet) { return res.send('Tweet does not exist').status(404); }
+                console.log(tweet);
+                let time = new Date();
+                let floor_num;
+                if (tweet.comment == null) { tweet.comment = []; floor_num =1;}
+                else {floor_num = tweet.comment.length + 1;}
+                // get user info
+                let user_potrait = user.portrait;
+                let new_comment = {
+                    username: username,
+                    portrait: user_potrait,
+                    content: req.body.content,
+                    time: time,
+                    floor: floor_num
+                };
+                console.log(new_comment)
+                tweet.comment.push(new_comment);                
+                tweet.save();
+                console.log("comment successfully");
+                return res.status(201).send('comment successfully');
+            });
+        }).catch((err) => {
+            console.log("-----Comment Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        });
+    });
+
+    //get detail tweet
+    app.get('/tweet/:tid', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        Tweet.findById(tid).populate('poster').exec().then((tweet) => {
+            if(!tweet){return res.send('Tweet does not exist').status(404);}
+            let tweet_info ={
+                tid: tweet._id,
+                likeInfo: tweet.like.length,
+                dislikeInfo: tweet.dislike_counter,
+                user: {uid: tweet.poster, username: tweet.poster.username},
+                content: tweet.tweet_content,
+                commentCount:tweet.comment.length,
+                retweetCount: tweet.retweet_counter,
+                time: tweet.post_time,  
+                portraitUrl: tweet.portrait,
+                tags: tweet.tag,
+            }
+            console.log('get tweet successfully');
+            return res.status(201).send(tweet_info);
+        }).catch((err) => {
+        console.log("-----Get Tweet Error--------");
+        console.log(err);
+        return res.status(500).send(err);
+        });
+    });
+
+    // get comment list
+    app.get('/tweet/:tid/comment', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        Tweet.findById(tid).then((tweet) => {
+            if(!tweet){return res.send('Tweet does not exist').status(404);}
+            let comment_list = tweet.comment;
+            console.log('get comment successfully');
+            res.send(comment_list);
+        }).catch((err) => {
+        console.log("-----Get Comment Error--------");
+        console.log(err);
+        return res.status(500).send(err);
+        });
+    });
+
+    app.post('/tweet/:tid/:username/:floor', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tid = req.params['tid'];
+        let username = req.params['username'];
+        let floor_reply = req.params['floor'];
+        Tweet.findById(tid).then((tweet) => {
+            if(!tweet){return res.send('Tweet does not exist').status(404);}
+            let floor_num = tweet.comment.length + 1;
+            let time = new Date();
+            User.findOne({ 'username': username }).then((user) => {
+                if (!user) { return res.send('User does not exist').status(404); }
+                let content = "Re "+floor_reply+": "+req.body.content;
+                let new_reply = {
+                    username: username,
+                    portrait: user.portrait,
+                    content: content,
+                    time: time,
+                    floor: floor_num
+                }
+                tweet.comment.push(new_reply);
+                tweet.save();
+                console.log(new_reply)
+                console.log("reply successfully");
+                return res.status(201).send('reply successfully');
+            });
+        }).catch((err) => {
+        console.log("-----Reply Error--------");
+        console.log(err);
+        return res.status(500).send(err);
+        });
+    });
+
+
+
 
     /* -------------------------------------------------------------- */
     /* ------------------------Write Your Part------------------------*/
