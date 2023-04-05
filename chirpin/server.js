@@ -755,7 +755,7 @@ db.once('open', function () {
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
         Account.create({
-            uid:1,
+            uid:new mongoose.Types.ObjectId(),
             username: req.body['newusername'],
             pwd: req.body['newpwd'],
             identity:'user'
@@ -764,7 +764,7 @@ db.once('open', function () {
             //console.log(acc);
             let user = {
                 username: req.body['newusername'],
-                uid: 1,
+                uid: new mongoose.Types.ObjectId(),
                 gender: '',
                 interest:[],
                 about:'',
@@ -900,6 +900,9 @@ db.once('open', function () {
                 user.username=newusername;
                 console.log("change the username in User db");
                 user.save();
+                res.sendStatus(200);
+            }
+            else{
                 res.sendStatus(200);
             }
         }).catch((err)=>{
