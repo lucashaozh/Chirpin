@@ -28,7 +28,7 @@ db.once('open', function () {
     const TweetSchema = mongoose.Schema({
         // tid: { type: String, required: true, unique: true },
         poster: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-        tweet_content: { type: String, required: true },
+        tweet_content: { type: String },
         tags: [{ type: String, required: true }],
         comments: [{
             username: { type: String, minlength: 4, maxlength: 20 },
@@ -265,7 +265,19 @@ db.once('open', function () {
                 target.follower_counter += 1;
                 user.save();
                 target.save();
+            Notification.create({
+                // nid: notificationID,
+                username: target.username,
+                actor_id: user._id,
+                action: "follow",
+                time: new Date()
+            }).then((noteobj) => {
+                console.log(noteobj._id);
+                Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                    console.log(c);});  
             });
+              
+        });
         }).then(() => {
             res.sendStatus(200);
         }).catch((err) => {
@@ -481,7 +493,7 @@ db.once('open', function () {
         // find the user
         User.findOne({ 'username': username }).then((user) => {
             if (!user) { return res.send('User does not exist').status(404); }
-            Tweet.findById(tid).then((tweet) => {
+            Tweet.findById(tid).populate('poster').exec().then((tweet) => {
                 if (!tweet) { return res.send('Tweet does not exist').status(404); }
                 let time = new Date();
                 if (user.tweets_liked == null) { user.tweets_liked = []; }
@@ -502,6 +514,18 @@ db.once('open', function () {
                 user.save();
                 tweet.save();
                 console.log("Like successfully");
+                Notification.create({
+                    // nid: notificationID,
+                    username: tweet.poster.username,
+                    actor_id: user._id,
+                    action: "like",
+                    tid:tweet._id,
+                    time: new Date()
+                }).then((noteobj) => {
+                    console.log(noteobj._id);
+                    Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                        console.log(c);});  
+                });
                 return res.status(201).send('Like successfully');
             });
         }).catch((err) => {
@@ -644,7 +668,7 @@ db.once('open', function () {
         User.findOne({ 'username': username }).then((user) => {
             if (!user) { return res.send('User does not exist').status(404); }
             else {console.log('User found')}
-            Tweet.findById(tid).then((tweet) => {
+            Tweet.findById(tid).populate('poster').exec().then((tweet) => {
                 if (!tweet) { return res.send('Tweet does not exist').status(404); }
                 console.log(tweet);
                 let time = new Date();
@@ -663,6 +687,18 @@ db.once('open', function () {
                 console.log(new_comment)
                 tweet.comments.push(new_comment);                
                 tweet.save();
+                Notification.create({
+                    // nid: notificationID,
+                    username: tweet.poster.username,
+                    actor_id: user._id,
+                    action: "comment",
+                    tid:tweet._id,
+                    time: new Date()
+                }).then((noteobj) => {
+                    console.log(noteobj._id);
+                    Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                        console.log(c);});  
+                });
                 console.log("comment successfully");
                 return res.status(201).send('comment successfully');
             });
@@ -722,7 +758,7 @@ db.once('open', function () {
         let tid = req.body.tid;
         let username = req.body.username;
         let floor_reply = req.body.floor;
-        Tweet.findById(tid).then((tweet) => {
+        Tweet.findById(tid).populate('poster').exec().then((tweet) => {
             if(!tweet){return res.send('Tweet does not exist').status(404);}
             let floor_num = tweet.comments.length + 1;
             let time = new Date();
@@ -738,6 +774,30 @@ db.once('open', function () {
                 }
                 tweet.comments.push(new_reply);
                 tweet.save();
+                Notification.create({
+                    // nid: notificationID,
+                    username: tweet.poster.username,
+                    actor_id: user._id,
+                    action: "comment",
+                    tid:tweet._id,
+                    time: new Date()
+                }).then((noteobj) => {
+                    console.log(noteobj._id);
+                    Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                        console.log(c);});  
+                });
+                Notification.create({
+                    // nid: notificationID,
+                    username: tweet.comments[floor_reply-1].username,
+                    actor_id: user._id,
+                    action: "reply",
+                    tid:tweet._id,
+                    time: new Date()
+                }).then((noteobj) => {
+                    console.log(noteobj._id);
+                    Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                        console.log(c);});  
+                });
                 console.log(new_reply)
                 console.log("reply successfully");
                 return res.status(201).send('reply successfully');
@@ -748,6 +808,70 @@ db.once('open', function () {
         return res.status(500).send(err);
         });
     });
+
+    // retweet
+    app.post('/retweet', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let parent_tid = req.body.tid;
+        // find the user
+        User.findOne({ 'username': req.body['username'] }).then((user) => {
+            if (!user) { return res.send('User does not exist').status(404); }
+            Tweet.findById(parent_tid).populate('poster').exec().then((tweet) => {
+                // create a new tweet
+                let time = new Date();
+                let new_tweet = {
+                    // tid: new mongoose.Types.ObjectId(),
+                    poster: user._id,
+                    tweet_content: req.body.tweet_content + " RT @" + tweet.poster.username + ": " + tweet.tweet_content,
+                    tags: req.body.tags,
+                    parent: parent_tid,
+                    dislike_counter: 0,
+                    report_counter: 0,
+                    post_time: time,
+                    likes:[],
+                    comments: [],
+                    retweets: []
+                }
+                
+                Tweet.create(new_tweet).then((new_tweet_) => {
+                    console.log(new_tweet_);
+                    Notification.create({
+                        // nid: notificationID,
+                        username: tweet.poster.username,
+                        actor_id: user._id,
+                        action: "retweet",
+                        tid: parent_tid,
+                        time: new Date()
+                    }).then((noteobj) => {
+                        console.log(noteobj._id);
+                        Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                            console.log(c);});  
+                    });
+                    res.sendStatus(201);
+                })
+            })
+        }).catch((err) => {
+                    res.send(err);
+            });
+    
+    });
+    /* -------------------------------------------------------------- */
+    /* ------------------------Notification LZQ-----------------------*/
+    /* ---------------------------------------------------------------*/
+
+    app.get('/notification/:username', (req, res) => {
+        Notification.find({ 'username': req.params['username'] }).sort({'time':-1}).then((notes) => {
+            res.set('Content-Type', 'text/plain');
+            console.log(notes);
+            res.status(201).send(notes);
+        }).catch((err) => {
+            console.log("-----Get Notification Error--------");
+            console.log(err);
+            return res.status(500).send(err);
+        })
+    });
+
+
 
     /* -------------------------------------------------------------- */
     /* ------------------------User/admin Operation JIANG Hongxu------------------------*/
@@ -935,6 +1059,7 @@ db.once('open', function () {
             res.send(err);
         });
     });
+    
 
     /* -------------------------------------------------------------- */
     /* ------------------------Search JIANG Hongxu------------------------*/
