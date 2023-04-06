@@ -79,10 +79,16 @@ db.once('open', function () {
         time: { type: Date, required: true }
     });
 
+    const TagSchema = mongoose.Schema({
+        tag: { type: String, required: true,unique:true}, 
+        tid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet'}] // the tweets that contain the tag
+    });
+
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
     const Notification = mongoose.model('Notification', NotificationSchema);
+    const Tag = mongoose.model('Tag',TagSchema);
 
     // create admin for testing
     app.get('/test/createAdmin', (req, res) => {
@@ -477,6 +483,13 @@ db.once('open', function () {
         });
     });
 
+    /* 
+    POST /tweet/:tid/:username/like (increase the like count +1, add the tid to the user’s liked-list)
+    POST /tweet/:tid/:username/cancel-like (like count -1, remove the tid from the user’s liked-list)
+    POST /tweet/:tid/:username/dislike (increase the dislike count +1, add the tid to the user’s disliked-list)
+    POST /tweet/:tid/:username/cancel-dislike (dislikelike count -1, remove the tid from the user’s disliked-list)
+    POST /tweet/:tid/:username/report (increase the tweet’s report count +1, add the tid to the user’s report-list)
+    */
 
     // like a tweet
     app.put('/tweet/:tid/:username/like', (req, res) => {
