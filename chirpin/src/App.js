@@ -75,22 +75,22 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  {mode == 'user' && <NavLink to="/" className="nav-link text-white" activeClassName="active">
+                  {mode == 'user' && <NavLink to="/" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
                   </NavLink>}
                 </li>
                 <li>
-                  {mode == 'user' && <NavLink to="/search" className="nav-link text-white" activeClassName="active">
+                  {mode == 'user' && <NavLink to="/search" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
                   </NavLink>}
                 </li>
                 <li>
-                  {mode == 'user' && <NavLink to="/notification" className="nav-link text-white" activeClassName="active">
+                  {mode == 'user' && <NavLink to="/notification" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
                   </NavLink>}
                 </li>
                 <li>
-                  {mode == 'user' && <NavLink to={"/" + getLoginInfo()['username']} className="nav-link text-white" activeClassName="active">
+                  {mode == 'user' && <NavLink to={"/" + getLoginInfo()['username']} className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faUser} className='me-2' />Profile</span>
                   </NavLink>}
                 </li>
@@ -167,11 +167,11 @@ function App() {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <div class="mb-3">
-                <label for="name" class="col-form-label"> Input your username: </label>
-                <input type="text" class="form-control" id="originalusername" />
-                <label for="name" class="col-form-label"> Input New Password: </label>
-                <input type="text" class="form-control" id="changedpwd" />
+              <div className="mb-3">
+                <label htmlFor="name" className="col-form-label"> Input your username: </label>
+                <input type="text" className="form-control" id="originalusername" />
+                <label htmlFor="name" className="col-form-label"> Input New Password: </label>
+                <input type="text" className="form-control" id="changedpwd" />
               </div>
             </div>
             <div className="modal-footer">
