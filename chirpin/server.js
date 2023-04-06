@@ -79,10 +79,16 @@ db.once('open', function () {
         time: { type: Date, required: true }
     });
 
+    const TagSchema = mongoose.Schema({
+        tag: { type: String, required: true,unique:true}, 
+        tid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet'}] // the tweets that contain the tag
+    });
+
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
     const Notification = mongoose.model('Notification', NotificationSchema);
+    const Tag = mongoose.model('Tag',TagSchema);
 
     // create admin for testing
     app.get('/test/createAdmin', (req, res) => {
