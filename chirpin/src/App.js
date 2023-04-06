@@ -71,47 +71,50 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <NavLink to="/" className="nav-link text-white" activeClassName="active">
+                  {mode=='user' && <NavLink to="/" className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/search" className="nav-link text-white" activeClassName="active">
+                  {mode=='user' && <NavLink to="/search" className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/notification" className="nav-link text-white" activeClassName="active">
+                  {mode=='user' && <NavLink to="/notification" className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
                   {mode=='user'&& <NavLink to={"/"+getLoginInfo()['username']} className="nav-link text-white" activeClassName="active">
                     <span><FontAwesomeIcon icon={faUser} className='me-2' />Profile</span>
                   </NavLink>}
                 </li>
+                <li>
+                  {mode==='admin' && <span><FontAwesomeIcon icon={faUser} className='me-2' />Admin mode</span>}
+                </li>
               </ul>
               <hr />
-              <div className="dropdown">
+              {isLogin && <div className="dropdown">
                 <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
                   <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                  <strong>setting</strong>
+                  <strong>settings</strong>
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
                   <li><a className="dropdown-item" href="/login">Sign out</a></li> 
                   <li><a type="button" className="dropdown-item" data-bs-toggle="modal" data-bs-target="#changepasswordForm" data-bs-whatever="@mdo" >Change Password</a></li>                  
-                </ul>  
-              </div>
+                </ul>
+              </div>}
             </div>
             <div className="col-md-10 p-3 bg-light overflow-auto">
               <Routes>
                 {/* <Route path='/' element={<PrivateRoute />}> */}
                 <Route path='/' element={<Main />} />
                 {/* </Route> */}
-                {/* <Route path='/login' element={<LoginRoute ifLogout={islogin} onChangeLogin={switchloginstate} />}> */}
+                {/* <Route path='/login' element={<LoginRoute ifLogout={isLogin} onChangeLogin={switchLoginState} />}> */}
                 <Route path='/login' element={<Login onChangeLogin={switchLoginState} />} />
-                {/* </Route> */}
+                {/* </Route>  */}
                 <Route path='/search' element={<Search />} />
                 <Route path="/:username" element={<Profile />} />
                 <Route path='/:username/followings' element={<Main />} />
