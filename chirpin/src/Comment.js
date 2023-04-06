@@ -18,7 +18,7 @@ class Comment extends React.Component{
                 {/* <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
                                             {this.props.floor}
                 </button> */}
-                <div data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo"data-target="#GSCCModal" onClick={()=>console.log(this.props.floor)}>
+                <div data-bs-toggle="modal" data-bs-target={"#commentForm"+this.props.floor} data-bs-whatever="@mdo"data-target="#GSCCModal" onClick={()=>console.log(this.props.floor)}>
                     <FontAwesomeIcon icon={faStairs}></FontAwesomeIcon>
                     <div>{this.props.floor}</div>
                 </div>
@@ -32,7 +32,24 @@ class Comment extends React.Component{
                     </div>
                     <small className="opacity-50 text-nowrap">{this.props.time}</small>
                 </div>
-                <CommentForm floor={this.props.floor}/>  
+                {/* <CommentForm floor={this.props.floor}/> */}
+                <div class="modal fade" id={"commentForm"+this.props.floor} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                <div class="modal-dialog">
+                    <div class="modal-content">
+                    <div class="modal-header">
+                        <h1 class="modal-title fs-5"> Re floor {this.props.floor}</h1>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <textarea className="form-control" id='new-comment' rows='5'></textarea>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+                    </div>
+                    </div>
+                </div>
+            </div>  
             </div>
         )
     }
@@ -51,35 +68,38 @@ class CommentList extends React.Component{
 }
 
 {/** this is used to comment comment */}
-class CommentForm extends React.Component{
-    constructor(props){
-        super(props);
-    }
-    render(){
-        return(
-            // <div>
-            //     <textarea className="form-control" id='new-comment' rows='1' value="comment here"></textarea>
-            // </div>
-            <div class="modal fade" id="commentForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                    <div class="modal-header">
-                        <h1 class="modal-title fs-5"> Re floor {this.props.floor}</h1>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                    </div>
-                    <div class="modal-body">
-                        <textarea className="form-control" id='new-comment' rows='5'></textarea>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Send </button>
-                    </div>
-                    </div>
-                </div>
-            </div>
-        )
-    }
-}
+// class CommentForm extends React.Component{
+//     constructor(props){
+//         super(props);
+//         console.log(this.props.floor)
+//     }
+//     render(){
+//         return(
+//             // <div>
+//             //     <textarea className="form-control" id='new-comment' rows='1' value="comment here"></textarea>
+//             // </div>
+//             <>
+//             <div class="modal fade" id="commentForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+//                 <div class="modal-dialog">
+//                     <div class="modal-content">
+//                     <div class="modal-header">
+//                         <h1 class="modal-title fs-5"> Re floor {this.props.floor}</h1>
+//                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+//                     </div>
+//                     <div class="modal-body">
+//                         <textarea className="form-control" id='new-comment' rows='5'></textarea>
+//                     </div>
+//                     <div class="modal-footer">
+//                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+//                         <button type="button" class="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+//                     </div>
+//                     </div>
+//                 </div>
+//             </div>
+//             </>
+//         )
+//     }
+// }
 
 
 export {Comment, CommentList, CommentForm};
