@@ -20,10 +20,12 @@ export const getLoginInfo = () => {
 };
 
 export const login = (username, mode) => {
+  console.log("Save Login Cookie");
   cookie.save('userInfo', { username, mode }, { path: '/', maxAge: 3600 });
 };
 
 export const logout = () => {
+  console.log("Remove Login Cookie");
   cookie.remove('userInfo');
 };
 
