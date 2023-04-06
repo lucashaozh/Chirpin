@@ -102,4 +102,4 @@ class CommentList extends React.Component{
 // }
 
 
-export {Comment, CommentList, CommentForm};
+export {Comment, CommentList};
