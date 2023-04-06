@@ -477,13 +477,6 @@ db.once('open', function () {
         });
     });
 
-    /* 
-    POST /tweet/:tid/:username/like (increase the like count +1, add the tid to the user’s liked-list)
-    POST /tweet/:tid/:username/cancel-like (like count -1, remove the tid from the user’s liked-list)
-    POST /tweet/:tid/:username/dislike (increase the dislike count +1, add the tid to the user’s disliked-list)
-    POST /tweet/:tid/:username/cancel-dislike (dislikelike count -1, remove the tid from the user’s disliked-list)
-    POST /tweet/:tid/:username/report (increase the tweet’s report count +1, add the tid to the user’s report-list)
-    */
 
     // like a tweet
     app.put('/tweet/:tid/:username/like', (req, res) => {
