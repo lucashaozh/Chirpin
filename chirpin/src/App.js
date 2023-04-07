@@ -42,7 +42,7 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
 function App() {
   const [isLogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['username'] : false);
   const [mode, setMode] = useState(getLoginInfo() ? getLoginInfo()['mode'] : false);
-
+  
   const switchLoginState = () => {
     let logInfo = getLoginInfo();
     if (logInfo) {
@@ -75,19 +75,19 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  {mode == 'user' && <NavLink to="/" className="nav-link text-white" activeclassname="active">
+                  <NavLink to="/" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
-                  </NavLink>}
+                  </NavLink>
                 </li>
                 <li>
-                  {mode == 'user' && <NavLink to="/search" className="nav-link text-white" activeclassname="active">
+                  <NavLink to="/search" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
-                  </NavLink>}
+                  </NavLink>
                 </li>
                 <li>
-                  {mode == 'user' && <NavLink to="/notification" className="nav-link text-white" activeclassname="active">
+                  <NavLink to="/notification" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
-                  </NavLink>}
+                  </NavLink>
                 </li>
                 <li>
                   {mode == 'user' && <NavLink to={"/" + getLoginInfo()['username']} className="nav-link text-white" activeclassname="active">
@@ -95,7 +95,9 @@ function App() {
                   </NavLink>}
                 </li>
                 <li>
-                  {mode === 'admin' && <span><FontAwesomeIcon icon={faUser} className='me-2' />Admin mode</span>}
+                  {mode == 'admin' && <NavLink to={"/admin"} className="nav-link text-white" activeclassname="active">
+                    <span><FontAwesomeIcon icon={faUser} className='me-2' />Admin Actions</span>
+                  </NavLink>}
                 </li>
               </ul>
               {isLogin && <div className="dropdown">

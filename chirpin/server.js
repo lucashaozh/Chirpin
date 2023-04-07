@@ -57,15 +57,15 @@ db.once('open', function () {
         gender: { type: String },
         interests: [{ type: String}],
         about: { type: String },
-        follower_counter: { type: Number, required: true },
-        following_counter: { type: Number, required: true },
+        follower_counter: { type: Number },
+        following_counter: { type: Number},
         tweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         tweets_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         users_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         users_blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        report_counter: { type: Number, required: true },
+        report_counter: { type: Number },
         tweets_liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         tweets_disliked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         portrait: { type: String }
@@ -886,40 +886,43 @@ db.once('open', function () {
     //create a user by signing up or admin adding
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Account.create({
-            // uid:new mongoose.Types.ObjectId(),
-            username: req.body['newusername'],
-            pwd: req.body['newpwd'],
-            identity:'user'
-        }).then((acc) => {
-            if(!acc){return res.send("Sign up unsuccessfully").status(404);}
-            //console.log(acc);
-            let user = {
+        let _username = req.body['username'];
+        Account.findOne({ username: _username }).then((acc)=>{
+            if(acc){return res.send("The username has already been used. Please change a username.").status(404);}
+            Account.create({
+                // uid:new mongoose.Types.ObjectId(),
                 username: req.body['newusername'],
-                // uid: new mongoose.Types.ObjectId(),
-                gender: '',
-                interest:[],
-                about:'',
-                follow_counter:0,
-                following_counter:0,
-                tweets:[],
-                follows:[],
-                followings:[],
-                tweets_reported:[],
-                users_reported:[],
-                uesrs_blocked:[],
-                report_counter:0,
-                tweets_liked:[],
-                tweets_disliked:[],
-                portrait:''
-            }
-            User.create(user).then((user)=>{
-                console.log(user);
-                res.sendStatus(201);
-            }).catch((err) => {
-                res.send(err);
-            });
-
+                pwd: req.body['newpwd'],
+                identity:'user'
+            }).then((acc) => {
+                if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                //console.log(acc);
+                let user = {
+                    username: req.body['newusername'],
+                    // uid: new mongoose.Types.ObjectId(),
+                    gender: '',
+                    interest:[],
+                    about:'',
+                    follow_counter:0,
+                    following_counter:0,
+                    tweets:[],
+                    follows:[],
+                    followings:[],
+                    tweets_reported:[],
+                    users_reported:[],
+                    uesrs_blocked:[],
+                    report_counter:0,
+                    tweets_liked:[],
+                    tweets_disliked:[],
+                    portrait:''
+                }
+                User.create(user).then((user)=>{
+                    console.log(user);
+                    res.status(201).send("Sign up SUccessfully");
+                }).catch((err) => {
+                    res.send(err);
+                });
+            })
         });
     });
 
@@ -929,24 +932,28 @@ db.once('open', function () {
         let _username = req.body['username'];
         let _pwd = req.body['pwd'];
         Account.findOne({ username: _username }).then((val) => {
-            if(val.identity=='user'){
-                if (val != null && _pwd == val.pwd) {
-                    res.status(200).send('Login As User Successfully!\n');
-                } 
-                else {
-                    console.log("incorrect");
-                    res.status(404).send("Incorrect Username or Password.\n");
-                }
+            if (!val) {
+                res.status(404).send("Username does not exist.");
             }
-            else if(val.identity=='admin'){
-                console.log(3)
-                if (val != null && _pwd == val.pwd) {
-                    res.status(200).send('Login As Amin Successfully!\n');
-                } 
-                else {
-                    res.status(404).send("Incorrect Username or Password.\n");
+            else{
+                if(val.identity=='user'){
+                    if (val != null && _pwd == val.pwd) {
+                        res.status(201).send('Login As User Successfully!\n');
+                    } 
+                    else {
+                        console.log("incorrect");
+                        res.status(404).send("Incorrect Username or Password.\n");
+                    }
                 }
-            }  
+                if(val.identity=='admin'){
+                    if (val != null && _pwd == val.pwd) {
+                        res.status(200).send('Login As Amin Successfully!\n');
+                    } 
+                    else {
+                        res.status(404).send("Incorrect Username or Password.\n");
+                    }
+                } 
+            }
             }).catch((err)=>{
                 res.send(err);
             });
