@@ -57,15 +57,15 @@ db.once('open', function () {
         gender: { type: String },
         interests: [{ type: String}],
         about: { type: String },
-        follower_counter: { type: Number, required: true },
-        following_counter: { type: Number, required: true },
+        follower_counter: { type: Number },
+        following_counter: { type: Number},
         tweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         tweets_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         users_reported: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         users_blocked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
-        report_counter: { type: Number, required: true },
+        report_counter: { type: Number },
         tweets_liked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         tweets_disliked: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         portrait: { type: String }
@@ -886,40 +886,43 @@ db.once('open', function () {
     //create a user by signing up or admin adding
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Account.create({
-            // uid:new mongoose.Types.ObjectId(),
-            username: req.body['newusername'],
-            pwd: req.body['newpwd'],
-            identity:'user'
-        }).then((acc) => {
-            if(!acc){return res.send("Sign up unsuccessfully").status(404);}
-            //console.log(acc);
-            let user = {
+        let _username = req.body['username'];
+        Account.findOne({ username: _username }).then((acc)=>{
+            if(acc){return res.send("The username has already been used. Please change a username.").status(404);}
+            Account.create({
+                // uid:new mongoose.Types.ObjectId(),
                 username: req.body['newusername'],
-                // uid: new mongoose.Types.ObjectId(),
-                gender: '',
-                interest:[],
-                about:'',
-                follow_counter:0,
-                following_counter:0,
-                tweets:[],
-                follows:[],
-                followings:[],
-                tweets_reported:[],
-                users_reported:[],
-                uesrs_blocked:[],
-                report_counter:0,
-                tweets_liked:[],
-                tweets_disliked:[],
-                portrait:''
-            }
-            User.create(user).then((user)=>{
-                console.log(user);
-                res.sendStatus(201);
-            }).catch((err) => {
-                res.send(err);
-            });
-
+                pwd: req.body['newpwd'],
+                identity:'user'
+            }).then((acc) => {
+                if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                //console.log(acc);
+                let user = {
+                    username: req.body['newusername'],
+                    // uid: new mongoose.Types.ObjectId(),
+                    gender: '',
+                    interest:[],
+                    about:'',
+                    follow_counter:0,
+                    following_counter:0,
+                    tweets:[],
+                    follows:[],
+                    followings:[],
+                    tweets_reported:[],
+                    users_reported:[],
+                    uesrs_blocked:[],
+                    report_counter:0,
+                    tweets_liked:[],
+                    tweets_disliked:[],
+                    portrait:''
+                }
+                User.create(user).then((user)=>{
+                    console.log(user);
+                    res.status(201).send("User created successfully");
+                }).catch((err) => {
+                    res.send(err);
+                });
+            })
         });
     });
 
@@ -929,31 +932,35 @@ db.once('open', function () {
         let _username = req.body['username'];
         let _pwd = req.body['pwd'];
         Account.findOne({ username: _username }).then((val) => {
-            if(val.identity=='user'){
-                if (val != null && _pwd == val.pwd) {
-                    res.status(200).send('Login As User Successfully!\n');
-                } 
-                else {
-                    console.log("incorrect");
-                    res.status(404).send("Incorrect Username or Password.\n");
-                }
+            if (!val) {
+                res.status(404).send("Username does not exist.");
             }
-            else if(val.identity=='admin'){
-                console.log(3)
-                if (val != null && _pwd == val.pwd) {
-                    res.status(200).send('Login As Amin Successfully!\n');
-                } 
-                else {
-                    res.status(404).send("Incorrect Username or Password.\n");
+            else{
+                if(val.identity=='user'){
+                    if (val != null && _pwd == val.pwd) {
+                        res.status(201).send('Login As User Successfully!\n');
+                    } 
+                    else {
+                        console.log("incorrect");
+                        res.status(404).send("Incorrect Username or Password.\n");
+                    }
                 }
-            }  
+                if(val.identity=='admin'){
+                    if (val != null && _pwd == val.pwd) {
+                        res.status(200).send('Login As Amin Successfully!\n');
+                    } 
+                    else {
+                        res.status(404).send("Incorrect Username or Password.\n");
+                    }
+                } 
+            }
             }).catch((err)=>{
                 res.send(err);
             });
         });
     
 
-    //change pwd by user
+    //change pwd by user/admin
     app.put('/changepwd', (req, res) => {
         res.set('Content-Type', 'text-plain');
         let username = req.body.username;
@@ -965,7 +972,7 @@ db.once('open', function () {
             } else if (newpwd != '') {
                 acc.pwd = newpwd;
                 acc.save();
-                res.sendStatus(200);
+                res.send("Update Successfully!").status(200);
             }
             else{
                 return res.send('User does not exist').status(404);
@@ -987,8 +994,8 @@ db.once('open', function () {
             User.deleteOne({ username: username }).then((user) => {
                 if(!user){return res.send('User does not exist').status(404);}
                 else {
-                    console.log("Successfully delete user " + username+"in User db");
-                    res.send("Successfully delete user " + username+"in User db").status(204);
+                    console.log("Successfully delete user " + username+" in User db");
+                    res.send("Successfully delete user " + username).status(204);
                 }
             }).catch((err)=>{
             res.send(err);
@@ -998,50 +1005,50 @@ db.once('open', function () {
     
 
     //update user information by admin
-    app.put('/update', (req, res) => {
-        res.set('Content-Type', 'text-plain');
-        let oldusername = req.body.username
-        let newusername = req.body.newusername;
-        let newpwd = req.body.newpwd;
+    // app.put('/update', (req, res) => {
+    //     res.set('Content-Type', 'text-plain');
+    //     let oldusername = req.body.username
+    //     let newusername = req.body.newusername;
+    //     let newpwd = req.body.newpwd;
 
-        Account.findOne({ username: oldusername }).then((acc) => {
-            if (!acc) {
-                res.sendStatus(404);
-            } else {
-                if (newpwd != ''&& newusername !=''){
-                    acc.pwd = newpwd;
-                    acc.username=newusername;
-                    console.log("change the pwd and username in Account db");
-                    acc.save();
-                }
-                else if(newpwd != ''){
-                    acc.pwd = newpwd;
-                    console.log("change the pwd in Account db");
-                    acc.save();
-                }
-                else if(newusername != ''){
-                    acc.username = newusername;
-                    console.log("change the username in Account db");
-                    acc.save();
-                }
-            }
-            User.findOne({ username: oldusername }).then((user) => {
-            if (!user) {
-                res.sendStatus(404);
-            } else if(newusername !=''){
-                user.username=newusername;
-                console.log("change the username in User db");
-                user.save();
-                res.sendStatus(200);
-            }
-            else{
-                res.sendStatus(200);
-            }
-        }).catch((err)=>{
-           res.send(err); 
-            });
-        });
-    });
+    //     Account.findOne({ username: oldusername }).then((acc) => {
+    //         if (!acc) {
+    //             res.sendStatus(404);
+    //         } else {
+    //             if (newpwd != ''&& newusername !=''){
+    //                 acc.pwd = newpwd;
+    //                 acc.username=newusername;
+    //                 console.log("change the pwd and username in Account db");
+    //                 acc.save();
+    //             }
+    //             else if(newpwd != ''){
+    //                 acc.pwd = newpwd;
+    //                 console.log("change the pwd in Account db");
+    //                 acc.save();
+    //             }
+    //             else if(newusername != ''){
+    //                 acc.username = newusername;
+    //                 console.log("change the username in Account db");
+    //                 acc.save();
+    //             }
+    //         }
+    //         User.findOne({ username: oldusername }).then((user) => {
+    //         if (!user) {
+    //             res.sendStatus(404);
+    //         } else if(newusername !=''){
+    //             user.username=newusername;
+    //             console.log("change the username in User db");
+    //             user.save();
+    //             res.sendStatus(200);
+    //         }
+    //         else{
+    //             res.sendStatus(200);
+    //         }
+    //     }).catch((err)=>{
+    //        res.send(err); 
+    //         });
+    //     });
+    // });
 
     //get all the accounts for testing
     app.get('/acc', (req, res) => {
@@ -1100,6 +1107,51 @@ db.once('open', function () {
             }).catch((err) => {
                 res.send(err);
             });
-        })     
+        })
+    // get the first 10 tags which are contained most in the tweets
+    app.get('/search/trend', (req, res) => {
+         res.set('Content-Type', 'text/plain');
+            Tag.aggregate([
+                {$project:{"tag":"$tag",cnt:{$size:'$tid'}}},
+                {$sort:{cnt:-1}},
+                {$limit:10}]).then((tweets)=>{
+                    if(!tweets){
+                        console.log("no tags");
+                        res,send(404);
+                    }
+                    else{
+                        console.log(tweets);
+                        res.send(tweets)
+                    }
+                }).catch((err)=>{
+                    res.send(err);
+                })
+        }) 
+    //create a tag for testing
+    app.get('/test/createtag', (req, res) => {
+        var t1 = new mongoose.Types.ObjectId();
+        var t2 = new mongoose.Types.ObjectId();
+        Tag.create({
+            tag: "tag3",
+            tid:[t1]
+            }).then(() => {
+                res.sendStatus(200);
+            }).catch((err) => {
+                console.error(err);
+            });
+        });  
+        //get all the tags in tag db for testing
+        app.get('/tag', (req, res) => {
+            res.set('Content-Type', 'text/plain');
+            Tag.find().then((users) => {
+                console.log(users);
+                res.send(users);
+            }).catch((err) => {
+                res.send(err);
+            });
+        });
+        
+    
+        
 });
 const server = app.listen(8000);

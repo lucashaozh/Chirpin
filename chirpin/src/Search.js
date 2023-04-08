@@ -7,6 +7,9 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import SearchUser from './SearchUser';
 import SearchTweet from './SearchTweet';
 import { Link } from 'react-router-dom';
+import {BACK_END} from './App';
+import InfiniteScroll from 'react-infinite-scroll-component';
+import { useState } from 'react';
 
 class Search extends React.Component{
     constructor(props){
@@ -57,33 +60,75 @@ class Search extends React.Component{
     }
 }       
 class Trend extends React.Component{
+    constructor(props) {
+        super(props);
+        this.state = { trendList: []};
+      }
+
+    async getTrend(){
+        let res = await fetch(BACK_END + 'search/trend',{
+          method:'GET',
+          headers: { 
+            'Content-Type': 'application/json',
+            'Accept': 'application/json'
+          }
+        });
+        let l = await res.json();
+        await this.setState({trendList:l});
+        console.log(this.state.trendList)
+      }
+      componentDidMount(){
+        this.getTrend()
+      }
+
+    render() {
+        return (<>
+            <InfiniteScroll dataLength={this.state.trendList.length} next={null} hasMore={false} scrollableTarget="scrollableDiv"
+                endMessage={<p style={{ textAlign: 'center' }}>
+                    <b>Above are all the hot topics.</b>
+                </p>}>
+                <TrendListView trendInfos={this.state.trendList}/>
+            </InfiniteScroll>
+        </>
+        );
+    }
+} 
+
+
+function TrendListView({ trendInfos }) {
+
+    const [trendInfoList, settrendList] = useState(trendInfos);
+
+    return (
+        <>
+            {trendInfos.map((trendInfo, index) =>
+                <TrendCard tag={trendInfo.tag} key={index} />
+            )}
+        </>
+    );
+
+}
+
+class TrendCard extends React.Component{
+    constructor(props) {
+        super(props);
+    }
     render(){
         return(
-            <>
-            <div class="list-group w-800">
-            <Link to={"/searchtag/trend1"} class="list-group-item list-group-item-action d-flex" aria-current="true">
-            <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
-            <div>
-            <h6 class="mb-0">#Trend1</h6>
-            </div>
-            </div>
-            </Link>
-            </div>
-            <div class="list-group w-800">
-            <Link to={"/searchtag/trend2"} class="list-group-item list-group-item-action d-flex" aria-current="true">
-            <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
-            <div>
-            <h6 class="mb-0">#Trend2</h6>
-            </div>
-            </div>
-            </Link>
-            </div>
-            <div class="list-group w-800">
-            </div>
-            </>
+        <>
+        <div class="list-group w-800">
+        <Link to={"/searchtag/"+this.props.tag} class="list-group-item list-group-item-action d-flex" aria-current="true">
+        <div class="d-flex gap-20 w-1000" style={{margin:10, padding:10}}>
+        <div>
+        <h6 class="mb-0">{this.props.tag}</h6>
+        </div>
+        </div>
+        </Link>
+        </div>
+        </>
         )
     }
-}    
+}
 
 
 

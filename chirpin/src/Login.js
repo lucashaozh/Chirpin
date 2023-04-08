@@ -14,16 +14,19 @@ import {
 }
 from 'mdb-react-ui-kit';
 import {Navigate} from 'react-router-dom';
+import {BACK_END} from './App';
 
 export const getLoginInfo = () => {
   return cookie.load('userInfo');
 };
 
 export const login = (username, mode) => {
+  console.log("Save Login Cookie");
   cookie.save('userInfo', { username, mode }, { path: '/', maxAge: 3600 });
 };
 
 export const logout = () => {
+  console.log("Remove Login Cookie");
   cookie.remove('userInfo');
 };
 
@@ -43,10 +46,28 @@ class Login extends React.Component {
   handleUserSignup = (event) => {
     const username = document.getElementById("newusername").value;
     const newpwd = document.getElementById("newpwd").value;
-    const userInfor = {
+    const userInfo = {
       newusername: username,
       newpwd: newpwd
     };
+    fetch(BACK_END+"createuser", {
+      method: "POST",
+      body: JSON.stringify(userInfo),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => {
+        if (res.status === 201) {
+          
+        }
+        return res.text();
+      })
+      .then(data => {alert(data);})
+      .catch(err => {
+        console.log(err);
+      });
+    event.preventDefault();
 
   } 
 
@@ -57,29 +78,31 @@ class Login extends React.Component {
       username: username,
       pwd: pwd
     };
-    this.setState({login:true, username:username, mode:'user'})
-    login(username, 'user');
-    this.props.onChangeLogin();
-    // fetch(BACK_END+"login/user", {
-    //   method: "POST",
-    //   body: JSON.stringify(userinfo),
-    //   headers: {
-    //     'Content-Type': 'application/json'
-    //   },
-    // })
-    //   .then(res => {
-    //     if (res.status === 200) {
-    //       this.setState({ login: true, uid: uid, mode:'user'});
-    //       login(uid, 'user');
-    //       this.props.onChangeLogin();
-    //     }
-    //     return res.text();
-    //   })
-    //   .then(data => alert(data))
-    //   .catch(err => {
-    //     console.log(err);
-    //   });
-    // event.preventDefault();
+    // this.setState({login:true, username:username, mode:'user'})
+    // login(username, 'user');
+    // this.props.onChangeLogin();
+    fetch(BACK_END+"login/user", {
+      method: "POST",
+      body: JSON.stringify(userInfo),
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    })
+      .then(res => {
+        if (res.status === 201) {
+          this.setState({ login: true, username: username, mode:'user'});
+          login(username, 'user');
+          this.props.onChangeLogin();
+        }
+        return res.text();
+      })
+      .then(data => {if(data=='Login As Amin Successfully!\n'){this.setState({ login: true, username: username, mode:'admin'});
+      login(username, 'admin');
+      this.props.onChangeLogin();}alert(data)})
+      .catch(err => {
+        console.log(err);
+      });
+    event.preventDefault();
   };
   render(){
     return (this.state.login === false ? (
@@ -135,7 +158,7 @@ class Login extends React.Component {
 
         </MDBTabsContent>
 
-      </MDBContainer>):(this.state.mode === 'user' ? <Navigate to='/'/> : <Navigate to='/adm'/>)
+      </MDBContainer>):(this.state.mode === 'user' ? <Navigate to='/'/> : <Navigate to='/admin'/>)
     );
   }
 }
