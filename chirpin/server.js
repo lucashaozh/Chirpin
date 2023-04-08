@@ -918,7 +918,7 @@ db.once('open', function () {
                 }
                 User.create(user).then((user)=>{
                     console.log(user);
-                    res.status(201).send("Sign up SUccessfully");
+                    res.status(201).send("User created successfully");
                 }).catch((err) => {
                     res.send(err);
                 });
@@ -960,7 +960,7 @@ db.once('open', function () {
         });
     
 
-    //change pwd by user
+    //change pwd by user/admin
     app.put('/changepwd', (req, res) => {
         res.set('Content-Type', 'text-plain');
         let username = req.body.username;
@@ -972,7 +972,7 @@ db.once('open', function () {
             } else if (newpwd != '') {
                 acc.pwd = newpwd;
                 acc.save();
-                res.sendStatus(200);
+                res.send("Update Successfully!").status(200);
             }
             else{
                 return res.send('User does not exist').status(404);
@@ -994,8 +994,8 @@ db.once('open', function () {
             User.deleteOne({ username: username }).then((user) => {
                 if(!user){return res.send('User does not exist').status(404);}
                 else {
-                    console.log("Successfully delete user " + username+"in User db");
-                    res.send("Successfully delete user " + username+"in User db").status(204);
+                    console.log("Successfully delete user " + username+" in User db");
+                    res.send("Successfully delete user " + username).status(204);
                 }
             }).catch((err)=>{
             res.send(err);
@@ -1005,50 +1005,50 @@ db.once('open', function () {
     
 
     //update user information by admin
-    app.put('/update', (req, res) => {
-        res.set('Content-Type', 'text-plain');
-        let oldusername = req.body.username
-        let newusername = req.body.newusername;
-        let newpwd = req.body.newpwd;
+    // app.put('/update', (req, res) => {
+    //     res.set('Content-Type', 'text-plain');
+    //     let oldusername = req.body.username
+    //     let newusername = req.body.newusername;
+    //     let newpwd = req.body.newpwd;
 
-        Account.findOne({ username: oldusername }).then((acc) => {
-            if (!acc) {
-                res.sendStatus(404);
-            } else {
-                if (newpwd != ''&& newusername !=''){
-                    acc.pwd = newpwd;
-                    acc.username=newusername;
-                    console.log("change the pwd and username in Account db");
-                    acc.save();
-                }
-                else if(newpwd != ''){
-                    acc.pwd = newpwd;
-                    console.log("change the pwd in Account db");
-                    acc.save();
-                }
-                else if(newusername != ''){
-                    acc.username = newusername;
-                    console.log("change the username in Account db");
-                    acc.save();
-                }
-            }
-            User.findOne({ username: oldusername }).then((user) => {
-            if (!user) {
-                res.sendStatus(404);
-            } else if(newusername !=''){
-                user.username=newusername;
-                console.log("change the username in User db");
-                user.save();
-                res.sendStatus(200);
-            }
-            else{
-                res.sendStatus(200);
-            }
-        }).catch((err)=>{
-           res.send(err); 
-            });
-        });
-    });
+    //     Account.findOne({ username: oldusername }).then((acc) => {
+    //         if (!acc) {
+    //             res.sendStatus(404);
+    //         } else {
+    //             if (newpwd != ''&& newusername !=''){
+    //                 acc.pwd = newpwd;
+    //                 acc.username=newusername;
+    //                 console.log("change the pwd and username in Account db");
+    //                 acc.save();
+    //             }
+    //             else if(newpwd != ''){
+    //                 acc.pwd = newpwd;
+    //                 console.log("change the pwd in Account db");
+    //                 acc.save();
+    //             }
+    //             else if(newusername != ''){
+    //                 acc.username = newusername;
+    //                 console.log("change the username in Account db");
+    //                 acc.save();
+    //             }
+    //         }
+    //         User.findOne({ username: oldusername }).then((user) => {
+    //         if (!user) {
+    //             res.sendStatus(404);
+    //         } else if(newusername !=''){
+    //             user.username=newusername;
+    //             console.log("change the username in User db");
+    //             user.save();
+    //             res.sendStatus(200);
+    //         }
+    //         else{
+    //             res.sendStatus(200);
+    //         }
+    //     }).catch((err)=>{
+    //        res.send(err); 
+    //         });
+    //     });
+    // });
 
     //get all the accounts for testing
     app.get('/acc', (req, res) => {
