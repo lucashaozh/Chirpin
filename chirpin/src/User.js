@@ -15,7 +15,7 @@ function UserCard({ userInfo }) {
 
   // variable that will not be changed in the card
   const username = userInfo["username"];
-  const uid = userInfo["uid"];
+  //const uid = userInfo["uid"];
   const portraitUrl = userInfo["portraitUrl"];
 
 
