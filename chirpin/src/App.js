@@ -20,6 +20,8 @@ import SearchTweet from './SearchTweet';
 import SearchUser from './SearchUser';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faBell, faHome, faSearch, faUser } from '@fortawesome/free-solid-svg-icons';
+import { Followings } from './Followings';
+import { Followers } from './Followers';
 
 
 export const BACK_END = 'http://localhost:8000/'
@@ -128,10 +130,10 @@ function App() {
                   <Route path="/:username" element={<Profile />} />
                 </Route>
                 <Route path='/:username/followings' element={<PrivateRoute />}>
-                  <Route path='/:username/followings' element={<Main />} />
+                  <Route path='/:username/followings' element={<Followings />} />
                 </Route>
                 <Route path='/:username/followers' element={<PrivateRoute />}>
-                  <Route path='/:username/followers' element={<Main />} />
+                  <Route path='/:username/followers' element={<Followers />} />
                 </Route>
                 <Route path='/searchuser/:username' element={<PrivateRoute />}>
                   <Route path='/searchuser/:username' element={<SearchUser />} />
