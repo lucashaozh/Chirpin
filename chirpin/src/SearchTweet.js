@@ -56,7 +56,7 @@ class SearchTweet extends React.Component{
                 
             <TweetListView tweetInfos={this.state.tweetList}/>   
         </InfiniteScroll>
-        </div>          */}
+        </div>           */}
         </>       
         ) 
     }     

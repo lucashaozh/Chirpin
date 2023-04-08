@@ -995,9 +995,17 @@ db.once('open', function () {
                 if(!user){return res.send('User does not exist').status(404);}
                 else {
                     console.log("Successfully delete user " + username+" in User db");
-                    res.send("Successfully delete user " + username).status(204);
+                    //res.send("Successfully delete user " + username).status(204);
                 }
-            }).catch((err)=>{
+                Tweet.delete({poster:user._id}).then((tweet)=>{
+                    if(!tweet){return res.send("Successfully delete user " + username).status(204);}
+                    else {
+                        console.log("Successfully delete user " + username+"'s tweets");
+                        res.send("Successfully delete user " + username).status(204);
+                }
+                })
+            }).
+            catch((err)=>{
             res.send(err);
             });
         });
@@ -1095,7 +1103,7 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': {$all:['#'+req.params['tag']]} }).then((tweet) => {
+        Tweet.find({ 'tags': {$all:['#'+req.params['tag']]} }).populate('poster').exec().then((tweet) => {
             if(!tweet){
                 console.log("no such tweet");
                 res.sendStatus(404);
@@ -1108,6 +1116,7 @@ db.once('open', function () {
                 res.send(err);
             });
         })
+
     // get the first 10 tags which are contained most in the tweets
     app.get('/search/trend', (req, res) => {
          res.set('Content-Type', 'text/plain');
