@@ -136,8 +136,8 @@ function App() {
                 <Route path='/searchuser/:username' element={<PrivateRoute />}>
                   <Route path='/searchuser/:username' element={<SearchUser />} />
                 </Route>
-                <Route path='/searchtag/:username' element={<PrivateRoute />}>
-                  <Route path='/searchtag/:username' element={<SearchTweet />} />
+                <Route path='/searchtag/:tag' element={<PrivateRoute />}>
+                  <Route path='/searchtag/:tag' element={<SearchTweet />} />
                 </Route>
                 <Route path='/tweet/:tweetid' element={<PrivateRoute />}>
                   <Route path='/tweet/:tweetid' element={<TweetDetail />} />

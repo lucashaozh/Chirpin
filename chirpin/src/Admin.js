@@ -178,7 +178,7 @@ class DeleteUser extends React.Component {
 
     render() {
         return (<>
-            <InfiniteScroll dataLength={deleteUserExample.length} next={null} hasMore={false} scrollableTarget="scrollableDiv"
+            <InfiniteScroll dataLength={this.state.userList.length} next={null} hasMore={false} scrollableTarget="scrollableDiv"
                 endMessage={<p style={{ textAlign: 'center' }}>
                     <b>Yay! You have seen it all</b>
                 </p>}>
