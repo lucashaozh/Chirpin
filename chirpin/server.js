@@ -706,7 +706,7 @@ db.once('open', function () {
                         console.log(c);});  
                 });
                 console.log("comment successfully");
-                return res.status(201).send('comment successfully');
+                return res.status(201).send(JSON.stringify(new_comment));
             });
         }).catch((err) => {
             console.log("-----Comment Error--------");
@@ -734,7 +734,7 @@ db.once('open', function () {
                 tags: tweet.tags,
             }
             console.log('get tweet successfully');
-            return res.status(201).send(tweet_info);
+            return res.status(201).send(JSON.stringify(tweet_info));
         }).catch((err) => {
         console.log("-----Get Tweet Error--------");
         console.log(err);
