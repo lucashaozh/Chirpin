@@ -594,20 +594,20 @@ db.once('open', function () {
                     model: 'Tweet'
                 }
             }).exec().then((user) => {
-                console.log("test");
                 let following = user.followings;
                 let tweets = [];
+                // console.log(following);
                 for (let i = 0; i < following.length; i++) {
-                    if (!following[i].tweets) {
-                        tweets.concat(following[i].tweets);
+                    if (following[i].tweets) {
+                        tweets = [...tweets, ...following[i].tweets];
                     }
                 }
-                console.log(tweets);
                 let tweetsInfo = tweets.map((tweet) => {
                     return {
                         "tid": tweet['_id'],
                         "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user.tweets_liked.includes(tweet['_id']) },
                         "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user.tweets_disliked.includes(tweet['_id']) },
+                        "user": { "uid": tweet['poster'], 'username': tweet['poster']['username']},
                         "content": tweet['tweet_content'],
                         "commentCount": tweet['comments'].length,
                         "retweetCount": tweet['retweets'].length,
@@ -616,7 +616,7 @@ db.once('open', function () {
                         "tags": tweet['tags'],
                     }
                 });
-                // console.log("----Followings Tweets------");
+                console.log("----Followings Tweets------");
                 // console.log(tweetsInfo);
                 return res.status(200).send(tweetsInfo);
             }).catch((err) => {
