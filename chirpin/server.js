@@ -1126,16 +1126,17 @@ db.once('open', function () {
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let _username = req.body['username'];
-        Account.findOne({ username: _username }).then((acc) => {
-            if (acc) { return res.send("The username has already been used. Please change a username.").status(404); }
+        Account.findOne({ username: _username }).then((acc)=>{
+            if(acc){console.log(acc);return res.status(201).send("The username has already been used. Please change a username.");}
+            else{
             Account.create({
                 // uid:new mongoose.Types.ObjectId(),
                 username: req.body['newusername'],
                 pwd: req.body['newpwd'],
                 identity: 'user'
             }).then((acc) => {
-                if (!acc) { return res.send("Sign up unsuccessfully").status(404); }
-                //console.log(acc);
+                //if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                console.log(acc);
                 let user = {
                     username: req.body['newusername'],
                     // uid: new mongoose.Types.ObjectId(),
@@ -1158,12 +1159,13 @@ db.once('open', function () {
                 User.create(user).then((user) => {
                     console.log(user);
                     res.status(201).send("User created successfully");
-                }).catch((err) => {
-                    res.send(err);
-                });
-            })
+                })
+            }).catch((err) => {
+                    res.send("The username has already existed. Please change a username.");
+                });}
         });
     });
+
 
     //user/admin authentication
     app.post('/login/user', (req, res) => {
@@ -1342,14 +1344,30 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': { $all: ['#' + req.params['tag']] } }).populate('poster').exec().then((tweet) => {
-            if (!tweet) {
+        Tweet.find({ 'tags': {$all:[req.params['tag']]} }).populate('poster').exec().then((tweet) => {
+            let obj=[];
+            if(!tweet){
                 console.log("no such tweet");
                 res.sendStatus(404);
             }
-            else {
-                console.log(tweet);
-                res.send(tweet);
+            else{
+                tweet.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
+                        "user": { "uid": tweet.poster['_id'], 'username': tweet.poster['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    obj.push(tweetObj);
+                });
+                console.log(obj);
+                res.send(obj);
             }
         }).catch((err) => {
             res.send(err);
