@@ -29,19 +29,11 @@ class SearchTweet extends React.Component{
           }
         });
         let l = await res.json();
-        await this.setState({tweetList:l});
-        console.log(this.state.tweetList)
-        // .then(res => {
-        //     if (res.status === 200) {
-        //     }
-        //     return res.text();
-        //   })
-        //   .then(data => {this.setState({userList:data});})
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
+        this.state.tweetList = await l;
+        this.setState((prevState) => ({ tweetList: l }));
+        console.log(this.state.tweetList);
       }
-      componentDidMount(){
+      componentWillMount(){
         this.getAllTweets()
       }
     
@@ -49,14 +41,13 @@ class SearchTweet extends React.Component{
         return(
         <>
        
-        <div>{this.state.tag}</div>
-        {/* <div id='scrollabletweets'style={{ height: "95vh", overflow: "auto" }}>
+        <div id='scrollabletweets'style={{ height: "95vh", overflow: "auto" }}>
         <InfiniteScroll dataLength={tweetInfoExample.length} next={null} hasMore={false} scrollableTarget="scrollabletweets"
                         endMessage={<p style={{ textAlign: 'center' }}><b>No more Tweets</b></p>}>
                 
             <TweetListView tweetInfos={this.state.tweetList}/>   
         </InfiniteScroll>
-        </div>           */}
+        </div>           
         </>       
         ) 
     }     

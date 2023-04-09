@@ -1255,20 +1255,36 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': {$all:['#'+req.params['tag']]} }).populate('poster').exec().then((tweet) => {
+        Tweet.find({ 'tags': {$all:[req.params['tag']]} }).populate('poster').exec().then((tweet) => {
+            let obj=[];
             if(!tweet){
                 console.log("no such tweet");
                 res.sendStatus(404);
             }
             else{
-                console.log(tweet);
-                res.send(tweet);
+                tweet.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
+                        "user": { "uid": tweet.poster['_id'], 'username': tweet.poster['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    obj.push(tweetObj);
+                });
+                console.log(obj);
+                res.send(obj);
             }
             }).catch((err) => {
                 res.send(err);
             });
         })
-
+        
     // get the first 10 tags which are contained most in the tweets
     app.get('/search/trend', (req, res) => {
          res.set('Content-Type', 'text/plain');
