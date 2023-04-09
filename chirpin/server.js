@@ -1040,15 +1040,16 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let _username = req.body['username'];
         Account.findOne({ username: _username }).then((acc)=>{
-            if(acc){return res.send("The username has already been used. Please change a username.").status(404);}
+            if(acc){console.log(acc);return res.status(201).send("The username has already been used. Please change a username.");}
+            else{
             Account.create({
                 // uid:new mongoose.Types.ObjectId(),
                 username: req.body['newusername'],
                 pwd: req.body['newpwd'],
                 identity:'user'
             }).then((acc) => {
-                if(!acc){return res.send("Sign up unsuccessfully").status(404);}
-                //console.log(acc);
+                //if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                console.log(acc);
                 let user = {
                     username: req.body['newusername'],
                     // uid: new mongoose.Types.ObjectId(),
@@ -1071,12 +1072,13 @@ db.once('open', function () {
                 User.create(user).then((user)=>{
                     console.log(user);
                     res.status(201).send("User created successfully");
-                }).catch((err) => {
-                    res.send(err);
-                });
-            })
+                })
+            }).catch((err) => {
+                    res.send("The username has already existed. Please change a username.");
+                });}
         });
     });
+
 
     //user/admin authentication
     app.post('/login/user', (req, res) => {
@@ -1284,7 +1286,7 @@ db.once('open', function () {
                 res.send(err);
             });
         })
-        
+
     // get the first 10 tags which are contained most in the tweets
     app.get('/search/trend', (req, res) => {
          res.set('Content-Type', 'text/plain');

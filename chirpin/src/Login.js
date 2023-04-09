@@ -50,6 +50,13 @@ class Login extends React.Component {
       newusername: username,
       newpwd: newpwd
     };
+    if (username === '') {
+      window.alert("Please enter a valid username.");
+    } else if (newpwd === '') {
+      window.alert("Please enter a password");
+    } else if (newpwd !== '' && (newpwd.length <= 4 || newpwd.length >= 20)) {
+      window.alert("The length of the password should be >4 and <20.");
+    } else {
     fetch(BACK_END + "createuser", {
       method: "POST",
       body: JSON.stringify(userInfo),
@@ -68,7 +75,7 @@ class Login extends React.Component {
         console.log(err);
       });
     event.preventDefault();
-
+    }
   }
 
   handleUserSubmit = (event) => {
@@ -78,9 +85,7 @@ class Login extends React.Component {
       username: username,
       pwd: pwd
     };
-    // this.setState({login:true, username:username, mode:'user'})
-    // login(username, 'user');
-    // this.props.onChangeLogin();
+    
     fetch(BACK_END + "login/user", {
       method: "POST",
       body: JSON.stringify(userInfo),
@@ -107,6 +112,7 @@ class Login extends React.Component {
         console.log(err);
       });
     event.preventDefault();
+  
   };
   render() {
     return (this.state.login === false ? (
@@ -137,7 +143,6 @@ class Login extends React.Component {
             <MDBInput wrapperClass='mb-4' label='Password' id='pwd' type='password' />
 
             <div className="d-flex justify-content-between mx-4 mb-4">
-              <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
               <a href="/login" onClick={() => alert("Please contact the administrator")}>Forgot password?</a>
             </div>
             <button type='submit' className="mb-4 w-100" style={{ backgroundColor: "#007bff", color: "white", fontSize: "17px", borderRadius: "4px", border: "white" }} onClick={this.handleUserSubmit}>Sign in</button>
@@ -151,10 +156,6 @@ class Login extends React.Component {
 
             <MDBInput wrapperClass='mb-4' label='Username' id='newusername' type='text' />
             <MDBInput wrapperClass='mb-4' label='Password' id='newpwd' type='password' />
-
-            <div className='d-flex justify-content-center mb-4'>
-              <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
-            </div>
 
             <button className="mb-4 w-100" style={{ backgroundColor: "#007bff", color: "white", fontSize: "17px", borderRadius: "4px", border: "white" }} onClick={this.handleUserSignup}>Sign up</button>
 
