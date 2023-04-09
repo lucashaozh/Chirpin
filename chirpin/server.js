@@ -450,13 +450,13 @@ db.once('open', function () {
                 if (user != null && user != '') {
                     user.tweets.forEach(tweet => {
                         let isReported = isLiked = isDisliked = false;
-                        if (self.tweets_liked.includes(tweet)) {
+                        if (self.tweets_liked.includes(tweet._id)) {
                             isLiked = true;
                         }
-                        if (self.tweets_disliked.includes(tweet)) {
+                        if (self.tweets_disliked.includes(tweet._id)) {
                             isDisliked = true;
                         }
-                        if (self.tweets_reported.includes(tweet)) {
+                        if (self.tweets_reported.includes(tweet._id)) {
                             isReported = true;
                         }
                         let tweetObj = {
@@ -494,13 +494,13 @@ db.once('open', function () {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
                 let isReported = isLiked = isDisliked = false;
-                if (user.tweets_liked.includes(tweet)) {
+                if (user.tweets_liked.includes(tweet._id)) {
                     isLiked = true;
                 }
-                if (user.tweets_disliked.includes(tweet)) {
+                if (user.tweets_disliked.includes(tweet._id)) {
                     isDisliked = true;
                 }
-                if (user.tweets_reported.includes(tweet)) {
+                if (user.tweets_reported.includes(tweet._id)) {
                     isReported = true;
                 }
                 let tweetObj = {
