@@ -32,10 +32,10 @@ db.once('open', function () {
         tags: [{ type: String, required: true }],
         comments: [{
             username: { type: String, minlength: 4, maxlength: 20 },
-            portrait: {type: String}, 
-            content: { type: String},
-            floor: { type: Number},
-            time: { type: Date}
+            portrait: { type: String },
+            content: { type: String },
+            floor: { type: Number },
+            time: { type: Date }
         }],
         parent: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' },
         likes: [{
@@ -55,10 +55,10 @@ db.once('open', function () {
         // uid: { type: String, required: true, unique: true },
         username: { type: String, required: true, unique: true, minlength: 4, maxlength: 20 },
         gender: { type: String },
-        interests: [{ type: String}],
+        interests: [{ type: String }],
         about: { type: String },
         follower_counter: { type: Number },
-        following_counter: { type: Number},
+        following_counter: { type: Number },
         tweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         followers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
         followings: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }],
@@ -72,23 +72,23 @@ db.once('open', function () {
     });
 
     const NotificationSchema = mongoose.Schema({
-        username: { type: String, required: true}, //who is receiving this notifications
-        actor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User'}, // who is sending this notification
+        username: { type: String, required: true }, //who is receiving this notifications
+        actor_id: { type: mongoose.Schema.Types.ObjectId, ref: 'User' }, // who is sending this notification
         action: { type: String, required: true }, // follow, like, comment, retweet
-        tid: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet'}, // which tweet is involved, null for follow action
+        tid: { type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }, // which tweet is involved, null for follow action
         time: { type: Date, required: true }
     });
 
     const TagSchema = mongoose.Schema({
-        tag: { type: String, required: true,unique:true}, 
-        tid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet'}] // the tweets that contain the tag
+        tag: { type: String, required: true, unique: true },
+        tid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }] // the tweets that contain the tag
     });
 
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
     const Notification = mongoose.model('Notification', NotificationSchema);
-    const Tag = mongoose.model('Tag',TagSchema);
+    const Tag = mongoose.model('Tag', TagSchema);
 
     // create admin for testing
     app.get('/test/createAdmin', (req, res) => {
@@ -191,27 +191,25 @@ db.once('open', function () {
         });
     });
 
-/* -------------------------------------------------------------- */
-/* ------------------------Profile (JI Yi)------------------------*/
-/* ---------------------------------------------------------------*/
+    /* -------------------------------------------------------------- */
+    /* ------------------------Profile (JI Yi)------------------------*/
+    /* ---------------------------------------------------------------*/
 
     // get basic user information
     app.get('/profile/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            let userObj = {};
-            if (user != null && user != '') {
-                userObj = {
-                    'uid': user['_id'],
-                    'username': user['username'],
-                    'gender': user['gender'],
-                    'interests': user['interests'],
-                    'follower_counter': user['follower_counter'],
-                    'following_counter': user['following_counter'],
-                    'about': user['about']
-                }
+            userObj = {
+                'uid': user['_id'],
+                'username': user['username'],
+                'gender': user['gender'],
+                'interests': user['interests'],
+                'follower_counter': user['follower_counter'],
+                'following_counter': user['following_counter'],
+                'about': user['about']
             }
+            // console.log(userObj);
             res.send(userObj);
         }).catch((err) => {
             console.log(err);
@@ -260,11 +258,11 @@ db.once('open', function () {
             let retUsers = []
             user.followings.forEach(innerUser => {
                 let userObj = {
-                "username": innerUser['username'],
-                "uid": innerUser['_id'],
-                "following": innerUser['following_counter'],
-                "follower": innerUser['follower_counter'],
-                "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
                 };
                 retUsers.push(userObj);
             });
@@ -284,11 +282,11 @@ db.once('open', function () {
             let retUsers = []
             user.followers.forEach(innerUser => {
                 let userObj = {
-                "username": innerUser['username'],
-                "uid": innerUser['_id'],
-                "following": innerUser['following_counter'],
-                "follower": innerUser['follower_counter'],
-                "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
                 };
                 retUsers.push(userObj);
             });
@@ -332,19 +330,20 @@ db.once('open', function () {
                 target.follower_counter += 1;
                 user.save();
                 target.save();
-            Notification.create({
-                // nid: notificationID,
-                username: target.username,
-                actor_id: user._id,
-                action: "follow",
-                time: new Date()
-            }).then((noteobj) => {
-                console.log(noteobj._id);
-                Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                    console.log(c);});  
+                Notification.create({
+                    // nid: notificationID,
+                    username: target.username,
+                    actor_id: user._id,
+                    action: "follow",
+                    time: new Date()
+                }).then((noteobj) => {
+                    console.log(noteobj._id);
+                    Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
+                        console.log(c);
+                    });
+                });
+
             });
-              
-        });
         }).then(() => {
             res.sendStatus(200);
         }).catch((err) => {
@@ -431,26 +430,25 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
+            let tweets = user.tweets;
             let retTweets = [];
-            if (user != null && user != '') {
-                let tweets = user.tweets;
-                tweets.forEach(tweet => {
-                    let tweetObj = {
-                        "tid": tweet['_id'],
-                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
-                        "user": { "uid": user['_id'], 'username': user['username'] },
-                        "content": tweet.tweet_content,
-                        "commentCount": tweet['comments'].length,
-                        "retweetCount": tweet['retweets'].length,
-                        "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
-                        "tags": tweet['tags']
-                    }
-                    retTweets.push(tweetObj);
-                });
-                res.send(retTweets);
-            }
+            tweets.forEach(tweet => {
+                let tweetObj = {
+                    "tid": tweet['_id'],
+                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                    "user": { "uid": user['_id'], 'username': user['username'] },
+                    "content": tweet.tweet_content,
+                    "commentCount": tweet['comments'].length,
+                    "retweetCount": tweet['retweets'].length,
+                    "time": tweet['post_time'],
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                    "tags": tweet['tags']
+                }
+                retTweets.push(tweetObj);
+            });
+            // console.log(retTweets);
+            res.send(retTweets);
         }).catch((err) => {
             console.log(err);
             res.send(err);
@@ -461,13 +459,13 @@ db.once('open', function () {
     app.get('/profile/:username/likes', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
-        User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' }}).exec().then((user) => {
+        User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' } }).exec().then((user) => {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
                 let tweetObj = {
                     "tid": tweet['_id'],
                     "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
+                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -505,7 +503,6 @@ db.once('open', function () {
     app.get('/users', (req, res) => {
         res.set('Content-Type', 'text/plain');
         User.find().then((users) => {
-            // console.log(users);
             res.send(users);
         }).catch((err) => {
             res.send(err);
@@ -516,24 +513,43 @@ db.once('open', function () {
     app.get('/followings/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         // consecutive populate: first find the user, then populate the following field, then populate the tweet field
-        User.findOne({ 'username': req.params['username'] }).populate('followings').exec().then((user) => {
-            let following = user.followings;
-            let tweets = [];
-            console.log(following);
-            for (let i = 0; i < following.length; i++) {
-                tweets.push(following[i].tweets);
-            }
-            console.log(tweets);
-            // populate the tweet field of the tweet
-            Tweet.find().where('_id').in(tweets).populate('poster').exec().then((tweets) => {
+        User.findOne({ 'username': req.params['username'] })
+            .populate({
+                path: 'followings', populate: {
+                    path: 'tweets',
+                    model: 'Tweet'
+                }
+            }).exec().then((user) => {
+                console.log("test");
+                let following = user.followings;
+                let tweets = [];
+                for (let i = 0; i < following.length; i++) {
+                    if (!following[i].tweets) {
+                        tweets.concat(following[i].tweets);
+                    }
+                }
                 console.log(tweets);
-                res.send(tweets);
+                let tweetsInfo = tweets.map((tweet) => {
+                    return {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user.tweets_liked.includes(tweet['_id']) },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user.tweets_disliked.includes(tweet['_id']) },
+                        "content": tweet['tweet_content'],
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags'],
+                    }
+                });
+                // console.log("----Followings Tweets------");
+                // console.log(tweetsInfo);
+                return res.status(200).send(tweetsInfo);
             }).catch((err) => {
-                res.send(err);
+                console.log("---Followings Tweets Error---");
+                console.log(err);
+                res.status(404).send(err);
             });
-        }).catch((err) => {
-            res.send(err);
-        });
     });
 
 
@@ -558,22 +574,23 @@ db.once('open', function () {
             // create a new tweet
             let time = new Date();
             let tweet = {
-                // tid: new mongoose.Types.ObjectId(),
                 poster: uid,
                 tweet_content: req.body.tweet_content,
                 tags: req.body.tags,
                 dislike_counter: 0,
                 report_counter: 0,
                 post_time: time,
-                likes:[],
+                likes: [],
                 comments: [],
                 retweets: []
             }
             Tweet.create(tweet).then((tweet) => {
-                console.log(tweet);
+                // add the tweet to the user's tweets
+                user.tweets.push(tweet._id);
+                user.save();
                 return res.sendStatus(201);
             }).catch((err) => {
-                return res.send(err);
+                return res.status().send(err);
             });
         });
     });
@@ -620,12 +637,13 @@ db.once('open', function () {
                     username: tweet.poster.username,
                     actor_id: user._id,
                     action: "like",
-                    tid:tweet._id,
+                    tid: tweet._id,
                     time: new Date()
                 }).then((noteobj) => {
-                    console.log(noteobj._id);
+                    // console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                        console.log(c);});  
+                        console.log(c);
+                    });
                 });
                 return res.status(201).send('Like successfully');
             });
@@ -697,7 +715,7 @@ db.once('open', function () {
             return res.status(500).send(err);
         });
     });
-    
+
 
     // cancel dislike a tweet
     app.put('/tweet/:tid/:username/cancel-dislike', (req, res) => {
@@ -811,14 +829,14 @@ db.once('open', function () {
         // find the user
         User.findOne({ 'username': username }).then((user) => {
             if (!user) { return res.send('User does not exist').status(404); }
-            else {console.log('User found')}
+            else { console.log('User found') }
             Tweet.findById(tid).populate('poster').exec().then((tweet) => {
                 if (!tweet) { return res.send('Tweet does not exist').status(404); }
                 console.log(tweet);
                 let time = new Date();
                 let floor_num;
-                if (tweet.comments == null) { tweet.comments = []; floor_num =1;}
-                else {floor_num = tweet.comments.length + 1;}
+                if (tweet.comments == null) { tweet.comments = []; floor_num = 1; }
+                else { floor_num = tweet.comments.length + 1; }
                 // get user info
                 let user_potrait = user.portrait;
                 let new_comment = {
@@ -829,19 +847,20 @@ db.once('open', function () {
                     floor: floor_num
                 };
                 console.log(new_comment)
-                tweet.comments.push(new_comment);                
+                tweet.comments.push(new_comment);
                 tweet.save();
                 Notification.create({
                     // nid: notificationID,
                     username: tweet.poster.username,
                     actor_id: user._id,
                     action: "comment",
-                    tid:tweet._id,
+                    tid: tweet._id,
                     time: new Date()
                 }).then((noteobj) => {
                     console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                        console.log(c);});  
+                        console.log(c);
+                    });
                 });
                 console.log("comment successfully");
                 return res.status(201).send(JSON.stringify(new_comment));
@@ -858,25 +877,25 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
         Tweet.findById(tid).populate('poster').exec().then((tweet) => {
-            if(!tweet){return res.send('Tweet does not exist').status(404);}
-            let tweet_info ={
+            if (!tweet) { return res.send('Tweet does not exist').status(404); }
+            let tweet_info = {
                 tid: tweet._id,
                 likeInfo: tweet.likes.length,
                 dislikeInfo: tweet.dislike_counter,
                 username: tweet.poster.username,
                 content: tweet.tweet_content,
-                commentCount:tweet.comments.length,
+                commentCount: tweet.comments.length,
                 retweetCount: tweet.retweets.length,
-                time: tweet.post_time,  
+                time: tweet.post_time,
                 portraitUrl: tweet.portrait,
                 tags: tweet.tags,
             }
             console.log('get tweet successfully');
             return res.status(201).send(JSON.stringify(tweet_info));
         }).catch((err) => {
-        console.log("-----Get Tweet Error--------");
-        console.log(err);
-        return res.status(500).send(err);
+            console.log("-----Get Tweet Error--------");
+            console.log(err);
+            return res.status(500).send(err);
         });
     });
 
@@ -885,14 +904,14 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
         Tweet.findById(tid).then((tweet) => {
-            if(!tweet){return res.send('Tweet does not exist').status(404);}
+            if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let comment_list = tweet.comments;
             console.log('get comment successfully');
             res.send(comment_list);
         }).catch((err) => {
-        console.log("-----Get Comment Error--------");
-        console.log(err);
-        return res.status(500).send(err);
+            console.log("-----Get Comment Error--------");
+            console.log(err);
+            return res.status(500).send(err);
         });
     });
 
@@ -903,12 +922,12 @@ db.once('open', function () {
         let username = req.body.username;
         let floor_reply = req.body.floor_reply;
         Tweet.findById(tid).populate('poster').exec().then((tweet) => {
-            if(!tweet){return res.send('Tweet does not exist').status(404);}
+            if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let floor_num = tweet.comments.length + 1;
             let time = new Date();
             User.findOne({ 'username': username }).then((user) => {
                 if (!user) { return res.send('User does not exist').status(404); }
-                let content = "Re Floor"+floor_reply+": "+req.body.content;
+                let content = "Re Floor" + floor_reply + ": " + req.body.content;
                 let new_reply = {
                     username: username,
                     portrait: user.portrait,
@@ -923,33 +942,35 @@ db.once('open', function () {
                     username: tweet.poster.username,
                     actor_id: user._id,
                     action: "comment",
-                    tid:tweet._id,
+                    tid: tweet._id,
                     time: new Date()
                 }).then((noteobj) => {
                     console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                        console.log(c);});  
+                        console.log(c);
+                    });
                 });
                 Notification.create({
                     // nid: notificationID,
-                    username: tweet.comments[floor_reply-1].username,
+                    username: tweet.comments[floor_reply - 1].username,
                     actor_id: user._id,
                     action: "reply",
-                    tid:tweet._id,
+                    tid: tweet._id,
                     time: new Date()
                 }).then((noteobj) => {
                     console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                        console.log(c);});  
+                        console.log(c);
+                    });
                 });
                 console.log(new_reply)
                 console.log("reply successfully");
                 return res.status(201).send(JSON.stringify(new_reply));
             });
         }).catch((err) => {
-        console.log("-----Reply Error--------");
-        console.log(err);
-        return res.status(500).send(err);
+            console.log("-----Reply Error--------");
+            console.log(err);
+            return res.status(500).send(err);
         });
     });
 
@@ -972,11 +993,11 @@ db.once('open', function () {
                     dislike_counter: 0,
                     report_counter: 0,
                     post_time: time,
-                    likes:[],
+                    likes: [],
                     comments: [],
                     retweets: []
                 }
-                
+
                 Tweet.create(new_tweet).then((new_tweet_) => {
                     console.log(new_tweet_);
                     Notification.create({
@@ -989,22 +1010,23 @@ db.once('open', function () {
                     }).then((noteobj) => {
                         console.log(noteobj._id);
                         Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
-                            console.log(c);});  
+                            console.log(c);
+                        });
                     });
                     res.sendStatus(201);
                 })
             })
         }).catch((err) => {
-                    res.send(err);
-            });
-    
+            res.send(err);
+        });
+
     });
     /* -------------------------------------------------------------- */
     /* ------------------------Notification LZQ-----------------------*/
     /* ---------------------------------------------------------------*/
 
     app.get('/notification/:username', (req, res) => {
-        Notification.find({ 'username': req.params['username'] }).sort({'time':-1}).then((notes) => {
+        Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).then((notes) => {
             res.set('Content-Type', 'text/plain');
             console.log(notes);
             res.status(201).send(notes);
@@ -1020,41 +1042,41 @@ db.once('open', function () {
     /* -------------------------------------------------------------- */
     /* ------------------------User/admin Operation JIANG Hongxu------------------------*/
     /* ---------------------------------------------------------------*/
-    
+
     //create a user by signing up or admin adding
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let _username = req.body['username'];
-        Account.findOne({ username: _username }).then((acc)=>{
-            if(acc){return res.send("The username has already been used. Please change a username.").status(404);}
+        Account.findOne({ username: _username }).then((acc) => {
+            if (acc) { return res.send("The username has already been used. Please change a username.").status(404); }
             Account.create({
                 // uid:new mongoose.Types.ObjectId(),
                 username: req.body['newusername'],
                 pwd: req.body['newpwd'],
-                identity:'user'
+                identity: 'user'
             }).then((acc) => {
-                if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                if (!acc) { return res.send("Sign up unsuccessfully").status(404); }
                 //console.log(acc);
                 let user = {
                     username: req.body['newusername'],
                     // uid: new mongoose.Types.ObjectId(),
                     gender: '',
-                    interest:[],
-                    about:'',
-                    follower_counter:0,
-                    following_counter:0,
-                    tweets:[],
-                    follows:[],
-                    followings:[],
-                    tweets_reported:[],
-                    users_reported:[],
-                    uesrs_blocked:[],
-                    report_counter:0,
-                    tweets_liked:[],
-                    tweets_disliked:[],
-                    portrait:''
+                    interest: [],
+                    about: '',
+                    follow_counter: 0,
+                    following_counter: 0,
+                    tweets: [],
+                    follows: [],
+                    followings: [],
+                    tweets_reported: [],
+                    users_reported: [],
+                    users_blocked: [],
+                    report_counter: 0,
+                    tweets_liked: [],
+                    tweets_disliked: [],
+                    portrait: ''
                 }
-                User.create(user).then((user)=>{
+                User.create(user).then((user) => {
                     console.log(user);
                     res.status(201).send("User created successfully");
                 }).catch((err) => {
@@ -1073,30 +1095,30 @@ db.once('open', function () {
             if (!val) {
                 res.status(404).send("Username does not exist.");
             }
-            else{
-                if(val.identity=='user'){
+            else {
+                if (val.identity == 'user') {
                     if (val != null && _pwd == val.pwd) {
                         res.status(201).send('Login As User Successfully!\n');
-                    } 
+                    }
                     else {
                         console.log("incorrect");
                         res.status(404).send("Incorrect Username or Password.\n");
                     }
                 }
-                if(val.identity=='admin'){
+                if (val.identity == 'admin') {
                     if (val != null && _pwd == val.pwd) {
                         res.status(200).send('Login As Amin Successfully!\n');
-                    } 
+                    }
                     else {
                         res.status(404).send("Incorrect Username or Password.\n");
                     }
-                } 
+                }
             }
-            }).catch((err)=>{
-                res.send(err);
-            });
+        }).catch((err) => {
+            res.send(err);
         });
-    
+    });
+
 
     //change pwd by user/admin
     app.put('/changepwd', (req, res) => {
@@ -1104,7 +1126,7 @@ db.once('open', function () {
         let username = req.body.username;
         let newpwd = req.body.newpwd;
 
-        Account.findOne({ username: username }).then ((acc) => {
+        Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
                 res.sendStatus(404);
             } else if (newpwd != '') {
@@ -1112,10 +1134,10 @@ db.once('open', function () {
                 acc.save();
                 res.send("Update Successfully!").status(200);
             }
-            else{
+            else {
                 return res.send('User does not exist').status(404);
             }
-        }).catch((err)=>{
+        }).catch((err) => {
             res.send(err);
         });
     });
@@ -1124,31 +1146,31 @@ db.once('open', function () {
     app.delete('/user/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
-        Account.deleteOne({username:username}).then((acc)=>{
-            if(!acc){return res.send('User does not exist').status(404);}
+        Account.deleteOne({ username: username }).then((acc) => {
+            if (!acc) { return res.send('User does not exist').status(404); }
             else {
-                console.log("Successfully delete user " + username+"in Account db");
+                console.log("Successfully delete user " + username + "in Account db");
             }
             User.deleteOne({ username: username }).then((user) => {
-                if(!user){return res.send('User does not exist').status(404);}
+                if (!user) { return res.send('User does not exist').status(404); }
                 else {
-                    console.log("Successfully delete user " + username+" in User db");
+                    console.log("Successfully delete user " + username + " in User db");
                     //res.send("Successfully delete user " + username).status(204);
                 }
-                Tweet.delete({poster:user._id}).then((tweet)=>{
-                    if(!tweet){return res.send("Successfully delete user " + username).status(204);}
+                Tweet.delete({ poster: user._id }).then((tweet) => {
+                    if (!tweet) { return res.send("Successfully delete user " + username).status(204); }
                     else {
-                        console.log("Successfully delete user " + username+"'s tweets");
+                        console.log("Successfully delete user " + username + "'s tweets");
                         res.send("Successfully delete user " + username).status(204);
-                }
+                    }
                 })
             }).
-            catch((err)=>{
-            res.send(err);
-            });
+                catch((err) => {
+                    res.send(err);
+                });
         });
     });
-    
+
 
     //update user information by admin
     // app.put('/update', (req, res) => {
@@ -1211,14 +1233,14 @@ db.once('open', function () {
     app.delete('/acc/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
-        Account.deleteOne({username:username}).then((acc)=>{
+        Account.deleteOne({ username: username }).then((acc) => {
             console.log("Successfully delete user " + username);
             res.status(204).send("Successfully delete user " + username);
-        }).catch((err)=>{
+        }).catch((err) => {
             res.send(err);
         });
     });
-    
+
 
     /* -------------------------------------------------------------- */
     /* ------------------------Search JIANG Hongxu------------------------*/
@@ -1226,79 +1248,79 @@ db.once('open', function () {
     //search for users (whose username contains the keywords)
     app.get('/searchuser/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        User.find({ 'username': {$regex:req.params['username']} }).then((user) => {
-            if(!user){
+        User.find({ 'username': { $regex: req.params['username'] } }).then((user) => {
+            if (!user) {
                 res.sendStatus(404);
             }
-            else{
+            else {
                 console.log(user);
                 res.send(user);
             }
-            }).catch((err) => {
-                res.send(err);
-            });
-        })
+        }).catch((err) => {
+            res.send(err);
+        });
+    })
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': {$all:['#'+req.params['tag']]} }).populate('poster').exec().then((tweet) => {
-            if(!tweet){
+        Tweet.find({ 'tags': { $all: ['#' + req.params['tag']] } }).populate('poster').exec().then((tweet) => {
+            if (!tweet) {
                 console.log("no such tweet");
                 res.sendStatus(404);
             }
-            else{
+            else {
                 console.log(tweet);
                 res.send(tweet);
             }
-            }).catch((err) => {
-                res.send(err);
-            });
-        })
+        }).catch((err) => {
+            res.send(err);
+        });
+    })
 
     // get the first 10 tags which are contained most in the tweets
     app.get('/search/trend', (req, res) => {
-         res.set('Content-Type', 'text/plain');
-            Tag.aggregate([
-                {$project:{"tag":"$tag",cnt:{$size:'$tid'}}},
-                {$sort:{cnt:-1}},
-                {$limit:10}]).then((tweets)=>{
-                    if(!tweets){
-                        console.log("no tags");
-                        res,send(404);
-                    }
-                    else{
-                        console.log(tweets);
-                        res.send(tweets)
-                    }
-                }).catch((err)=>{
-                    res.send(err);
-                })
-        }) 
+        res.set('Content-Type', 'text/plain');
+        Tag.aggregate([
+            { $project: { "tag": "$tag", cnt: { $size: '$tid' } } },
+            { $sort: { cnt: -1 } },
+            { $limit: 10 }]).then((tweets) => {
+                if (!tweets) {
+                    console.log("no tags");
+                    res, send(404);
+                }
+                else {
+                    console.log(tweets);
+                    res.send(tweets)
+                }
+            }).catch((err) => {
+                res.send(err);
+            })
+    })
     //create a tag for testing
     app.get('/test/createtag', (req, res) => {
         var t1 = new mongoose.Types.ObjectId();
         var t2 = new mongoose.Types.ObjectId();
         Tag.create({
             tag: "tag3",
-            tid:[t1]
-            }).then(() => {
-                res.sendStatus(200);
-            }).catch((err) => {
-                console.error(err);
-            });
-        });  
-        //get all the tags in tag db for testing
-        app.get('/tag', (req, res) => {
-            res.set('Content-Type', 'text/plain');
-            Tag.find().then((users) => {
-                console.log(users);
-                res.send(users);
-            }).catch((err) => {
-                res.send(err);
-            });
+            tid: [t1]
+        }).then(() => {
+            res.sendStatus(200);
+        }).catch((err) => {
+            console.error(err);
         });
-        
-    
-        
+    });
+    //get all the tags in tag db for testing
+    app.get('/tag', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Tag.find().then((users) => {
+            console.log(users);
+            res.send(users);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+
+
 });
 const server = app.listen(8000);
