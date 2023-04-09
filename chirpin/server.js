@@ -1171,7 +1171,7 @@ db.once('open', function () {
                     gender: '',
                     interest: [],
                     about: '',
-                    follow_counter: 0,
+                    follower_counter: 0,
                     following_counter: 0,
                     tweets: [],
                     follows: [],
