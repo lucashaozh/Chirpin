@@ -43,7 +43,8 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
   const [isReported, setIsReported] = useState(false);
 
 
-  const tweetUserInfo = tweetInfo['user'];
+  // const tweetUserInfo = tweetInfo['user'];
+  console.log(tweetInfo)
   const commentCount = tweetInfo['commentCount'];
   const retweetCount = tweetInfo['retweetCount'];
   const tweetContent = tweetInfo['content'];
@@ -111,11 +112,11 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
           <div>
             <div className="d-flex justify-content-center text-center">
               {/* link to the user profile */}
-              <Link to={"/" + tweetUserInfo.username}>
+              <Link to={"/" + tweetInfo.username}>
                 <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid rounded-circle w-75" />
               </Link>
             </div>
-            <h3 className="my-2 text-bold text-center">{tweetUserInfo.username}</h3>
+            <h3 className="my-2 text-bold text-center">{tweetInfo.username}</h3>
             <hr />
             <p className="opacity-50 text-nowrap text-center">{timeInterval}</p>
           </div>
