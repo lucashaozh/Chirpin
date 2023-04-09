@@ -36,7 +36,7 @@ function DisplayRichText({ content }) {
 
 
 
-function TweetCard({ tweetInfo, isDetailPage = true }) {
+function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [likeInfo, setLikeInfo] = useState(tweetInfo['likeInfo']);
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
@@ -209,7 +209,7 @@ function TweetCard({ tweetInfo, isDetailPage = true }) {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+              <button type="button" onClick={addComment} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
             </div>
           </div>
         </div>
