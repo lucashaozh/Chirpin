@@ -115,7 +115,8 @@ class Profile extends React.Component {
                         this.state.follow = true;
                         document.getElementById("follow").innerText = "Unfollow";
                         document.getElementById("follow").className = "btn btn-light";
-                        document.getElementById("followers").innerText = "Followers: " + this.state.target['follower_counter'].toString();
+                        document.getElementById("followers").innerText = "Followers: " + (this.state.target['follower_counter'] + 1).toString();
+                        this.state.target['follower_counter'] += 1;
                         alert("You have followed this user.");
                     } else {
                         alert("There seems to be some error. Please try again.");
@@ -136,6 +137,7 @@ class Profile extends React.Component {
                         document.getElementById("follow").innerText = "Follow";
                         document.getElementById("follow").className = "btn btn-primary";
                         document.getElementById("followers").innerText = "Followers: " + (this.state.target['follower_counter'] - 1).toString();
+                        this.state.target['follower_counter'] -= 1;
                         alert("You have unfollowed this user.");
                     } else {
                         alert("There seems to be some error. Please try again.");

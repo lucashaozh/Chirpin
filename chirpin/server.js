@@ -200,16 +200,18 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            userObj = {
-                'uid': user['_id'],
-                'username': user['username'],
-                'gender': user['gender'],
-                'interests': user['interests'],
-                'follower_counter': user['follower_counter'],
-                'following_counter': user['following_counter'],
-                'about': user['about']
+            let userObj = {};
+            if (user != null && user != '') {
+                userObj = {
+                    'uid': user['_id'],
+                    'username': user['username'],
+                    'gender': user['gender'],
+                    'interests': user['interests'],
+                    'follower_counter': user['follower_counter'],
+                    'following_counter': user['following_counter'],
+                    'about': user['about']
+                }
             }
-            // console.log(userObj);
             res.send(userObj);
         }).catch((err) => {
             console.log(err);
@@ -429,25 +431,26 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            let tweets = user.tweets;
             let retTweets = [];
-            tweets.forEach(tweet => {
-                let tweetObj = {
-                    "tid": tweet['_id'],
-                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
-                    "user": { "uid": user['_id'], 'username': user['username'] },
-                    "content": tweet.tweet_content,
-                    "commentCount": tweet['comments'].length,
-                    "retweetCount": tweet['retweets'].length,
-                    "time": tweet['post_time'],
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
-                    "tags": tweet['tags']
-                }
-                retTweets.push(tweetObj);
-            });
-            // console.log(retTweets);
-            res.send(retTweets);
+            if (user != null && user != '') {
+                let tweets = user.tweets;
+                tweets.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
+                        "user": { "uid": user['_id'], 'username': user['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    retTweets.push(tweetObj);
+                });
+                res.send(retTweets);
+            }
         }).catch((err) => {
             console.log(err);
             res.send(err);
@@ -464,7 +467,7 @@ db.once('open', function () {
                 let tweetObj = {
                     "tid": tweet['_id'],
                     "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -1038,7 +1041,7 @@ db.once('open', function () {
                     gender: '',
                     interest:[],
                     about:'',
-                    follow_counter:0,
+                    follower_counter:0,
                     following_counter:0,
                     tweets:[],
                     follows:[],
