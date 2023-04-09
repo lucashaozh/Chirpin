@@ -250,50 +250,64 @@ db.once('open', function () {
     });
 
     // get followings
-    app.get('/profile/:username/followings', (req, res) => {
+    app.get('/profile/:self/:target/followings', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        let username = req.params['username'];
-        User.findOne({ 'username': username }).populate('followings').exec().then((user) => {
-            console.log(user);
-            let retUsers = []
-            user.followings.forEach(innerUser => {
-                let userObj = {
+        let self = req.params['self'];
+        let target = req.params['target'];
+        User.findOne({ 'username': self }).then((self) => {
+            User.findOne({ 'username': target }).populate('followings').exec().then((user) => {
+                let retUsers = []
+                user.followings.forEach(innerUser => {
+                    let isFollowing = false;
+                    if (innerUser.followers.includes(self._id)) {
+                        isFollowing = true;
+                    }
+                    let userObj = {
                     "username": innerUser['username'],
                     "uid": innerUser['_id'],
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
+                    "isFollowing": isFollowing,
                     "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                };
-                retUsers.push(userObj);
+                    };
+                    retUsers.push(userObj);
+                });
+                res.send(retUsers);
+            }).catch((err) => {
+                console.log(err);
+                res.send(err);
             });
-            res.send(retUsers);
-        }).catch((err) => {
-            console.log(err);
-            res.send(err);
         });
     });
 
     // get followers
-    app.get('/profile/:username/followers', (req, res) => {
+    app.get('/profile/:self/:target/followers', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        let username = req.params['username'];
-        User.findOne({ 'username': username }).populate('followers').exec().then((user) => {
-            console.log(user);
-            let retUsers = []
-            user.followers.forEach(innerUser => {
-                let userObj = {
+        let self = req.params['self'];
+        let target = req.params['target'];
+        User.findOne({ 'username': self }).then((self) => {
+            User.findOne({ 'username': target }).populate('followers').exec().then((user) => {
+                let retUsers = []
+                user.followers.forEach(innerUser => {
+                    let isFollowing = false;
+                    if (innerUser.followers.includes(self._id)) {
+                        isFollowing = true;
+                    }
+                    let userObj = {
                     "username": innerUser['username'],
                     "uid": innerUser['_id'],
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
+                    "isFollowing": isFollowing,
                     "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
-                };
-                retUsers.push(userObj);
+                    };
+                    retUsers.push(userObj);
+                });
+                res.send(retUsers);
+            }).catch((err) => {
+                console.log(err);
+                res.send(err);
             });
-            res.send(retUsers);
-        }).catch((err) => {
-            console.log(err);
-            res.send(err);
         });
     });
 
