@@ -1,17 +1,17 @@
 import * as React from 'react';
 import { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route, Link, Navigate, Outlet, NavLink } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, Outlet, NavLink } from 'react-router-dom';
 import { getLoginInfo, login } from './Login';
 import { logout } from './Login';
 import Login from './Login';
 import Main from './Main';
 import TweetDetail from './TweetDetail';
-import { Notification, SingleNotification } from './Notification';
+import { Notification } from './Notification';
 import Search from './Search'
 import { Admin } from './Admin';
 import { Profile } from './Profile';
 
-import 'bootstrap';
+import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min";
 import "./css/App.css"
@@ -24,7 +24,9 @@ import { Followings } from './Followings';
 import { Followers } from './Followers';
 
 
+
 export const BACK_END = 'http://localhost:8000/'
+
 
 function PrivateRoute() {
   const auth = getLoginInfo();
@@ -44,7 +46,8 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
 function App() {
   const [isLogin, setLogin] = useState(getLoginInfo() ? getLoginInfo()['username'] : false);
   const [mode, setMode] = useState(getLoginInfo() ? getLoginInfo()['mode'] : false);
-  
+  const [userPortraitSrc, setUserPortraitSrc] = useState(null);
+
   const switchLoginState = () => {
     let logInfo = getLoginInfo();
     if (logInfo) {
@@ -64,6 +67,36 @@ function App() {
       newpwd: newpwd
     };
   }
+
+  const fetchUserPortrait = () => {
+    fetch(BACK_END + "profile/" + isLogin, {
+      method: "GET",
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(res => {
+        return res.json();
+    }).then(data => {
+      let portrait = data['portrait'];
+      if (!portrait) {
+        if (data['gender'] == 'Female') {
+          portrait = "./img/femaleAvatar.png";
+        } else {
+          portrait = "./img/maleAvatar.png";
+        }
+      }
+      setUserPortraitSrc(portrait);
+    }).catch(err => {
+      console.log(err);
+    });
+  }
+
+  useEffect(() => {
+    if (isLogin) {
+      fetchUserPortrait();
+    }
+  }, [isLogin]);
+
 
   return (
     <>
@@ -106,8 +139,8 @@ function App() {
                 <hr />
                 <a href="#" className="d-flex align-items-center text-white text-decoration-none dropdown-toggle"
                   data-bs-toggle="dropdown" aria-expanded="false">
-                  <img src="https://github.com/mdo.png" alt="" width="32" height="32" className="rounded-circle me-2" />
-                  <strong>settings</strong>
+                  { userPortraitSrc && <img src={userPortraitSrc} alt="" width="32" height="32" className="rounded-circle" /> }
+                  <strong className='ms-2'>{getLoginInfo()['username']}</strong>
                 </a>
                 <ul className="dropdown-menu dropdown-menu-dark text-small shadow">
                   <li><a className="dropdown-item" onClick={() => { logout(); switchLoginState(); }}>Sign out</a></li>

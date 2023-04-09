@@ -263,12 +263,12 @@ db.once('open', function () {
                         isFollowing = true;
                     }
                     let userObj = {
-                    "username": innerUser['username'],
-                    "uid": innerUser['_id'],
-                    "following": innerUser['following_counter'],
-                    "follower": innerUser['follower_counter'],
-                    "isFollowing": isFollowing,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "username": innerUser['username'],
+                        "uid": innerUser['_id'],
+                        "following": innerUser['following_counter'],
+                        "follower": innerUser['follower_counter'],
+                        "isFollowing": isFollowing,
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
                     };
                     retUsers.push(userObj);
                 });
@@ -294,12 +294,12 @@ db.once('open', function () {
                         isFollowing = true;
                     }
                     let userObj = {
-                    "username": innerUser['username'],
-                    "uid": innerUser['_id'],
-                    "following": innerUser['following_counter'],
-                    "follower": innerUser['follower_counter'],
-                    "isFollowing": isFollowing,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "username": innerUser['username'],
+                        "uid": innerUser['_id'],
+                        "following": innerUser['following_counter'],
+                        "follower": innerUser['follower_counter'],
+                        "isFollowing": isFollowing,
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
                     };
                     retUsers.push(userObj);
                 });
@@ -450,7 +450,7 @@ db.once('open', function () {
                 let tweetObj = {
                     "tid": tweet['_id'],
                     "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
                     "user": { "uid": user['_id'], 'username': user['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -523,6 +523,66 @@ db.once('open', function () {
         });
     });
 
+    // get all users except for current user
+    app.get('/users/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        User.find({ 'username': { $ne: username } }).then((users) => {
+            User.findOne({ 'username': username }).then((currUser) => {
+                let retUsers = users.map(user => {
+                    return {
+                        "username": user['username'],
+                        "uid": user['_id'],
+                        "following": user['followings'].length,
+                        "follower": user['followers'].length,
+                        "isFollowing": currUser['followings'].includes(user['_id']),
+                        "portraitUrl": user['portrait']
+                    }
+                });
+                // console.log("Get recommended users");
+                res.status(200).send(retUsers);
+            });
+        }).catch((err) => {
+            res.status(404).send(err);
+        });
+    });
+
+    // get recommended tweets for the user
+    app.get('/tweets/:username', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.params['username'];
+        // find all the tweets except for the user's tweets
+        Tweet.find().populate('poster').then((tweets) => {
+            tweets.filter((tweet) => {
+                return tweet.poster.username !== username;
+            });
+            User.findOne({"username": username}).then((user) => {
+                let retTweets = tweets.map(tweet => {
+                    return {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user['tweets_liked'].includes(tweet['_id']) },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user['tweets_disliked'].includes(tweet['_id']) },
+                        "isReported": user['tweets_reported'].includes(tweet['_id']),
+                        "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": tweet['poster']['portrait'],
+                        "tags": tweet['tags']
+                    }
+                });
+                console.log("---Get recommended tweets---");
+                // console.log(retTweets);
+                res.status(200).send(retTweets);
+            });
+        }).catch((err) => {
+            console.log("---Recommended tweets error---");
+            console.log(err);
+            return res.status(404).send(err);
+        });
+    });
+
     // get all the followings' tweets of the user
     app.get('/followings/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -567,17 +627,14 @@ db.once('open', function () {
     });
 
 
-    // tweet body example
     /*
-    {
-        "username": "user1",
-        "tweet_content": "hello world",
-        "tag": ["tag1", "tag2", "tag3"],
-    }
+        create a new tweet from body
+        {
+            "username": "user1",
+            "tweet_content": "hello world",
+            "tag": ["tag1", "tag2", "tag3"],
+        }
     */
-
-
-    // create a new tweet from body
     app.post('/new-tweet', (req, res) => {
         res.set('Content-Type', 'text/plain');
         // find the user
@@ -609,14 +666,6 @@ db.once('open', function () {
         });
     });
 
-    /* 
-    POST /tweet/:tid/:username/like (increase the like count +1, add the tid to the user’s liked-list)
-    POST /tweet/:tid/:username/cancel-like (like count -1, remove the tid from the user’s liked-list)
-    POST /tweet/:tid/:username/dislike (increase the dislike count +1, add the tid to the user’s disliked-list)
-    POST /tweet/:tid/:username/cancel-dislike (dislikelike count -1, remove the tid from the user’s disliked-list)
-    POST /tweet/:tid/:username/report (increase the tweet’s report count +1, add the tid to the user’s report-list)
-    */
-
     // like a tweet
     app.put('/tweet/:tid/:username/like', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -643,9 +692,12 @@ db.once('open', function () {
                     user.tweets_disliked.remove(tweet._id);
                     tweet.dislike_counter--;
                 }
+                let ret = {
+                    "likeInfo": { "likeCount": tweet.likes.length, "bLikeByUser": user.tweets_liked.includes(tweet._id) },
+                    "dislikeInfo": { "dislikeCount": tweet.dislike_counter, "bDislikeByUser": user.tweets_disliked.includes(tweet._id) }
+                }
                 user.save();
                 tweet.save();
-                console.log("Like successfully");
                 Notification.create({
                     // nid: notificationID,
                     username: tweet.poster.username,
@@ -659,7 +711,8 @@ db.once('open', function () {
                         console.log(c);
                     });
                 });
-                return res.status(201).send('Like successfully');
+                console.log("Like successfully");
+                return res.status(201).send(ret);
             });
         }).catch((err) => {
             console.log("-----Like Error--------");
@@ -682,10 +735,14 @@ db.once('open', function () {
                 }
                 user.tweets_liked.remove(tweet._id);
                 tweet.likes = tweet.likes.filter(item => item.username !== username);
+                let ret = {
+                    "likeInfo": { "likeCount": tweet.likes.length, "bLikeByUser": user.tweets_liked.includes(tweet._id) },
+                    "dislikeInfo": { "dislikeCount": tweet.dislike_counter, "bDislikeByUser": user.tweets_disliked.includes(tweet._id) }
+                }
                 user.save();
                 tweet.save();
                 console.log("Cancel like successfully");
-                return res.status(201).send('Cancel like successfully');
+                return res.status(201).send(ret);
             });
         }).catch((err) => {
             console.log("-----Cancel Like Error--------");
@@ -718,10 +775,14 @@ db.once('open', function () {
                 }
                 user.tweets_disliked.push(tweet._id);
                 tweet.dislike_counter++;
+                let ret = {
+                    "likeInfo": { "likeCount": tweet.likes.length, "bLikeByUser": user.tweets_liked.includes(tweet._id) },
+                    "dislikeInfo": { "dislikeCount": tweet.dislike_counter, "bDislikeByUser": user.tweets_disliked.includes(tweet._id) }
+                }
                 user.save();
                 tweet.save();
                 console.log("Dislike successfully");
-                return res.status(201).send('Dislike successfully');
+                return res.status(201).send(ret);
             });
         }).catch((err) => {
             console.log("-----Dislike Error--------");
@@ -747,8 +808,12 @@ db.once('open', function () {
                 tweet.dislike_counter--;
                 user.save();
                 tweet.save();
+                let ret = {
+                    "likeInfo": { "likeCount": tweet.likes.length, "bLikeByUser": user.tweets_liked.includes(tweet._id) },
+                    "dislikeInfo": { "dislikeCount": tweet.dislike_counter, "bDislikeByUser": user.tweets_disliked.includes(tweet._id) }
+                }
                 console.log("Cancel dislike successfully");
-                return res.status(201).send('Cancel dislike successfully');
+                return res.status(201).send(ret);
             });
         }).catch((err) => {
             console.log("-----Cancel dislike Error--------");

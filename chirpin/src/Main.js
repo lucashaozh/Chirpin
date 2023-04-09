@@ -8,6 +8,7 @@ import { randomSelect } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { getLoginInfo } from './Login';
+import { BACK_END } from './App';
 
 
 function NewPost() {
@@ -88,7 +89,7 @@ function NewPost() {
           console.log("New tag inserted");
         } else if (res.status === 400 && res.body === "Tag already exists") {
           alert("Tag already exists");
-        }else {
+        } else {
           console.log("Failed to insert new tag");
         }
         setTags([...tags, newTags]);
@@ -98,6 +99,8 @@ function NewPost() {
     } else {
       alert("Tag already exists");
     }
+    // clear the input field
+    document.getElementById("new-tag").value = '';
   }
 
 
@@ -159,7 +162,7 @@ function NewPost() {
         </div>
         <div className='d-flex justify-content-between'>
           <div>
-            {tags.map((tag, index) => {
+            {tags != undefined && tags.map((tag, index) => {
               return (
                 <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
               );
@@ -205,25 +208,54 @@ function NewPost() {
 
 function Main() {
   const fetchFollowingsTweet = () => {
-    return tweetInfoExample;
+    fetch(BACK_END + "followings/" + getLoginInfo()['username'], { "method": "GET" },
+    ).then((res) => {
+      if (res.status === 200) {
+        return res.json();
+      }
+    }).then((data) => {
+      console.log(data);
+      setFollowingsTweets(data);
+    }).catch((err) => {
+      console.log(err);
+    });
   }
 
   const fetchRecommendUsers = () => {
-    return randomSelect(userInfoExample, 6);
+    fetch(BACK_END + "users/" + getLoginInfo()['username'], { "method": "GET" })
+      .then((res) => res.json()).then((data) => {
+        console.log(data);
+        setRecommendUsers(data);
+      }).catch((err) => {
+        console.log(err);
+      });
   }
 
   const fetchRecommendTweets = () => {
-    return randomSelect(tweetInfoExample, 15);
+    fetch(BACK_END + "tweets/" + getLoginInfo()['username'], { "method": "GET" })
+      .then((res) => res.json()).then((data) => {
+        console.log(data);
+        setRecommendTweets(data);
+      }).catch((err) => {
+        console.log(err);
+      });
   }
 
+
   const [viewMode, setViewMode] = useState("following");
-  const [recommendUsers, setRecommendUsers] = useState(randomSelect(userInfoExample, 6));
-  const [recommendTweets, setRecommendTweets] = useState(randomSelect(tweetInfoExample, 13));
-  const [followingsTweets, setFollowingsTweets] = useState(fetchFollowingsTweet());
+  const [recommendUsers, setRecommendUsers] = useState([]);
+  const [recommendTweets, setRecommendTweets] = useState([]);
+  const [followingsTweets, setFollowingsTweets] = useState([]);
+  const [dataLength, setDataLength] = useState(0);
 
-  const [dataLength, setDataLength] = useState(Math.min(5, tweetInfoExample.length));
-
-
+  useEffect(() => {
+    if (viewMode === "following") {
+      fetchFollowingsTweet();
+      setDataLength(followingsTweets ? followingsTweets.length : 0);
+    } else if (viewMode === "recommend") {
+      refreshRecommend();
+    }
+  }, [viewMode]);
 
   // const fetchMore = () => {
   //     console.log("Fetch more data");
@@ -249,22 +281,18 @@ function Main() {
 
   const changeFollowingMode = () => {
     setViewMode("following");
-    setFollowingsTweets(fetchFollowingsTweet());
-    setDataLength(followingsTweets ? followingsTweets.length : 0);
   }
 
   const changeRecommendMode = () => {
     setViewMode("recommend");
-    setRecommendUsers(fetchRecommendUsers());
-    setRecommendTweets(randomSelect(tweetInfoExample, 15));
-    setRecommendUsers(randomSelect(userInfoExample, 6));
-    const usersLength = recommendUsers ? Math.ceil(recommendUsers.length / 3) : 0;
-    const tweetsLength = recommendTweets ? recommendTweets.length : 0;
-    setDataLength(usersLength + tweetsLength);
   }
 
   const refreshRecommend = () => {
-    changeRecommendMode();
+    fetchRecommendUsers();
+    fetchRecommendTweets();
+    const usersLength = recommendUsers ? Math.ceil(recommendUsers.length / 3) : 0;
+    const tweetsLength = recommendTweets ? recommendTweets.length : 0;
+    setDataLength(usersLength + tweetsLength);
   }
 
 
