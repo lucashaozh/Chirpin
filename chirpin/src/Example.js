@@ -4,6 +4,7 @@ export const userInfoExample = [
         "uid": 0,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
@@ -11,6 +12,7 @@ export const userInfoExample = [
         "uid": 1,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
@@ -18,6 +20,7 @@ export const userInfoExample = [
         "uid": 2,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
@@ -25,6 +28,7 @@ export const userInfoExample = [
         "uid": 3,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
@@ -32,6 +36,7 @@ export const userInfoExample = [
         "uid": 4,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -40,6 +45,7 @@ export const userInfoExample = [
         "uid": 5,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
     {
@@ -47,6 +53,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -55,6 +62,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -63,6 +71,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -71,6 +80,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -79,6 +89,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -87,6 +98,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -95,6 +107,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -103,6 +116,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": false,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -111,6 +125,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -119,6 +134,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -127,6 +143,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -135,6 +152,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -143,6 +161,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -151,6 +170,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
+        "isFollowing": true,
 
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
@@ -159,7 +179,7 @@ export const userInfoExample = [
         "uid": 6,
         "following": 0,
         "follower": 0,
-
+        "isFollowing": true,
         "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
     },
 ]

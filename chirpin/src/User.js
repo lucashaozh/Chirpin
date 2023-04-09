@@ -9,7 +9,7 @@ import "./css/UserCard.css"
  */
 function UserCard({ userInfo }) {
   // variable that might be changed in the card
-  const [isFollowing, setIsFollowing] = useState(false);
+  const [isFollowing, setIsFollowing] = useState(userInfo["isFollowing"]);
   const [followingCount, setFollowingCount] = useState(userInfo["following"]);
   const [followerCount, setFollowerCount] = useState(userInfo["follower"]);
 
