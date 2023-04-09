@@ -431,9 +431,9 @@ class MyTweetsList extends React.Component {
 
     async fetchInfo() {
         // fetch self information
-        let username = window.location.pathname.split('/')[1];
-        console.log(username);
-        let tweetrec = await fetch(BACK_END + "profile/" + username + "/tweets", {
+        let self = getLoginInfo()['username'];
+        let target = window.location.pathname.split('/')[1];
+        let tweetrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/tweets", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
