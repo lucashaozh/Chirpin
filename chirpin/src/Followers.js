@@ -3,6 +3,7 @@ import Container from 'react-bootstrap/Container';
 import UserListView from './User';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {BACK_END} from './App';
+import { getLoginInfo } from './Login';
 
 class Followers extends React.Component {
 
@@ -15,8 +16,9 @@ class Followers extends React.Component {
 
     async fetchInfo() {
         // fetch followers infomation
-        let username = window.location.pathname.split('/')[1];
-        let followersrec = await fetch(BACK_END + "profile/" + username + "/followers", {
+        let self = getLoginInfo()['username'];
+        let target = window.location.pathname.split('/')[1];
+        let followersrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/followers", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
