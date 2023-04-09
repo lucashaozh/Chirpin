@@ -816,7 +816,7 @@ db.once('open', function () {
                 tid: tweet._id,
                 likeInfo: tweet.likes.length,
                 dislikeInfo: tweet.dislike_counter,
-                user: {uid: tweet.poster, username: tweet.poster.username},
+                username: tweet.poster.username,
                 content: tweet.tweet_content,
                 commentCount:tweet.comments.length,
                 retweetCount: tweet.retweets.length,
@@ -854,14 +854,14 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let tid = req.body.tid;
         let username = req.body.username;
-        let floor_reply = req.body.floor;
+        let floor_reply = req.body.floor_reply;
         Tweet.findById(tid).populate('poster').exec().then((tweet) => {
             if(!tweet){return res.send('Tweet does not exist').status(404);}
             let floor_num = tweet.comments.length + 1;
             let time = new Date();
             User.findOne({ 'username': username }).then((user) => {
                 if (!user) { return res.send('User does not exist').status(404); }
-                let content = "Re "+floor_reply+": "+req.body.content;
+                let content = "Re Floor"+floor_reply+": "+req.body.content;
                 let new_reply = {
                     username: username,
                     portrait: user.portrait,
@@ -897,7 +897,7 @@ db.once('open', function () {
                 });
                 console.log(new_reply)
                 console.log("reply successfully");
-                return res.status(201).send('reply successfully');
+                return res.status(201).send(JSON.stringify(new_reply));
             });
         }).catch((err) => {
         console.log("-----Reply Error--------");
