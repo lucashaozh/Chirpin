@@ -4,7 +4,8 @@ import { useEffect, useState, useRef } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import { timeDifference } from './Utils';
 import { Link } from "react-router-dom";
-import { Modal } from "bootstrap"
+import { getLoginInfo } from './Login';
+import { BACK_END } from './App';
 
 
 const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
@@ -40,11 +41,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [likeInfo, setLikeInfo] = useState(tweetInfo['likeInfo']);
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
-  const [isReported, setIsReported] = useState(false);
+  const [isReported, setIsReported] = useState(tweetInfo['isReported']);
 
 
   // const tweetUserInfo = tweetInfo['user'];
-  console.log(tweetInfo)
+  // console.log(tweetInfo)
   const commentCount = tweetInfo['commentCount'];
   const retweetCount = tweetInfo['retweetCount'];
   const tweetContent = tweetInfo['content'];
@@ -60,49 +61,88 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   });
 
   const clickLikeTweet = () => {
-    let updatedLikeInfo = { ...likeInfo };
-    updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-    if (updatedLikeInfo.bLikeByUser) {
-      updatedLikeInfo.likeCount += 1;
-      if (dislikeInfo.bDislikeByUser) {
-        let updatedDislikeInfo = { ...dislikeInfo };
-        updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-        updatedDislikeInfo.dislikeCount -= 1;
-        setDislikeInfo(updatedDislikeInfo);
-      }
+    // let updatedLikeInfo = { ...likeInfo };
+    // updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
+    // if (updatedLikeInfo.bLikeByUser) {
+    //   updatedLikeInfo.likeCount += 1;
+    //   if (dislikeInfo.bDislikeByUser) {
+    //     let updatedDislikeInfo = { ...dislikeInfo };
+    //     updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
+    //     updatedDislikeInfo.dislikeCount -= 1;
+    //     setDislikeInfo(updatedDislikeInfo);
+    //   }
+    // } else {
+    //   updatedLikeInfo.likeCount -= 1;
+    // }
+    // setLikeInfo(updatedLikeInfo);
+    if (likeInfo.bLikeByUser) {
+      updateTweetInfo("cancel-like");
     } else {
-      updatedLikeInfo.likeCount -= 1;
+      updateTweetInfo("like");
     }
-    setLikeInfo(updatedLikeInfo);
-    updateTweetInfoToDB();
   }
 
   const clickDislikeTweet = () => {
-    let updatedDislikeInfo = { ...dislikeInfo };
-    updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-    if (updatedDislikeInfo.bDislikeByUser) {
-      updatedDislikeInfo.dislikeCount += 1;
-      if (likeInfo.bLikeByUser) {
-        let updatedLikeInfo = { ...likeInfo };
-        updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-        updatedLikeInfo.likeCount -= 1;
-        setLikeInfo(updatedLikeInfo);
-      }
+    // let updatedDislikeInfo = { ...dislikeInfo };
+    // updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
+    // if (updatedDislikeInfo.bDislikeByUser) {
+    //   updatedDislikeInfo.dislikeCount += 1;
+    //   if (likeInfo.bLikeByUser) {
+    //     let updatedLikeInfo = { ...likeInfo };
+    //     updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
+    //     updatedLikeInfo.likeCount -= 1;
+    //     setLikeInfo(updatedLikeInfo);
+    //   }
+    // } else {
+    //   updatedDislikeInfo.dislikeCount -= 1;
+    // }
+    // setDislikeInfo(updatedDislikeInfo);
+    if (dislikeInfo.bDislikeByUser) {
+      updateTweetInfo("cancel-dislike");
     } else {
-      updatedDislikeInfo.dislikeCount -= 1;
+      updateTweetInfo("dislike");
     }
-    setDislikeInfo(updatedDislikeInfo);
-    updateTweetInfoToDB();
   }
 
-  const updateTweetInfoToDB = () => {
+  const updateTweetInfo = (operation) => {
     console.log("Updated tweet info to DB");
+    fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/" + operation, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(res => {
+      if (res.status === 201) {
+        return res.json();
+      } else {
+        console.log("Like tweet failed");
+        throw new Error("Like tweet failed");
+      }
+    }).then(data => {
+      setLikeInfo(data['likeInfo']);
+      setDislikeInfo(data['dislikeInfo']);
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   const handleTweetReport = () => {
     // TODO: report tweet to DB
-    setIsReported(true);
-    // setIsModalOpen(false);
+    fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    }).then(res => {
+      if (res.status === 201) {
+        console.log("Report tweet success");
+        setIsReported(true);
+      } else {
+        console.log("Report tweet failed");
+      }
+    }).catch(err => {
+      console.log(err);
+    });
   }
 
   return (
@@ -112,11 +152,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
           <div>
             <div className="d-flex justify-content-center text-center">
               {/* link to the user profile */}
-              <Link to={"/" + tweetInfo.username}>
+              <Link to={"/" + tweetInfo.user.username}>
                 <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid rounded-circle w-75" />
               </Link>
             </div>
-            <h3 className="my-2 text-bold text-center">{tweetInfo.username}</h3>
+            <h3 className="my-2 text-bold text-center">{tweetInfo.user.username}</h3>
             <hr />
             <p className="opacity-50 text-nowrap text-center">{timeInterval}</p>
           </div>

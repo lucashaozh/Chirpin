@@ -12,9 +12,9 @@ import {
   MDBInput,
   MDBCheckbox
 }
-from 'mdb-react-ui-kit';
-import {Navigate} from 'react-router-dom';
-import {BACK_END} from './App';
+  from 'mdb-react-ui-kit';
+import { Navigate } from 'react-router-dom';
+import { BACK_END } from './App';
 
 export const getLoginInfo = () => {
   return cookie.load('userInfo');
@@ -33,15 +33,15 @@ export const logout = () => {
 class Login extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { login: false, username:undefined, mode:'user', justifyActive:'login'};
+    this.state = { login: false, username: undefined, mode: 'user', justifyActive: 'login' };
   }
- 
+
   handleJustifyClick = (value) => {
-     if (value === this.state.justifyActive) {
-       return;
-     }
-     this.setState({justifyActive:value});
-   };
+    if (value === this.state.justifyActive) {
+      return;
+    }
+    this.setState({ justifyActive: value });
+  };
 
   handleUserSignup = (event) => {
     const username = document.getElementById("newusername").value;
@@ -50,7 +50,14 @@ class Login extends React.Component {
       newusername: username,
       newpwd: newpwd
     };
-    fetch(BACK_END+"createuser", {
+    if (username === '') {
+      window.alert("Please enter a valid username.");
+    } else if (newpwd === '') {
+      window.alert("Please enter a password");
+    } else if (newpwd !== '' && (newpwd.length <= 4 || newpwd.length >= 20)) {
+      window.alert("The length of the password should be >4 and <20.");
+    } else {
+    fetch(BACK_END + "createuser", {
       method: "POST",
       body: JSON.stringify(userInfo),
       headers: {
@@ -59,17 +66,17 @@ class Login extends React.Component {
     })
       .then(res => {
         if (res.status === 201) {
-          
+
         }
         return res.text();
       })
-      .then(data => {alert(data);})
+      .then(data => { alert(data); })
       .catch(err => {
         console.log(err);
       });
     event.preventDefault();
-
-  } 
+    }
+  }
 
   handleUserSubmit = (event) => {
     const username = document.getElementById("username").value;
@@ -78,10 +85,8 @@ class Login extends React.Component {
       username: username,
       pwd: pwd
     };
-    // this.setState({login:true, username:username, mode:'user'})
-    // login(username, 'user');
-    // this.props.onChangeLogin();
-    fetch(BACK_END+"login/user", {
+    
+    fetch(BACK_END + "login/user", {
       method: "POST",
       body: JSON.stringify(userInfo),
       headers: {
@@ -90,21 +95,26 @@ class Login extends React.Component {
     })
       .then(res => {
         if (res.status === 201) {
-          this.setState({ login: true, username: username, mode:'user'});
+          this.setState({ login: true, username: username, mode: 'user' });
           login(username, 'user');
           this.props.onChangeLogin();
         }
         return res.text();
       })
-      .then(data => {if(data=='Login As Amin Successfully!\n'){this.setState({ login: true, username: username, mode:'admin'});
-      login(username, 'admin');
-      this.props.onChangeLogin();}alert(data)})
+      .then(data => {
+        if (data == 'Login As Amin Successfully!\n') {
+          this.setState({ login: true, username: username, mode: 'admin' });
+          login(username, 'admin');
+          this.props.onChangeLogin();
+        } alert(data)
+      })
       .catch(err => {
         console.log(err);
       });
     event.preventDefault();
+  
   };
-  render(){
+  render() {
     return (this.state.login === false ? (
       <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
 
@@ -129,14 +139,13 @@ class Login extends React.Component {
               <p>Sign in</p>
             </div>
 
-            <MDBInput wrapperClass='mb-4' label='Username' id='username' type='text'/>
-            <MDBInput wrapperClass='mb-4' label='Password' id='pwd' type='password'/>
+            <MDBInput wrapperClass='mb-4' label='Username' id='username' type='text' />
+            <MDBInput wrapperClass='mb-4' label='Password' id='pwd' type='password' />
 
             <div className="d-flex justify-content-between mx-4 mb-4">
-              <MDBCheckbox name='flexCheck' value='' id='flexCheckDefault' label='Remember me' />
-              <a href="/login" onClick={()=>alert("Please contact the administrator")}>Forgot password?</a>
+              <a href="/login" onClick={() => alert("Please contact the administrator")}>Forgot password?</a>
             </div>
-            <button type='submit' className="mb-4 w-100" style={{backgroundColor:"#007bff", color:"white",fontSize:"17px",borderRadius: "4px",border:"white"}} onClick={this.handleUserSubmit}>Sign in</button>
+            <button type='submit' className="mb-4 w-100" style={{ backgroundColor: "#007bff", color: "white", fontSize: "17px", borderRadius: "4px", border: "white" }} onClick={this.handleUserSubmit}>Sign in</button>
           </MDBTabsPane>
 
           <MDBTabsPane show={this.state.justifyActive === 'signup'}>
@@ -145,20 +154,16 @@ class Login extends React.Component {
               <p>Sign up</p>
             </div>
 
-            <MDBInput wrapperClass='mb-4' label='Username' id='newusername' type='text'/>
-            <MDBInput wrapperClass='mb-4' label='Password' id='newpwd' type='password'/>
+            <MDBInput wrapperClass='mb-4' label='Username' id='newusername' type='text' />
+            <MDBInput wrapperClass='mb-4' label='Password' id='newpwd' type='password' />
 
-            <div className='d-flex justify-content-center mb-4'>
-              <MDBCheckbox name='flexCheck' id='flexCheckDefault' label='I have read and agree to the terms' />
-            </div>
-
-            <button className="mb-4 w-100"style={{backgroundColor:"#007bff", color:"white",fontSize:"17px",borderRadius: "4px",border:"white"}} onClick={this.handleUserSignup}>Sign up</button>
+            <button className="mb-4 w-100" style={{ backgroundColor: "#007bff", color: "white", fontSize: "17px", borderRadius: "4px", border: "white" }} onClick={this.handleUserSignup}>Sign up</button>
 
           </MDBTabsPane>
 
         </MDBTabsContent>
 
-      </MDBContainer>):(this.state.mode === 'user' ? <Navigate to='/'/> : <Navigate to='/admin'/>)
+      </MDBContainer>) : (this.state.mode === 'user' ? <Navigate to='/' /> : <Navigate to='/admin' />)
     );
   }
 }
