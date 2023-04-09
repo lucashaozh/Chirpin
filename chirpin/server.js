@@ -200,16 +200,18 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            userObj = {
-                'uid': user['_id'],
-                'username': user['username'],
-                'gender': user['gender'],
-                'interests': user['interests'],
-                'follower_counter': user['follower_counter'],
-                'following_counter': user['following_counter'],
-                'about': user['about']
+            let userObj = {};
+            if (user != null && user != '') {
+                userObj = {
+                    'uid': user['_id'],
+                    'username': user['username'],
+                    'gender': user['gender'],
+                    'interests': user['interests'],
+                    'follower_counter': user['follower_counter'],
+                    'following_counter': user['following_counter'],
+                    'about': user['about']
+                }
             }
-            // console.log(userObj);
             res.send(userObj);
         }).catch((err) => {
             console.log(err);
@@ -429,25 +431,26 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            let tweets = user.tweets;
             let retTweets = [];
-            tweets.forEach(tweet => {
-                let tweetObj = {
-                    "tid": tweet['_id'],
-                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
-                    "user": { "uid": user['_id'], 'username': user['username'] },
-                    "content": tweet.tweet_content,
-                    "commentCount": tweet['comments'].length,
-                    "retweetCount": tweet['retweets'].length,
-                    "time": tweet['post_time'],
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
-                    "tags": tweet['tags']
-                }
-                retTweets.push(tweetObj);
-            });
-            // console.log(retTweets);
-            res.send(retTweets);
+            if (user != null && user != '') {
+                let tweets = user.tweets;
+                tweets.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
+                        "user": { "uid": user['_id'], 'username': user['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    retTweets.push(tweetObj);
+                });
+                res.send(retTweets);
+            }
         }).catch((err) => {
             console.log(err);
             res.send(err);
@@ -464,7 +467,7 @@ db.once('open', function () {
                 let tweetObj = {
                     "tid": tweet['_id'],
                     "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -490,7 +493,7 @@ db.once('open', function () {
     app.get('/tweets', (req, res) => {
         res.set('Content-Type', 'text/plain');
         Tweet.find().then((tweets) => {
-            console.log(tweets);
+            // console.log(tweets);
             res.send(tweets);
         }).catch((err) => {
             res.send(err);
@@ -502,7 +505,7 @@ db.once('open', function () {
     app.get('/users', (req, res) => {
         res.set('Content-Type', 'text/plain');
         User.find().then((users) => {
-            console.log(users);
+            // console.log(users);
             res.send(users);
         }).catch((err) => {
             res.send(err);
@@ -550,6 +553,7 @@ db.once('open', function () {
         // find the user
         User.findOne({ 'username': req.body['username'] }).then((user) => {
             if (!user) { return res.send('User does not exist').status(404); }
+            console.log(req.body);
             let uid = user._id;
             // create a new tweet
             let time = new Date();
@@ -567,9 +571,9 @@ db.once('open', function () {
             }
             Tweet.create(tweet).then((tweet) => {
                 console.log(tweet);
-                res.sendStatus(201);
+                return res.sendStatus(201);
             }).catch((err) => {
-                res.send(err);
+                return res.send(err);
             });
         });
     });
@@ -747,6 +751,49 @@ db.once('open', function () {
             console.log("-----Report Error--------");
             console.log(err);
             return res.status(500).send(err);
+        });
+    });
+
+    // get all the tags
+    app.get('/tags', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Tag.find().then((tags) => {
+            return res.status(200).send(tags);
+        }).catch((err) => {
+            console.log(err);
+            return res.status(404).send(err);
+        });
+    });
+
+    // check if the tag exists
+    app.get('/tag/:tagname', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let tagname = req.params['tagname'];
+        Tag.find({ 'tag': tagname }).then((tag) => {
+            if (tag.length == 0) {
+                return res.status(404).send('Tag does not exist');
+
+            }
+            return res.status(200).send('Tag exists');
+        }).catch((err) => {
+            console.log(err);
+        });
+    });
+
+
+    // create new tag
+    app.post('/new-tag', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        Tag.create(req.body).then((tag) => {
+            return res.status(201).send(tag);
+        }).catch((err) => {
+            // check if it is the duplicate key error
+            if (err.code == 11000) {
+                return res.status(400).send('Tag already exists');
+            } else {
+                console.log(err);
+                return res.status(400).send(err);
+            }
         });
     });
 

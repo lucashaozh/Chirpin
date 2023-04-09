@@ -148,12 +148,6 @@ function App() {
                   <Route path='/admin' element={<Admin />} />
                 </Route>
 
-                {/* <Route path='/:username' element={<PrivateRoute />}> */}
-                {/* <Route path="/:username" element={<Profile username={islogin} />} /> */}
-                {/* </Route> */}
-                {/* <Route path='/adm' element={<PrivateRoute />}> */}
-                {/* <Route path='/adm' element={<Adm islogin={islogin}></Adm>} /> */}
-                {/* </Route> */}
                 <Route path='/notification' element={<PrivateRoute />}>
                   <Route path='/notification' element={<Notification ></Notification>} />
                 </Route>

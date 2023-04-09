@@ -7,14 +7,56 @@ import { userInfoExample, tweetInfoExample, tagsExample } from './Example';
 import { randomSelect } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
+import { getLoginInfo } from './Login';
 
 
 function NewPost() {
+  const fetchAvailableTags = () => {
+    fetch('http://localhost:8000/tags', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(data => {
+      const fetchedTags = data.map((item) => item['tag']);
+      setAvailableTags(fetchedTags);
+    }).catch(err => {
+      console.log(err);
+    });
+  };
+
+
   const editorRef = useRef(null);
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
-  const log = () => {
+  const [availableTags, setAvailableTags] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const postNewTweet = () => {
     if (editorRef.current) {
       console.log(editorRef.current.getContent());
+      let postBody = {
+        username: getLoginInfo()['username'],
+        tweet_content: editorRef.current.getContent(),
+        tags: tags
+      }
+
+      fetch('http://localhost:8000/new-tweet', {
+        method: 'POST',
+        body: JSON.stringify(postBody),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        if (res.status === 201) {
+          editorRef.current.setContent(initialContent);
+          setTags([]);
+          alert("Post success");
+        } else {
+          alert("Post failed");
+        }
+      });
+    } else {
+      console.log("Error: editorRef.current is null");
     }
   };
 
@@ -29,6 +71,34 @@ function NewPost() {
       editorRef.current.setContent(initialContent);
     }
   };
+
+  const addNewTags = () => {
+    let newTags = document.getElementById("new-tag").value;
+    // check if the tag is already in the list
+    if (!availableTags.includes(newTags)) {
+      // insert the new tag into the database
+      fetch('http://localhost:8000/new-tag', {
+        method: 'POST',
+        body: JSON.stringify({ tag: newTags }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        if (res.status === 201) {
+          console.log("New tag inserted");
+        } else if (res.status === 400 && res.body === "Tag already exists") {
+          alert("Tag already exists");
+        }else {
+          console.log("Failed to insert new tag");
+        }
+        setTags([...tags, newTags]);
+        // close the modal
+        document.getElementById("close-modal").click();
+      });
+    } else {
+      alert("Tag already exists");
+    }
+  }
 
 
   return (
@@ -87,8 +157,44 @@ function NewPost() {
             }}
           />
         </div>
-        <div className='d-flex justify-content-end'>
-          <button type="button" className="btn btn-primary mx-2" onClick={log}>New post</button>
+        <div className='d-flex justify-content-between'>
+          <div>
+            {tags.map((tag, index) => {
+              return (
+                <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
+              );
+            })}
+            <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-bs-target="#add-tag" data-bs-whatever="@mdo" onClick={() => { fetchAvailableTags(); }}>Add Tag</button>
+          </div>
+          <button type="button" className="btn btn-primary mx-2" onClick={postNewTweet}>New post</button>
+        </div>
+      </div>
+      {/* Modal */}
+      <div className="modal fade" id="add-tag" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">Please choose a tag or input new tags</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              {/* <h4>Choose a tag</h4> */}
+              {randomSelect(availableTags, 5).map((tag, index) => {
+                return (
+                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                );
+              })}
+              <div>
+                <div className="input-group m-2">
+                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                  <button className="btn btn-outline-primary" type="button" onClick={addNewTags}>Add</button>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" id="close-modal" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>
