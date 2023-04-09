@@ -438,7 +438,7 @@ db.once('open', function () {
                     let tweetObj = {
                         "tid": tweet['_id'],
                         "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                        "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
                         "user": { "uid": user['_id'], 'username': user['username'] },
                         "content": tweet.tweet_content,
                         "commentCount": tweet['comments'].length,
@@ -467,7 +467,7 @@ db.once('open', function () {
                 let tweetObj = {
                     "tid": tweet['_id'],
                     "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
-                    "dislikeInfo": { "dislikeCound": tweet['dislike_counter'] },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'] },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
