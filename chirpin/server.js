@@ -643,6 +643,7 @@ db.once('open', function () {
                         "tid": tweet['_id'],
                         "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user.tweets_liked.includes(tweet['_id']) },
                         "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user.tweets_disliked.includes(tweet['_id']) },
+                        "isReported": user.tweets_reported.includes(tweet['_id']),
                         "user": { "uid": tweet['poster'], 'username': tweet['poster']['username']},
                         "content": tweet['tweet_content'],
                         "commentCount": tweet['comments'].length,
@@ -652,8 +653,7 @@ db.once('open', function () {
                         "tags": tweet['tags'],
                     }
                 });
-                console.log("----Followings Tweets------");
-                // console.log(tweetsInfo);
+                console.log("----Get Followings Tweets------");
                 return res.status(200).send(tweetsInfo);
             }).catch((err) => {
                 console.log("---Followings Tweets Error---");
@@ -663,14 +663,6 @@ db.once('open', function () {
     });
 
 
-    /*
-        create a new tweet from body
-        {
-            "username": "user1",
-            "tweet_content": "hello world",
-            "tag": ["tag1", "tag2", "tag3"],
-        }
-    */
     app.post('/new-tweet', (req, res) => {
         res.set('Content-Type', 'text/plain');
         // find the user

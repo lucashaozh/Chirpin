@@ -16,6 +16,8 @@ import {
 import { Navigate } from 'react-router-dom';
 import { BACK_END } from './App';
 
+// { "username": username, "mode": mode }
+// not logged in: undefined
 export const getLoginInfo = () => {
   return cookie.load('userInfo');
 };
