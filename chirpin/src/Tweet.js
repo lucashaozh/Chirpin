@@ -42,10 +42,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
   const [isReported, setIsReported] = useState(tweetInfo['isReported']);
-
-
-  // const tweetUserInfo = tweetInfo['user'];
-  // console.log(tweetInfo)
   const commentCount = tweetInfo['commentCount'];
   const retweetCount = tweetInfo['retweetCount'];
   const tweetContent = tweetInfo['content'];
@@ -60,6 +56,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     }, 1000);
     return () => clearInterval(interval);
   });
+
+  useEffect(() => {
+    setLikeInfo(tweetInfo['likeInfo']);
+    setDislikeInfo(tweetInfo['dislikeInfo']);
+  }, [tweetInfo]);
 
   const clickLikeTweet = () => {
     // let updatedLikeInfo = { ...likeInfo };
@@ -129,7 +130,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const handleTweetReport = () => {
-    // TODO: report tweet to DB
     fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
       method: 'PUT',
       headers: {
