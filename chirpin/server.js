@@ -992,8 +992,8 @@ db.once('open', function () {
                 else { console.log('User found') }
                 let tweet_info = {
                     tid: tweet._id,
-                    likeInfo: {likeCount: tweet.likes.length, bLikeByUser: tweet.likes.includes(user._id)},
-                    dislikeInfo: {dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tid)},
+                    likeInfo: {likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id)},
+                    dislikeInfo: {dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id)},
                     user: {uid: tweet.poster._id},
                     content: tweet.tweet_content,
                     commentCount: tweet.comments.length,
@@ -1003,6 +1003,7 @@ db.once('open', function () {
                     tags: tweet.tags,
                 }
                 console.log('get tweet successfully');
+                console.log(tweet_info)
                 return res.status(201).send(JSON.stringify(tweet_info));
             });
         }).catch((err) => {

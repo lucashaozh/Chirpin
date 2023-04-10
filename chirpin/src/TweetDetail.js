@@ -65,7 +65,7 @@ class TweetDetail extends React.Component{
         
     }
 
-    componentDidMount(){
+    componentWillMount(){
         this.fetchTweetDetail()
     }
 
