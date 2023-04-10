@@ -18,9 +18,9 @@ class TweetDetail extends React.Component{
             retweetCount:0,
             tweetInfo: {
                 "tid": 0,
-                "likeInfo": 0,
-                "dislikeInfo": 0,
-                "user": { uid: 0, username: 'Loading'},
+                "likeInfo": {likeCount:0, bLikeByUser: false},
+                "dislikeInfo": {dislikeCount:0, bDislikeByUser: false},
+                "user": { uid: 0},
                 "content": 'Loading',
                 "commentCount": 0,
                 "retweetCount": 0,
@@ -36,7 +36,8 @@ class TweetDetail extends React.Component{
 
     async fetchTweetDetail(){
         // fetch tweet info
-        let tweetInfo = await fetch(BACK_END+'tweet/'+window.location.pathname.split('/')[2], {
+        console.log(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username)
+        let tweetInfo = await fetch(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username, {
             method: 'GET',
             headers:{
                 'Content-Type': 'application/json', 
@@ -44,6 +45,7 @@ class TweetDetail extends React.Component{
         });
         let tweetInfoRes = await tweetInfo.json();
         console.log(tweetInfoRes);
+        this.setState({tweetInfo: tweetInfoRes},()=>console.log(this.state.tweetInfo));
 
 
         // fetch comment info
@@ -58,13 +60,12 @@ class TweetDetail extends React.Component{
         console.log(commentInfoRes);
         
         // just not right
-        this.setState({tweetInfo: tweetInfoRes},()=>console.log(this.state.commentInfo));
         this.setState({commentInfo: commentInfoRes},()=>console.log(this.state.commentInfo));
         
         
     }
 
-    componentWillMount(){
+    componentDidMount(){
         this.fetchTweetDetail()
     }
 

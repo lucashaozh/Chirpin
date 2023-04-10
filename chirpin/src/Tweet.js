@@ -98,6 +98,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     //   updatedDislikeInfo.dislikeCount -= 1;
     // }
     // setDislikeInfo(updatedDislikeInfo);
+    console.log(tweetInfo)
     if (dislikeInfo.bDislikeByUser) {
       updateTweetInfo("cancel-dislike");
     } else {
@@ -258,7 +259,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* forward tweet */}
-      <ForwardForm tid={tweetInfo.tid}/>
+      <ForwardForm tid={tweetInfo['tid']}/>
 
       {/* forward select tag*/}
 
@@ -313,7 +314,7 @@ function ForwardForm(tid) {
         tags: tags,
         tid: tid.tid //parent id whyyyy???
       }
-      console.log(postBody)
+      console.log(tid)
 
       fetch('http://localhost:8000/retweet', {
         method: 'POST',
