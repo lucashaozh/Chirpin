@@ -60,12 +60,37 @@ function App() {
   };
 
   const changePwd = () => {
-    let ousername = document.getElementById("originalusername");
-    let newpwd = document.getElementById("changedpwd");
-    const uesrinfo = {
-      uername: ousername,
+    let ousername = getLoginInfo()['username'];
+    let opwd = document.querySelector("#originalpwd").value;
+    let newpwd = document.querySelector("#changedpwd").value;
+    const userinfo = {
+      username: ousername,
+      oldpwd:opwd,
       newpwd: newpwd
     };
+    console.log(userinfo)
+    if (userinfo['newpwd'] === '') {
+      window.alert("Please enter a valid new password.");
+    } else if (userinfo['newpwd'] !== '' && (userinfo['newpwd'].length <= 4 || userinfo['newpwd'].length >= 20)) {
+      window.alert("The length of the new password should be >4 and <20.");
+    }else{
+      fetch(BACK_END + 'changepwd',{
+        method:'PUT',
+        body:JSON.stringify(userinfo),
+        headers: { 
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+        }
+        return res.text();
+      })
+      .then(data => {alert(data);})
+      .catch(err => {
+        console.log(err);
+      });
+  }
   }
 
   const fetchUserPortrait = () => {
@@ -199,15 +224,15 @@ function App() {
             </div>
             <div className="modal-body">
               <div className="mb-3">
-                <label htmlFor="name" className="col-form-label"> Input your username: </label>
-                <input type="text" className="form-control" id="originalusername" />
+                <label htmlFor="name" className="col-form-label"> Input Your Old Password: </label>
+                <input type="text" className="form-control" id="originalpwd" />
                 <label htmlFor="name" className="col-form-label"> Input New Password: </label>
                 <input type="text" className="form-control" id="changedpwd" />
               </div>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Submit </button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={changePwd}> Submit </button>
             </div>
           </div>
         </div>

@@ -16,6 +16,8 @@ import cookie from 'react-cookies';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import {BACK_END} from './App';
+import { set } from 'mongoose';
+import { get } from 'jquery';
 
 class Profile extends React.Component {
 
@@ -23,6 +25,7 @@ class Profile extends React.Component {
         super(props);
         this.state = { 
             viewMode: "MyTweets",
+            mode: getLoginInfo()['mode'],
             self: {
                 uid: "Loading",
                 username: getLoginInfo()['username'],
@@ -41,22 +44,28 @@ class Profile extends React.Component {
             },
             follow: false, 
             block: false,
-            report: false
+            report: false,
+            textAreaValue: "",
+            interestsValue: "",
+            interestsTempValue: ""
         };
     }
 
     async fetchInfo() {
         // fetch self information
-        let selfrec = await fetch(BACK_END + "profile/" + this.state.self['username'] + "/actioninfo", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
-        let self = await selfrec.json();
-        this.state.self = await self;
-        this.setState((prevState) => ({ self: self }));
+        let mode = this.state.mode;
+        if (mode === 'user') {
+            let selfrec = await fetch(BACK_END + "profile/" + this.state.self['username'] + "/actioninfo", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+            let self = await selfrec.json();
+            this.state.self = await self;
+            this.setState((prevState) => ({ self: self }));
+        }
 
         // fetch target information
         let targetrec = await fetch(BACK_END + "profile/" + this.state.target['username'], {
@@ -67,33 +76,39 @@ class Profile extends React.Component {
             }
         });
         let target = await targetrec.json();
-        let str = "";
+        let str1 = "";
+        let str2 = "";
         target['interests'].forEach(element => {
-            str += "#" + element + " ";
+            str1 += "#" + element + " ";
+            str2 += element + ", ";
         });
-        target['interests'] = str;
+        target['interests'] = str1;
+        this.state.interestsValue = str2.slice(0, -2);
+        this.state.interestsTempValue = str2.slice(0, -2);
         this.state.target = await target;
         this.setState((prevState) => ({ target: target }));
 
-        console.log(this.state.self);
-        console.log(this.state.target);
+        this.state.textAreaValue = target['about'];
+        this.setState({ textAreaValue: target['about'] });
 
-        if (this.state.self['followings'].includes(this.state.target['uid'])) {
-            this.state.follow = true;
-        } else {
-            this.state.follow = false;
-        }
+        if (this.state.mode === 'user') {
+            if (this.state.self['followings'].includes(this.state.target['uid'])) {
+                this.state.follow = true;
+            } else {
+                this.state.follow = false;
+            }
 
-        if (this.state.self['users_blocked'].includes(this.state.target['uid'])) {
-            this.state.block = true;
-        } else {
-            this.state.block = false;
-        }
+            if (this.state.self['users_blocked'].includes(this.state.target['uid'])) {
+                this.state.block = true;
+            } else {
+                this.state.block = false;
+            }
 
-        if (this.state.self['users_reported'].includes(this.state.target['uid'])) {
-            this.state.report = true;
-        } else {
-            this.state.report = false;
+            if (this.state.self['users_reported'].includes(this.state.target['uid'])) {
+                this.state.report = true;
+            } else {
+                this.state.report = false;
+            }
         }
     }
     
@@ -110,7 +125,7 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    console.log(data.status)
+                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.follow = true;
                         document.getElementById("follow").innerText = "Unfollow";
@@ -131,7 +146,7 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    console.log(data.status)
+                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.follow = false;
                         document.getElementById("follow").innerText = "Follow";
@@ -156,7 +171,7 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    console.log(data.status)
+                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.block = true;
                         document.getElementById("block").innerText = "Unblock";
@@ -175,7 +190,7 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    console.log(data.status)
+                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.block = false;
                         document.getElementById("block").innerText = "Block";
@@ -198,11 +213,12 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    console.log(data.status)
+                    // console.log(data.status)
                     if (data.status === 200) {
-                        this.state.follow = true;
-                        document.getElementById("report").innerText = "Reported"
-                        document.getElementById("report").className = "btn btn-light"
+                        this.state.report = true;
+                        document.getElementById("report").innerText = "Reported";
+                        document.getElementById("report").className = "btn btn-light";
+                        document.getElementById("report").setAttribute("disabled", "");
                         alert("You have reported this user.");
                     } else {
                         alert("There seems to be some error. Please try again.");
@@ -217,13 +233,31 @@ class Profile extends React.Component {
     }
 
     handleEditClick = () => {
+        this.state.textAreaValue = this.state.target.about;
+        this.setState({ textAreaValue: this.state.target.about });
+        this.state.interestsTempValue = this.state.interestsValue;
+        this.setState({ interestsTempValue: this.state.interestsValue });
+    }
+
+    handleEditSubmit = () => {
+        let gender = "";
+        if (document.getElementById("radio-male").checked) {
+            gender = document.getElementById("radio-male").value;
+        }
+        if (document.getElementById("radio-female").checked) {
+            gender = document.getElementById("radio-female").value;
+        }
+        if (document.getElementById("radio-others").checked) {
+            gender = document.getElementById("radio-others").value;
+        }
         let userObj = {
-            gender: document.getElementById("gender").value,
+            gender: gender,
+            // gender: document.getElementById("gender").value,
             interests: document.getElementById("interests").value,
             portrait: document.getElementById("portrait").value,
             about: document.getElementById("about").value
         }
-        console.log(userObj);
+        // console.log(userObj);
         fetch(BACK_END + "profile/" + this.state.self['username'], {
             method: 'PUT',
             body:JSON.stringify(userObj),
@@ -232,7 +266,7 @@ class Profile extends React.Component {
             }
         }).then(
             (data) => {
-                console.log(data.status)
+                // console.log(data.status);
                 if (data.status === 200) {
                     alert("Update Profile Successfully!");
                     window.location.reload(true);
@@ -245,6 +279,16 @@ class Profile extends React.Component {
         });
     }
 
+    handleInterestsChange = (event) => {
+        this.state.interestsTempValue = event.target.interestsValue;
+        this.setState({ interestsTempValue: event.target.value });
+    }
+
+    handleAboutChange = (event) => {
+        this.state.textAreaValue = event.target.value;
+        this.setState({ textAreaValue: event.target.value });
+    }
+
     render() {
         return (<>
             <Container fluid>
@@ -252,12 +296,12 @@ class Profile extends React.Component {
                     <Row>
                         <Col>
                         {
-                            (this.state.target['username'] === this.state.self['username'] && 
+                            (this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] && 
                             <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
                                 My Profile
                             </div>) ||
                             <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                                Other's Profile
+                                {this.state.target['username']}'s Profile
                             </div>
                         }
                         </Col>
@@ -281,41 +325,44 @@ class Profile extends React.Component {
                                     <Button component={Link} to={"/" + this.state.target['username'] + "/followings"} id='followings' style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black'}}> Followings: {this.state.target['following_counter']} </Button>
                                     <Button component={Link} to={"/" + this.state.target['username'] + "/followers"} id='followers' style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-15px', fontSize: '15px', color: 'black'}}> Followers: {this.state.target['follower_counter']} </Button>
                                     {
-                                        this.state.target['username'] === this.state.self['username'] && 
-                                        <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
+                                        this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] && 
+                                        <button type="button" onClick={this.handleEditClick} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
                                             Edit Profile 
                                         </button>
                                     }
                                 </div>
                                 {
-                                    this.state.target['username'] !== this.state.self['username'] && 
+                                    this.state.mode === 'user' && this.state.target['username'] !== this.state.self['username'] && 
                                     <div style={{position: "absolute", top: "140px", right: "30px"}}>
                                         {
+                                            this.state.mode === 'user' && (
                                             (this.state.follow &&
                                             <button type="button" onClick={this.handleFollowClick} className="btn btn-light" id="follow" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
                                                 Unfollow
                                             </button>) ||
                                             <button type="button" onClick={this.handleFollowClick} className="btn btn-primary" id="follow" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
                                                 Follow
-                                            </button>
+                                            </button>)
                                         }
                                         {
+                                            this.state.mode === 'user' && (
                                             (this.state.block &&
                                             <button type="button" onClick={this.handleBlockClick} className="btn btn-light" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
                                                 Unblock
                                             </button>) ||
                                             <button type="button" onClick={this.handleBlockClick} className="btn btn-dark" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
                                                 Block
-                                            </button>
+                                            </button>)
                                         }
                                         {
+                                            this.state.mode === 'user' && (
                                             (this.state.report &&
-                                            <button type="button" onClick={this.handleReportClick} className="btn btn-light" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
+                                            <button type="button" className="btn btn-light" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}} disabled> 
                                                 Reported 
                                             </button>) ||
                                             <button type="button" className="btn btn-warning" id='report' data-bs-toggle="modal" data-bs-target="#report-user" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
                                                 Report 
-                                            </button>
+                                            </button>)
                                         }
                                     </div>
                                 }
@@ -359,11 +406,29 @@ class Profile extends React.Component {
                                             <form>
                                             <div className="mb-3">
                                                 <label htmlFor="gender" className="col-form-label"> Gender: </label>
-                                                <input type="text" className="form-control" id="gender" />
+                                                <div className="form-check">
+                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-male" value="Male" />
+                                                    <label className="form-check-label" htmlFor="radio-male">
+                                                        Male
+                                                    </label>
+                                                </div>
+                                                <div className="form-check">
+                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-female" value="Female" />
+                                                    <label className="form-check-label" htmlFor="radio-female">
+                                                        Female
+                                                    </label>
+                                                </div>
+                                                <div className="form-check">
+                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-others" value="Others" />
+                                                    <label className="form-check-label" htmlFor="radio-others">
+                                                        Others
+                                                    </label>
+                                                </div>
+                                                {/* <input type="text" className="form-control" id="gender" /> */}
                                             </div>
                                             <div className="mb-3">
                                                 <label htmlFor="interest" className="col-form-label"> Interests: </label>
-                                                <input type="text" className="form-control" id="interests" placeholder="Please use ', ' to split interests, e.g. Basketball, Piano" />
+                                                <input type="text" className="form-control" id="interests" value={this.state.interestsTempValue} onChange={this.handleInterestsChange} />
                                             </div>
                                             <div className="mb-3">
                                                 <label htmlFor="text" className="col-sm-2 col-form-label"> Portrait: </label>
@@ -371,13 +436,13 @@ class Profile extends React.Component {
                                             </div>
                                             <div className="mb-3">
                                                 <label htmlFor="about-text" className="col-form-label"> About: </label>
-                                                <textarea className="form-control" id="about" rows="4"></textarea>
+                                                <textarea className="form-control" id="about" rows="4" value={this.state.textAreaValue} onChange={this.handleAboutChange} />
                                             </div>
                                             </form>
                                         </div>
                                         <div className="modal-footer">
                                             <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-                                            <button type="button" className="btn btn-primary" onClick={this.handleEditClick} data-bs-dismiss="modal"> Submit </button>
+                                            <button type="button" className="btn btn-primary" onClick={this.handleEditSubmit} data-bs-dismiss="modal"> Submit </button>
                                         </div>
                                         </div>
                                     </div>
@@ -433,17 +498,41 @@ class MyTweetsList extends React.Component {
         // fetch self information
         let self = getLoginInfo()['username'];
         let target = window.location.pathname.split('/')[1];
-        let tweetrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/tweets", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
+        let mode = getLoginInfo()['mode'];
+        let tweetrec = [];
+        if (mode === 'user') {
+            tweetrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/tweets", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        } else {
+            tweetrec = await fetch(BACK_END + "profile/" + target + "/tweets", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        }
         let tweets = await tweetrec.json();
-        console.log(tweets);
+
+        tweets.sort(this.compare);
+
         this.state.tweets = await tweets;
         this.setState((prevState) => ({ tweets: tweets }));
+    }
+
+    compare = ( tweetA, tweetB ) => {
+        if ( tweetA.time > tweetB.time ) {
+            return -1;
+        }
+        if ( tweetA.time < tweetB.time ) {
+            return 1;
+        }
+        return 0;
     }
     
     componentWillMount(){
@@ -474,8 +563,8 @@ class LikesList extends React.Component {
 
     async fetchInfo() {
         // fetch self information
-        let username = window.location.pathname.split('/')[1];
-        console.log(username);
+        let username = getLoginInfo()['username'];
+        // console.log(username);
         let tweetrec = await fetch(BACK_END + "profile/" + username + "/likes", {
             method: 'GET',
             headers: {
@@ -484,9 +573,21 @@ class LikesList extends React.Component {
             }
         });
         let likes = await tweetrec.json();
-        console.log(likes);
+
+        likes.sort(this.compare);
+
         this.state.likes = await likes;
         this.setState((prevState) => ({ likes: likes }));
+    }
+
+    compare = ( tweetA, tweetB ) => {
+        if ( tweetA.time > tweetB.time ) {
+            return -1;
+        }
+        if ( tweetA.time < tweetB.time ) {
+            return 1;
+        }
+        return 0;
     }
     
     componentWillMount(){

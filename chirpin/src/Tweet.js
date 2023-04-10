@@ -61,6 +61,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     return () => clearInterval(interval);
   });
 
+  useEffect(() => {
+    setLikeInfo(tweetInfo['likeInfo']);
+    setDislikeInfo(tweetInfo['dislikeInfo']);
+  }, [tweetInfo]);
+
   const clickLikeTweet = () => {
     // let updatedLikeInfo = { ...likeInfo };
     // updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
@@ -129,7 +134,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const handleTweetReport = () => {
-    // TODO: report tweet to DB
     fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
       method: 'PUT',
       headers: {
