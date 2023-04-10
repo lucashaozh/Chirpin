@@ -1096,6 +1096,7 @@ db.once('open', function () {
         // find the user
         User.findOne({ 'username': req.body['username'] }).then((user) => {
             if (!user) { return res.send('User does not exist').status(404); }
+            console.log('user found')
             Tweet.findById(parent_tid).populate('poster').exec().then((tweet) => {
                 // create a new tweet
                 let time = new Date();
@@ -1104,7 +1105,7 @@ db.once('open', function () {
                     poster: user._id,
                     tweet_content: req.body.tweet_content + " RT @" + tweet.poster.username + ": " + tweet.tweet_content,
                     tags: req.body.tags,
-                    parent: parent_tid,
+                    // parent: parent_tid, TODO: still need parent?
                     dislike_counter: 0,
                     report_counter: 0,
                     post_time: time,

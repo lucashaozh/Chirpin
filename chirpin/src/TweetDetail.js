@@ -31,6 +31,7 @@ class TweetDetail extends React.Component{
             commentInfo: []
         }
         this.addReply = this.addReply.bind(this);
+        this.addComment = this.addComment.bind(this);
     }
 
     async fetchTweetDetail(){
@@ -88,9 +89,56 @@ class TweetDetail extends React.Component{
         let new_comments = this.state.commentInfo;
         new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
         this.setState({commentInfo: new_comments});
+        // this.setState({tweetInfo.commentCount: this.state.tweetInfo.commentCount+1})
+        console.log(this.state.commentInfo);
+        document.getElementById(newcommentId).value='';
+    }
+
+    async addComment(){
+        let newCom = {
+            content: document.getElementById('new-comment').value,
+            username: getLoginInfo().username,
+            tid: window.location.pathname.split('/')[2],
+        };
+        console.log(newCom);
+        let com = await fetch(BACK_END + 'tweet/comment', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(newCom),
+        });
+        let com_res = await com.json();
+        console.log(com_res);
+        let new_comments = this.state.commentInfo;
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        this.setState({commentInfo: new_comments});
         console.log(this.state.commentInfo);
         document.getElementById('new-comment').value='';
     }
+
+    // async retweet(){
+    //     let newRetweet = {
+    //         content: document.getElementById('new-retweet').value,
+    //         username: getLoginInfo().username,
+    //         tid: window.location.pathname.split('/')[2],
+    //     };
+    //     console.log(newCom);
+    //     let com = await fetch(BACK_END + 'tweet/comment', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(newCom),
+    //     });
+    //     let com_res = await com.json();
+    //     console.log(com_res);
+    //     let new_comments = this.state.commentInfo;
+    //     new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+    //     this.setState({commentInfo: new_comments});
+    //     console.log(this.state.commentInfo);
+    //     document.getElementById('new-comment').value='';
+    // }
 
     render(){
         return(
@@ -99,7 +147,7 @@ class TweetDetail extends React.Component{
                 <div id="scrollableComment" style={{ height: "95vh", overflow: "auto" }}>
                     <InfiniteScroll dataLength={this.state.commentInfo.length} next={null} hasMore={false} scrollableTarget="scrollableComment"
                             endMessage={<p style={{ textAlign: 'center' }}><b>No more comments</b></p>}>
-                        <TweetCard tweetInfo={this.state.tweetInfo}/> 
+                        <TweetCard tweetInfo={this.state.tweetInfo} addComment={this.addComment.bind(this)}/> 
                         {/* <CommentList tid={window.location.pathname.split('/')[2]} commentInfo={this.state.commentInfo}/> */}
                         <div className="list-group w-auto">
                             {this.state.commentInfo.map((comment,index)=>
