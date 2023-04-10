@@ -117,6 +117,29 @@ class TweetDetail extends React.Component{
         document.getElementById('new-comment').value='';
     }
 
+    // async retweet(){
+    //     let newRetweet = {
+    //         content: document.getElementById('new-retweet').value,
+    //         username: getLoginInfo().username,
+    //         tid: window.location.pathname.split('/')[2],
+    //     };
+    //     console.log(newCom);
+    //     let com = await fetch(BACK_END + 'tweet/comment', {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         body: JSON.stringify(newCom),
+    //     });
+    //     let com_res = await com.json();
+    //     console.log(com_res);
+    //     let new_comments = this.state.commentInfo;
+    //     new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+    //     this.setState({commentInfo: new_comments});
+    //     console.log(this.state.commentInfo);
+    //     document.getElementById('new-comment').value='';
+    // }
+
     render(){
         return(
             <div> 

@@ -6,7 +6,7 @@ import { timeDifference } from './Utils';
 import { Link } from "react-router-dom";
 import { getLoginInfo } from './Login';
 import { BACK_END } from './App';
-
+import { randomSelect } from './Utils';
 
 const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
 
@@ -51,6 +51,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const tweetContent = tweetInfo['content'];
   const portraitUrl = tweetInfo['portraitUrl'];
   const tags = tweetInfo['tags'];
+  
 
   // update time interval every second
   useEffect(() => {
@@ -145,6 +146,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     });
   }
 
+
   return (
     <div className="card p-2 m-2 mb-4" style={{ borderRadius: "30px" }}>
       <div className="card-body row">
@@ -152,11 +154,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
           <div>
             <div className="d-flex justify-content-center text-center">
               {/* link to the user profile */}
-              <Link to={"/" + tweetInfo.user.username}>
+              <Link to={"/" + tweetInfo.username}>
                 <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid rounded-circle w-75" />
               </Link>
             </div>
-            <h3 className="my-2 text-bold text-center">{tweetInfo.user.username}</h3>
+            <h3 className="my-2 text-bold text-center">{tweetInfo.username}</h3>
             <hr />
             <p className="opacity-50 text-nowrap text-center">{timeInterval}</p>
           </div>
@@ -202,9 +204,9 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                 <span className="ms-1 opacity-75">{commentCount}</span>
               </span>
               <span className="m-1">
-                <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target="#tweetForwardForm" data-bs-whatever="@mdo">
+                <a className="btn btn-outline-primary btn-floating"  href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
                   <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
-                </button>
+                </a>
                 <span className="ms-1 opacity-75">{retweetCount}</span>
               </span>
               <span className="m-1">
@@ -256,12 +258,15 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* forward tweet */}
-      <ForwardForm />
+      <ForwardForm tid={tweetInfo.tid}/>
+
+      {/* forward select tag*/}
+
     </div>
   )
 }
 
-function ForwardForm() {
+function ForwardForm(tid) {
   const editorRef = useRef(null);
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
   const log = () => {
@@ -282,72 +287,189 @@ function ForwardForm() {
     }
   };
 
+  const fetchAvailableTags = () => {
+    fetch('http://localhost:8000/tags', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    }).then(res => res.json()).then(data => {
+      const fetchedTags = data.map((item) => item['tag']);
+      setAvailableTags(fetchedTags);
+    }).catch(err => {
+      console.log(err);
+    });
+  };
+
+  const [availableTags, setAvailableTags] = useState([]);
+  const [tags, setTags] = useState([]);
+
+  const postRetweet = () => {
+    if (editorRef.current) {
+      console.log(editorRef.current.getContent());
+      let postBody = {
+        username: getLoginInfo()['username'],
+        tweet_content: editorRef.current.getContent(),
+        tags: tags,
+        tid: tid.tid //parent id whyyyy???
+      }
+      console.log(postBody)
+
+      fetch('http://localhost:8000/retweet', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(postBody)  
+      }).then(res => {
+        console.log(res)
+        if (res.status === 201) {
+          editorRef.current.setContent(initialContent);
+          setTags([]);
+          alert("Retweet success");
+        } else {
+          alert("Retweet failed");
+        }
+      });
+    } else {
+      console.log("Error: editorRef.current is null");
+    }
+  };
+
+
+  const addNewTags = () => {
+    let newTags = document.getElementById("new-tag-retweet").value;
+    // check if the tag is already in the list
+    if (!availableTags.includes(newTags)) {
+      // insert the new tag into the database
+      fetch('http://localhost:8000/new-tag', {
+        method: 'POST',
+        body: JSON.stringify({ tag: newTags }),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      }).then(res => {
+        if (res.status === 201) {
+          console.log("New tag inserted");
+        } else if (res.status === 400 && res.body === "Tag already exists") {
+          alert("Tag already exists");
+        } else {
+          console.log("Failed to insert new tag");
+        }
+        setTags([...tags, newTags]);
+        // close the modal
+        document.getElementById("close-modal").click();
+      });
+    } else {
+      alert("Tag already exists");
+    }
+    // clear the input field
+    document.getElementById("new-tag-retweet").value = '';
+  }
   return (
-    <div className="modal fade" id="tweetForwardForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-      <div className="modal-dialog">
-        <div className="modal-content">
-          <div className="modal-header">
-            <h1 className="modal-title fs-5"> Forward </h1>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div className="modal-body">
-            <Editor
-              apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
-              onInit={(evt, editor) => editorRef.current = editor}
-              initialValue={initialContent}
-              onFocus={handleFocus}
-              onBlur={handleBlur}
-              init={{
-                min_height: 250,
-                max_height: 750,
-                menubar: true,
-                plugins: 'advcode table advlist lists image media anchor link autoresize',
-                toolbar: 'blocks bold forecolor backcolor | bullist numlist | link image media | table',
-                image_title: true,
-                automatic_uploads: true,
-                file_picker_types: 'image',
-                /* and here's our custom image picker*/
-                file_picker_callback: (cb, value, meta) => {
-                  const input = document.createElement('input');
-                  input.setAttribute('type', 'file');
-                  input.setAttribute('accept', 'image/*');
+    <div>
+      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+        <div className="modal-dialog">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5"> Forward </h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <Editor
+                apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
+                onInit={(evt, editor) => editorRef.current = editor}
+                initialValue={initialContent}
+                onFocus={handleFocus}
+                onBlur={handleBlur}
+                init={{
+                  min_height: 250,
+                  max_height: 750,
+                  menubar: true,
+                  plugins: 'advcode table advlist lists image media anchor link autoresize',
+                  toolbar: 'blocks bold forecolor backcolor | bullist numlist | link image media | table',
+                  image_title: true,
+                  automatic_uploads: true,
+                  file_picker_types: 'image',
+                  /* and here's our custom image picker*/
+                  file_picker_callback: (cb, value, meta) => {
+                    const input = document.createElement('input');
+                    input.setAttribute('type', 'file');
+                    input.setAttribute('accept', 'image/*');
 
-                  input.addEventListener('change', (e) => {
-                    const file = e.target.files[0];
+                    input.addEventListener('change', (e) => {
+                      const file = e.target.files[0];
 
-                    const reader = new FileReader();
-                    reader.addEventListener('load', () => {
-                      /*
-                      Note: Now we need to register the blob in TinyMCEs image blob
-                      registry. In the next release this part hopefully won't be
-                      necessary, as we are looking to handle it internally.
-                      */
-                      const id = 'blobid' + (new Date()).getTime();
-                      console.log(Editor.editorUpload);
-                      const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;;
+                      const reader = new FileReader();
+                      reader.addEventListener('load', () => {
+                        /*
+                        Note: Now we need to register the blob in TinyMCEs image blob
+                        registry. In the next release this part hopefully won't be
+                        necessary, as we are looking to handle it internally.
+                        */
+                        const id = 'blobid' + (new Date()).getTime();
+                        console.log(Editor.editorUpload);
+                        const blobCache = window.tinymce.activeEditor.editorUpload.blobCache;;
 
-                      const base64 = reader.result.split(',')[1];
-                      const blobInfo = blobCache.create(id, file, base64);
-                      blobCache.add(blobInfo);
+                        const base64 = reader.result.split(',')[1];
+                        const blobInfo = blobCache.create(id, file, base64);
+                        blobCache.add(blobInfo);
 
-                      /* call the callback and populate the Title field with the file name */
-                      cb(blobInfo.blobUri(), { title: file.name });
+                        /* call the callback and populate the Title field with the file name */
+                        cb(blobInfo.blobUri(), { title: file.name });
+                      });
+                      reader.readAsDataURL(file);
                     });
-                    reader.readAsDataURL(file);
-                  });
 
-                  input.click();
-                },
-                content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
-              }}
-            />
-          </div>
-          <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-            <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+                    input.click();
+                  },
+                  content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
+                }}
+              />
+            </div>
+            <div className="modal-footer">
+              <div>
+                {tags != undefined && tags.map((tag, index) => {
+                  return (
+                    <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
+                  );
+                })}
+                <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button>
+              </div>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button>
+            </div>
           </div>
         </div>
       </div>
+
+      {/* modal for choosing tags*/}
+      {/* <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+        <div className="modal-dialog modal-dialog-centered">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">Please choose a tag or input new tags</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" aria-label="Close"></button>
+            </div>
+            <div className="modal-body">
+              <h4>Choose a tag</h4>
+              {randomSelect(availableTags, 5).map((tag, index) => {
+                return (
+                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                );
+              })}
+              <div>
+                <div className="input-group m-2">
+                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
+                </div>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button type="button" id="close-modal" className="btn btn-secondary" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal">Back</button>
+            </div>
+          </div>
+        </div>
+      </div> */}
     </div>
   )
 }
