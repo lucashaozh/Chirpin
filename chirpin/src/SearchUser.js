@@ -7,6 +7,7 @@ import ButtonGroup from 'react-bootstrap/ButtonGroup';
 import Dropdown from 'react-bootstrap/Dropdown';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {BACK_END} from './App';
+import { getLoginInfo } from './Login';
 
 
 class SearchUser extends React.Component{
@@ -15,34 +16,29 @@ class SearchUser extends React.Component{
         super(props);
         this.state = {
             username: window.location.pathname.split('/')[2],
+            selfname : getLoginInfo()['username'],
             userList:[]
         };
     }
 
-    async getAllUser(){
-        let res = await fetch(BACK_END + 'searchuser/'+this.state.username,{
-          method:'GET',
-          headers: { 
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          }
+    async getAllUser() {
+        let res = await fetch(BACK_END + "searchuser/" + this.state.selfname + "/" + this.state.username, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+                'Accept': 'application/json'
+            }
         });
         let l = await res.json();
-        await this.setState({userList:l});
-        console.log(this.state.userList)
-        // .then(res => {
-        //     if (res.status === 200) {
-        //     }
-        //     return res.text();
-        //   })
-        //   .then(data => {this.setState({userList:data});})
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
-      }
-      componentDidMount(){
-        this.getAllUser()
-      }
+        this.state.userList = await l;
+        this.setState((prevState) => ({ userList: l }));
+        console.log(this.state.userList);
+    }
+    
+    componentWillMount(){
+        this.getAllUser();
+    }
+  
     
     render(){
         return(

@@ -1327,20 +1327,36 @@ db.once('open', function () {
     /* ------------------------Search JIANG Hongxu------------------------*/
     /* ---------------------------------------------------------------*/
     //search for users (whose username contains the keywords)
-    app.get('/searchuser/:username', (req, res) => {
+    app.get('/searchuser/:selfname/:targetname', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        User.find({ 'username': { $regex: req.params['username'] } }).then((user) => {
-            if (!user) {
-                res.sendStatus(404);
-            }
-            else {
-                console.log(user);
-                res.send(user);
-            }
-        }).catch((err) => {
-            res.send(err);
+        let self = req.params['selfname'];
+        let target = req.params['targetname'];
+        User.findOne({ 'username': self }).then((self) => {
+            User.find({ 'username': { $regex: target }}).then((user) => {
+                let retUsers = [];
+                user.forEach(innerUser => {
+                    let isFollowing = false;
+                    if (innerUser.followers.includes(self._id)) {
+                        isFollowing = true;
+                    }
+                    let userObj = {
+                        "username": innerUser['username'],
+                        "uid": innerUser['_id'],
+                        "following": innerUser['following_counter'],
+                        "follower": innerUser['follower_counter'],
+                        "isFollowing": isFollowing,
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    };
+                    retUsers.push(userObj);
+                });
+                res.send(retUsers);
+            }).catch((err) => {
+                console.log(err);
+                res.send(err);
+            });
         });
-    })
+    });
+
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
