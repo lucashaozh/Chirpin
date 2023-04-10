@@ -72,7 +72,7 @@ class TweetDetail extends React.Component{
     async addReply(clicked_floor){
         let newcommentId = "new-comment"+clicked_floor;
         let newCom = {
-            content: "Re floor "+clicked_floor+": "+document.getElementById(newcommentId).value,
+            content: document.getElementById(newcommentId).value,
             username: getLoginInfo().username,
             tid: window.location.pathname.split('/')[2],
             floor_reply: clicked_floor
@@ -90,7 +90,7 @@ class TweetDetail extends React.Component{
         let new_comments = this.state.commentInfo;
         new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
         this.setState({commentInfo: new_comments});
-        // this.setState({tweetInfo.commentCount: this.state.tweetInfo.commentCount+1})
+        this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: this.state.tweetInfo.commentCount+1}})
         console.log(this.state.commentInfo);
         document.getElementById(newcommentId).value='';
     }
@@ -114,6 +114,8 @@ class TweetDetail extends React.Component{
         let new_comments = this.state.commentInfo;
         new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
         this.setState({commentInfo: new_comments});
+        let com_count = this.state.tweetInfo.commentCount+1
+        this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: com_count}});
         console.log(this.state.commentInfo);
         document.getElementById('new-comment').value='';
     }
