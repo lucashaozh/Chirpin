@@ -208,14 +208,16 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            userObj = {
-                'uid': user['_id'],
-                'username': user['username'],
-                'gender': user['gender'],
-                'interests': user['interests'],
-                'follower_counter': user['follower_counter'],
-                'following_counter': user['following_counter'],
-                'about': user['about']
+            if (user != null && user != '') {
+                userObj = {
+                    'uid': user['_id'],
+                    'username': user['username'],
+                    'gender': user['gender'],
+                    'interests': user['interests'],
+                    'follower_counter': user['follower_counter'],
+                    'following_counter': user['following_counter'],
+                    'about': user['about']
+                }
             }
             // console.log(userObj);
             res.send(userObj);
@@ -257,7 +259,7 @@ db.once('open', function () {
         });
     });
 
-    // get followings
+    // get followings (user mode)
     app.get('/profile/:self/:target/followings', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -288,7 +290,31 @@ db.once('open', function () {
         });
     });
 
-    // get followers
+    // get followings (admin mode)
+    app.get('/profile/:target/followings', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('followings').exec().then((user) => {
+            let retUsers = []
+            user.followings.forEach(innerUser => {
+                let userObj = {
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "isFollowing": false,
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                };
+                retUsers.push(userObj);
+            });
+            res.send(retUsers);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    // get followers (user mode)
     app.get('/profile/:self/:target/followers', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -316,6 +342,30 @@ db.once('open', function () {
                 console.log(err);
                 res.send(err);
             });
+        });
+    });
+
+    // get followers (admin mode)
+    app.get('/profile/:target/followers', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('followers').exec().then((user) => {
+            let retUsers = []
+            user.followers.forEach(innerUser => {
+                let userObj = {
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "isFollowing": false,
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                };
+                retUsers.push(userObj);
+            });
+            res.send(retUsers);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
         });
     });
 
@@ -359,7 +409,7 @@ db.once('open', function () {
                     action: "follow",
                     time: new Date()
                 }).then((noteobj) => {
-                    console.log(noteobj._id);
+                    // console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
                         console.log(c);
                     });
@@ -447,7 +497,7 @@ db.once('open', function () {
         })
     });
 
-    // get tweets posted
+    // get tweets posted (user mode)
     app.get('/profile/:self/:target/tweets', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -494,6 +544,37 @@ db.once('open', function () {
         });
     });
 
+    // get tweets posted (admin mode)
+    app.get('/profile/:target/tweets', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('tweets').exec().then((user) => {
+            let retTweets = [];
+            if (user != null && user != '') {
+                user.tweets.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": false },
+                        "user": { "uid": user['_id'], 'username': user['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "isReported": false,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    retTweets.push(tweetObj);
+                });
+                res.send(retTweets);
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
     // get tweets liked
     app.get('/profile/:username/likes', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -501,20 +582,14 @@ db.once('open', function () {
         User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' }}).exec().then((user) => {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
-                let isReported = isLiked = isDisliked = false;
-                if (user.tweets_liked.includes(tweet._id)) {
-                    isLiked = true;
-                }
-                if (user.tweets_disliked.includes(tweet._id)) {
-                    isDisliked = true;
-                }
+                let isReported = false;
                 if (user.tweets_reported.includes(tweet._id)) {
                     isReported = true;
                 }
                 let tweetObj = {
                     "tid": tweet['_id'],
-                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": isLiked },
-                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": isDisliked },
+                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": true },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": false },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -524,6 +599,7 @@ db.once('open', function () {
                     "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
                     "tags": tweet['tags']
                 }
+                // console.log(tweetObj);
                 retLikes.push(tweetObj);
             });
             res.send(retLikes);
@@ -643,6 +719,7 @@ db.once('open', function () {
                         "tid": tweet['_id'],
                         "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user.tweets_liked.includes(tweet['_id']) },
                         "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user.tweets_disliked.includes(tweet['_id']) },
+                        "isReported": user.tweets_reported.includes(tweet['_id']),
                         "user": { "uid": tweet['poster'], 'username': tweet['poster']['username']},
                         "content": tweet['tweet_content'],
                         "commentCount": tweet['comments'].length,
@@ -652,8 +729,7 @@ db.once('open', function () {
                         "tags": tweet['tags'],
                     }
                 });
-                console.log("----Followings Tweets------");
-                // console.log(tweetsInfo);
+                console.log("----Get Followings Tweets------");
                 return res.status(200).send(tweetsInfo);
             }).catch((err) => {
                 console.log("---Followings Tweets Error---");
@@ -663,14 +739,6 @@ db.once('open', function () {
     });
 
 
-    /*
-        create a new tweet from body
-        {
-            "username": "user1",
-            "tweet_content": "hello world",
-            "tag": ["tag1", "tag2", "tag3"],
-        }
-    */
     app.post('/new-tweet', (req, res) => {
         res.set('Content-Type', 'text/plain');
         // find the user
@@ -988,25 +1056,32 @@ db.once('open', function () {
     });
 
     //get detail tweet
-    app.get('/tweet/:tid', (req, res) => {
+    app.get('/fetchtweet/:tid/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
+        console.log(tid);
         Tweet.findById(tid).populate('poster').exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
-            let tweet_info = {
-                tid: tweet._id,
-                likeInfo: tweet.likes.length,
-                dislikeInfo: tweet.dislike_counter,
-                username: tweet.poster.username,
-                content: tweet.tweet_content,
-                commentCount: tweet.comments.length,
-                retweetCount: tweet.retweets.length,
-                time: tweet.post_time,
-                portraitUrl: tweet.portrait,
-                tags: tweet.tags,
-            }
-            console.log('get tweet successfully');
-            return res.status(201).send(JSON.stringify(tweet_info));
+            console.log('tweet found');
+            User.findOne({ 'username': req.params['username'] }).then((user) => {
+                if (!user) { return res.send('User does not exist').status(404); }
+                else { console.log('User found') }
+                let tweet_info = {
+                    tid: tweet._id,
+                    likeInfo: {likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id)},
+                    dislikeInfo: {dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id)},
+                    user: {uid: tweet.poster._id},
+                    content: tweet.tweet_content,
+                    commentCount: tweet.comments.length,
+                    retweetCount: tweet.retweets.length,
+                    time: tweet.post_time,
+                    portraitUrl: tweet.portrait,
+                    tags: tweet.tags,
+                }
+                console.log('get tweet successfully');
+                console.log(tweet_info)
+                return res.status(201).send(JSON.stringify(tweet_info));
+            });
         }).catch((err) => {
             console.log("-----Get Tweet Error--------");
             console.log(err);
