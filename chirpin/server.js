@@ -980,25 +980,32 @@ db.once('open', function () {
     });
 
     //get detail tweet
-    app.get('/tweet/:tid', (req, res) => {
+    app.get('/fetchtweet/:tid/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
+        console.log(tid);
         Tweet.findById(tid).populate('poster').exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
-            let tweet_info = {
-                tid: tweet._id,
-                likeInfo: tweet.likes.length,
-                dislikeInfo: tweet.dislike_counter,
-                username: tweet.poster.username,
-                content: tweet.tweet_content,
-                commentCount: tweet.comments.length,
-                retweetCount: tweet.retweets.length,
-                time: tweet.post_time,
-                portraitUrl: tweet.portrait,
-                tags: tweet.tags,
-            }
-            console.log('get tweet successfully');
-            return res.status(201).send(JSON.stringify(tweet_info));
+            console.log('tweet found');
+            User.findOne({ 'username': req.params['username'] }).then((user) => {
+                if (!user) { return res.send('User does not exist').status(404); }
+                else { console.log('User found') }
+                let tweet_info = {
+                    tid: tweet._id,
+                    likeInfo: {likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id)},
+                    dislikeInfo: {dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id)},
+                    user: {uid: tweet.poster._id},
+                    content: tweet.tweet_content,
+                    commentCount: tweet.comments.length,
+                    retweetCount: tweet.retweets.length,
+                    time: tweet.post_time,
+                    portraitUrl: tweet.portrait,
+                    tags: tweet.tags,
+                }
+                console.log('get tweet successfully');
+                console.log(tweet_info)
+                return res.status(201).send(JSON.stringify(tweet_info));
+            });
         }).catch((err) => {
             console.log("-----Get Tweet Error--------");
             console.log(err);
