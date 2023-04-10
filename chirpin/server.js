@@ -44,10 +44,7 @@ db.once('open', function () {
         }],
         dislike_counter: { type: Number, required: true },
         report_counter: { type: Number, required: true },
-        retweets: [{
-            time: { type: Date, required: true },
-            username: { type: String, required: true }
-        }],
+        retweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         post_time: { type: Date, required: true },
     });
 
@@ -1117,7 +1114,7 @@ db.once('open', function () {
             let time = new Date();
             User.findOne({ 'username': username }).then((user) => {
                 if (!user) { return res.send('User does not exist').status(404); }
-                let content = "Re Floor" + floor_reply + ": " + req.body.content;
+                let content = "Re Floor " + floor_reply + ": " + req.body.content;
                 let new_reply = {
                     username: username,
                     portrait: user.portrait,
@@ -1191,6 +1188,13 @@ db.once('open', function () {
 
                 Tweet.create(new_tweet).then((new_tweet_) => {
                     console.log(new_tweet_);
+                    // update the user
+                    user.tweets.push(new_tweet_._id);
+                    user.save();
+                    // update the parent tweet
+                    tweet.retweets.push(new_tweet_._id);
+                    tweet.save();
+                    // create a notification
                     Notification.create({
                         // nid: notificationID,
                         username: tweet.poster.username,
