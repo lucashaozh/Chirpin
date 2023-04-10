@@ -84,11 +84,19 @@ db.once('open', function () {
         tid: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }] // the tweets that contain the tag
     });
 
+    const messageSchema = new mongoose.Schema({
+        from: { type: String, required: true },
+        to: { type: String, required: true },
+        content: { type: String, required: true },
+        time: { type: Date, default: Date.now }
+    });
+    
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
     const Notification = mongoose.model('Notification', NotificationSchema);
     const Tag = mongoose.model('Tag', TagSchema);
+    const Message = mongoose.model('Message', messageSchema);
 
     // create admin for testing
     app.get('/test/createAdmin', (req, res) => {
@@ -1461,7 +1469,42 @@ db.once('open', function () {
         });
     });
 
+    /* -------------------------------------------------------------- */
+    /* ------------------------Chat DU Yunhao------------------------*/
+    /* ---------------------------------------------------------------*/
+    
 
+    // define route for sending a private message
+    app.post('/message', (req, res) => {
+    // retrieve message data from request body
+    const { from, to, content } = req.body;
+    // create new message object
+    const message = new Message({ from, to, content });
+    // save message to database
+    message.save((err) => {
+        if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        } else {
+        res.sendStatus(200);
+        }
+    });
+    });
+
+    // define route for retrieving all messages between two users
+    app.get('/messages', (req, res) => {
+    // retrieve sender and recipient usernames from query parameters
+    const { sender, recipient } = req.query;
+    // find all messages between the two users
+    Message.find({ $or: [{ from: sender, to: recipient }, { from: recipient, to: sender }] }, (err, messages) => {
+        if (err) {
+        console.error(err);
+        res.sendStatus(500);
+        } else {
+        res.send(messages);
+        }
+    });
+    });
 
 });
 const server = app.listen(8000);
