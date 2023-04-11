@@ -665,7 +665,7 @@ db.once('open', function () {
                         "portraitUrl": user['portrait']
                     }
                 });
-                // console.log("Get recommended users");
+                console.log("Get recommended users");
                 res.status(200).send(retUsers);
             });
         }).catch((err) => {
@@ -722,7 +722,7 @@ db.once('open', function () {
                     populate: {
                         path: 'poster',
                         model: 'User',
-                        select: 'username'
+                        select: 'username portrait'
                     }
                 }
             }).exec().then((user) => {
@@ -745,7 +745,7 @@ db.once('open', function () {
                         "commentCount": tweet['comments'].length,
                         "retweetCount": tweet['retweets'].length,
                         "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "portraitUrl": tweet['poster']['portrait'],
                         "tags": tweet['tags'],
                     }
                 });
