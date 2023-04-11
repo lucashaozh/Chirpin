@@ -9,14 +9,23 @@ import { notificationExample } from './Example';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import {BACK_END} from './App';
 import { getLoginInfo } from './Login';
+import { timeDifference } from './Utils';
 
 const iconMap = {
     "like": faThumbsUp,
-    "dislike": faThumbsDown,
+    // "dislike": faThumbsDown,
     "comment": faComment,
     "retweet": faRetweet,
     "follow": faUser
 }
+
+const actionMap = {
+    "like": "liked your tweet",
+    'follow': "started following you",
+    "comment": "commented on your tweet",
+    "retweet": "retweeted your tweet" 
+}
+    
 
 
 class Notification extends React.Component{
@@ -113,8 +122,8 @@ class SingleNotification extends React.Component{
                     <Link to={'/' + this.props.name}>
                         <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
                     </Link>
-                    <p class="card-text d-inline-block m-2">{this.props.name} {this.props.action} {this.props.content}</p>
-                    <p class="card-text"><small class="text-muted">Last updated {this.props.time} ago</small></p>
+                    <p class="card-text d-inline-block m-2">{this.props.name} {actionMap[this.props.action]} {this.props.content}</p>
+                    <p class="card-text"><small class="text-muted">Last updated {timeDifference(this.props.time)} ago</small></p>
                 </div>
             </div>
         )
