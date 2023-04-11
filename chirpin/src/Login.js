@@ -117,8 +117,8 @@ class Login extends React.Component {
   
   };
   render() {
-    return (this.state.login === false ? (
-      <MDBContainer className="p-3 my-5 d-flex flex-column w-50">
+    return (this.state.login === false ? 
+      (<MDBContainer className="p-3 my-5 d-flex flex-column w-50">
 
         <MDBTabs pills justify className='mb-3 d-flex flex-row justify-content-between'>
           <MDBTabsItem>
@@ -165,7 +165,7 @@ class Login extends React.Component {
 
         </MDBTabsContent>
 
-      </MDBContainer>) : (this.state.mode === 'user' ? <Navigate to='/' /> : <Navigate to='/admin' />)
+      </MDBContainer>) :(this.state.mode === 'user' ? <Navigate to='/'/> : <Navigate to='/admin'/>)
     );
   }
 }
