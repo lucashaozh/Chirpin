@@ -1221,10 +1221,50 @@ db.once('open', function () {
     /* ---------------------------------------------------------------*/
 
     app.get('/notification/:username', (req, res) => {
-        Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).then((notes) => {
-            res.set('Content-Type', 'text/plain');
-            console.log(notes);
-            res.status(201).send(notes);
+        res.set('Content-Type', 'text/plain');
+        Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).populate('actor_id').populate('tid').exec().then((notes) => {
+            
+        // Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).then((notes) => {
+            console.log('notifications found');
+            // console.log(notes);
+            let notification_list = [];
+            // let test = []
+            notes.forEach(note =>{
+                // console.log(note)
+                if (note.action!='follow'){
+                    let content_len = note.tid.tweet_content.length>30?30:note.tid.tweet_content.length;
+                    let notification = {
+                        "icon": note.action,
+                        "tid": note.tid._id,
+                        "action": note.action,
+                        "name": note.actor_id.username,
+                        "portrait": note.actor_id.portrait,
+                        "time": note.time,
+                        "content": note.tid.tweet_content.slice(0, content_len),
+                    }
+                    notification_list.push(notification);
+                } 
+                else {
+                    let notification = {
+                        "icon": note.action,
+                        "tid": null,
+                        "action": note.action,
+                        "name": note.actor_id.username,
+                        "portrait": note.actor_id.portrait,
+                        "time": note.time,
+                        "content": null
+                    }
+                    notification_list.push(notification);
+                }
+
+                // // console.log(notification)
+                console.log(notification_list);
+            });
+            console.log(notification_list);
+            // console.log(test);
+            // res.status(201).send("success");
+            
+            res.status(201).send(JSON.stringify(notification_list));
         }).catch((err) => {
             console.log("-----Get Notification Error--------");
             console.log(err);

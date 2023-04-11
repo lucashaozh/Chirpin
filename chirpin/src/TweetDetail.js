@@ -36,7 +36,7 @@ class TweetDetail extends React.Component{
 
     async fetchTweetDetail(){
         // fetch tweet info
-        console.log(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username)
+        // console.log(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username)
         let tweetInfo = await fetch(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username, {
             method: 'GET',
             headers:{

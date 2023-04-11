@@ -7,6 +7,8 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faUser} from '@fortawesome/free-solid-svg-icons';
 import { notificationExample } from './Example';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {BACK_END} from './App';
+import { getLoginInfo } from './Login';
 
 const iconMap = {
     "like": faThumbsUp,
@@ -20,8 +22,32 @@ const iconMap = {
 class Notification extends React.Component{
     constructor(props){
         super(props);
-        this.state = {viewMode:"notification"}; // two viewmode, notification or message
+        this.state = {
+            viewMode:"notification",
+            notifications: []
+        }; // two viewmode, notification or message
+        
     }
+
+    async fetchNotification(){
+        // fetch notification
+        let notification = await fetch(BACK_END+'notification/'+getLoginInfo().username, {
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+            }
+        });
+        let notificationRes = await notification.json();
+        console.log(notificationRes);
+        this.setState({notifications: notificationRes},()=>console.log(this.state.notifications));
+    }
+
+    componentWillMount(){
+        this.fetchNotification();
+    }
+
+
+
     render(){
         return(
             <div>
@@ -33,9 +59,9 @@ class Notification extends React.Component{
             <div id="scrollableNotification" style={{ height: "95vh", overflow: "auto" }}>
                 
                 {this.state.viewMode == "notification" && 
-                    <InfiniteScroll dataLength={notificationExample.length} next={null} hasMore={false} scrollableTarget="scrollableNotification"
+                    <InfiniteScroll dataLength={this.state.notifications.length} next={null} hasMore={false} scrollableTarget="scrollableNotification"
                         endMessage={<p style={{ textAlign: 'center' }}><b>No more notifications</b></p>}>
-                        <NotificationListView />
+                        <NotificationListView notifications={this.state.notifications}/>
                     </InfiniteScroll>
                 }
                 {this.state.viewMode == "message" && <MessageView />}
@@ -57,10 +83,13 @@ class MessageView extends React.Component{
 }
 
 class NotificationListView extends React.Component{
+    constructor(props){
+        super(props);
+    }
     render(){
         return(
             <div className='list-group w-auto'>
-                {notificationExample.map((note,index)=>
+                {this.props.notifications.map((note,index)=>
                 note.icon!="follow" ?
                 <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>
                 :
