@@ -44,11 +44,11 @@ export function timeDifference(time) {
 
 export function splitList(list, n) {
   let result = [];
-  console.log(list.length);
+  // console.log(list.length);
   for (let i = 0; i < list.length; i += n) {
     result.push(list.slice(i, i + n));
   }
-  console.log(result);
+  // console.log(result);
   return result;
 }
 
