@@ -272,7 +272,7 @@ db.once('open', function () {
         });
     });
 
-        // get followings (user mode)
+    // get followings (user mode)
     app.get('/profile/:self/:target/followings', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -542,7 +542,7 @@ db.once('open', function () {
                             "retweetCount": tweet['retweets'].length,
                             "isReported": isReported,
                             "time": tweet['post_time'],
-                            "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                            "portraitUrl": user['portrait'],
                             "tags": tweet['tags']
                         }
                         retTweets.push(tweetObj);
@@ -577,7 +577,7 @@ db.once('open', function () {
                         "retweetCount": tweet['retweets'].length,
                         "isReported": false,
                         "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "portraitUrl": user['portrait'],
                         "tags": tweet['tags']
                     }
                     retTweets.push(tweetObj);
@@ -611,7 +611,7 @@ db.once('open', function () {
                     "retweetCount": tweet['retweets'].length,
                     "isReported": isReported,
                     "time": tweet['post_time'],
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                    "portraitUrl": tweet['poster']['portrait'],
                     "tags": tweet['tags']
                 }
                 // console.log(tweetObj);
