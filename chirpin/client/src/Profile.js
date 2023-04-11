@@ -5,17 +5,18 @@ import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
-import femaleAvatar from './img/femaleAvatar.png';
-import { useState, useRef } from 'react';
-import UserListView from './User';
 import { TweetListView } from './Tweet';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { userInfoExample, tweetInfoExample } from './Example';
 import { getLoginInfo } from './Login';
-import cookie from 'react-cookies';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BACK_END } from './App';
+import { useParams } from 'react-router-dom';
+// import femaleAvatar from './img/femaleAvatar.png';
+// import { useState, useRef } from 'react';
+// import UserListView from './User';
+// import { userInfoExample, tweetInfoExample } from './Example';
+// import cookie from 'react-cookies';
 
 class Profile extends React.Component {
 
@@ -33,7 +34,7 @@ class Profile extends React.Component {
             },
             target: {
                 uid: "Loading",
-                username: window.location.pathname.split('/')[1],
+                username: props.username,
                 gender: "Loading",
                 interests: "Loading",
                 following_counter: "Loading",
@@ -111,9 +112,34 @@ class Profile extends React.Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
+
+    componentDidUpdate(prevProps) {
+        // Check if the username param has changed
+        console.log("componentDidUpdate");
+        if (prevProps.username !== this.props.username) {
+            // Set the new username in state and fetch new data
+            this.setState({ target: { username: this.props.username } });
+            // Code to fetch data with the new username
+            this.fetchInfo();
+        }
+    }
+
+    // componentDidUpdate(prevProps) {
+    //     // Check if the username param has changed
+    //     console.log("componentDidUpdate");
+    //     const { match } = this.props;
+    //     const { username: prevUsername } = prevProps.match.params;
+    //     const { username } = match.params;
+    //     if (prevUsername !== username) {
+    //         // Set the new username in state and fetch new data
+    //         this.setState({ target: { username: username } });
+    //         // Code to fetch data with the new username
+    //         this.fetchInfo();
+    //     }
+    // }
 
     handleFollowClick = () => {
         if (this.state.follow === false) {
@@ -577,7 +603,7 @@ class MyTweetsList extends React.Component {
         return 0;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
 
@@ -632,9 +658,10 @@ class LikesList extends React.Component {
         return 0;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
+
 
     render() {
         return (
@@ -649,4 +676,10 @@ class LikesList extends React.Component {
 
 }
 
-export { Profile };
+// Function to use the useParams hook in a class component
+function ProfileWrapper(props) {
+    const { username } = useParams();
+    return <Profile {...props} username={username} />;
+}
+
+export default ProfileWrapper;

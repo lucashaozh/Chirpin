@@ -702,7 +702,7 @@ db.once('open', function () {
                     }
                 });
                 console.log("---Get recommended tweets---");
-                console.log(retTweets);
+                // console.log(retTweets);
                 res.status(200).send(retTweets);
             });
         }).catch((err) => {

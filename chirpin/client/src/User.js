@@ -82,9 +82,10 @@ function UserCard({ userInfo }) {
               </Link>
             </div>
             <div className="col-8 ms-3">
-              <h5 className="mb-1">{username}</h5>
-              <p className="mb-2 pb-1" style={{ color: "#2b2a2a" }}>Senior Journalist</p>
-              <div className="row d-flex justify-content-center rounded-3 py-1 m-1"
+              <h5 className="m-1">{username}</h5>
+              {/* <p className="mb-2 pb-1" style={{ color: "#2b2a2a" }}>Senior Journalist</p> */}
+              
+              <div className="row d-flex justify-content-center rounded-3 py-1 m-1 my-2"
                 style={{ backgroundColor: "#efefef" }}>
                 <div className="col-md-6">
                   <p className="small text-muted mb-1 overflow-hidden d-flex flex-nowrap">Followings</p>
