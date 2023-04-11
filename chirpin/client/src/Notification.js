@@ -7,21 +7,56 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faUser} from '@fortawesome/free-solid-svg-icons';
 import { notificationExample } from './Example';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import {BACK_END} from './App';
+import { getLoginInfo } from './Login';
+import { timeDifference } from './Utils';
 
 const iconMap = {
     "like": faThumbsUp,
-    "dislike": faThumbsDown,
+    // "dislike": faThumbsDown,
     "comment": faComment,
     "retweet": faRetweet,
     "follow": faUser
 }
 
+const actionMap = {
+    "like": "liked your tweet",
+    'follow': "started following you",
+    "comment": "commented on your tweet",
+    "retweet": "retweeted your tweet" 
+}
+    
+
 
 class Notification extends React.Component{
     constructor(props){
         super(props);
-        this.state = {viewMode:"notification"}; // two viewmode, notification or message
+        this.state = {
+            viewMode:"notification",
+            notifications: []
+        }; // two viewmode, notification or message
+        
     }
+
+    async fetchNotification(){
+        // fetch notification
+        let notification = await fetch(BACK_END+'notification/'+getLoginInfo().username, {
+            method: 'GET',
+            headers:{
+                'Content-Type': 'application/json',
+            }
+        });
+        let notificationRes = await notification.json();
+        console.log(notificationRes);
+        this.setState({notifications: notificationRes},()=>console.log(this.state.notifications));
+    }
+
+    componentWillMount(){
+        this.fetchNotification();
+    }
+
+
+
     render(){
         return(
             <div>
@@ -33,9 +68,9 @@ class Notification extends React.Component{
             <div id="scrollableNotification" style={{ height: "95vh", overflow: "auto" }}>
                 
                 {this.state.viewMode == "notification" && 
-                    <InfiniteScroll dataLength={notificationExample.length} next={null} hasMore={false} scrollableTarget="scrollableNotification"
+                    <InfiniteScroll dataLength={this.state.notifications.length} next={null} hasMore={false} scrollableTarget="scrollableNotification"
                         endMessage={<p style={{ textAlign: 'center' }}><b>No more notifications</b></p>}>
-                        <NotificationListView />
+                        <NotificationListView notifications={this.state.notifications}/>
                     </InfiniteScroll>
                 }
                 {this.state.viewMode == "message" && <MessageView />}
@@ -57,14 +92,17 @@ class MessageView extends React.Component{
 }
 
 class NotificationListView extends React.Component{
+    constructor(props){
+        super(props);
+    }
     render(){
         return(
             <div className='list-group w-auto'>
-                {notificationExample.map((note,index)=>
+                {this.props.notifications.map((note,index)=>
                 note.icon!="follow" ?
-                <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>
+                <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} portrait={note.portrait}/></Link>
                 :
-                <Link to={'/'+note.name} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>)
+                <Link to={'/'+note.name} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} portrait={note.portrait}/></Link>)
                 }
                 
             </div>
@@ -75,6 +113,7 @@ class NotificationListView extends React.Component{
 class SingleNotification extends React.Component{
     constructor(props){
         super(props);
+        // console.log(this.props.portrait)
     }
     render(){
         return(
@@ -82,10 +121,10 @@ class SingleNotification extends React.Component{
                 <div class="card-body">
                     <div className="d-inline-block m-2"> <FontAwesomeIcon color='grey' icon={iconMap[this.props.icon]} size='small'/> </div>
                     <Link to={'/' + this.props.name}>
-                        <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
+                        <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.portrait} alt="Card image cap"/>
                     </Link>
-                    <p class="card-text d-inline-block m-2">{this.props.name} {this.props.action} {this.props.content}</p>
-                    <p class="card-text"><small class="text-muted">Last updated {this.props.time} ago</small></p>
+                    <p class="card-text d-inline-block m-2">{this.props.name} {actionMap[this.props.action]} "{this.props.content}"</p>
+                    <p class="card-text"><small class="text-muted">Last updated {timeDifference(this.props.time)} ago</small></p>
                 </div>
             </div>
         )

@@ -6,6 +6,7 @@ import Comment from './Comment';
 import { TweetCard } from './Tweet';
 import { BACK_END } from './App';
 import { getLoginInfo } from './Login';
+import { timeDifference } from './Utils';
 // const tweetInfo = tweetInfoExample[0];
 
 
@@ -36,7 +37,7 @@ class TweetDetail extends React.Component{
 
     async fetchTweetDetail(){
         // fetch tweet info
-        console.log(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username)
+        // console.log(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username)
         let tweetInfo = await fetch(BACK_END+'fetchtweet/'+window.location.pathname.split('/')[2]+'/'+getLoginInfo().username, {
             method: 'GET',
             headers:{
@@ -44,7 +45,7 @@ class TweetDetail extends React.Component{
             }
         });
         let tweetInfoRes = await tweetInfo.json();
-        console.log(tweetInfoRes);
+        // console.log(tweetInfoRes);
         this.setState({tweetInfo: tweetInfoRes},()=>console.log(this.state.tweetInfo));
 
 
@@ -57,7 +58,7 @@ class TweetDetail extends React.Component{
             }
         });
         let commentInfoRes = await commentInfo.json();
-        console.log(commentInfoRes);
+        // console.log(commentInfoRes);
         
         // just not right
         this.setState({commentInfo: commentInfoRes},()=>console.log(this.state.commentInfo));
@@ -88,7 +89,7 @@ class TweetDetail extends React.Component{
         let com_res = await com.json();
         console.log(com_res);
         let new_comments = this.state.commentInfo;
-        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: timeDifference(com_res.time)});
         this.setState({commentInfo: new_comments});
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: this.state.tweetInfo.commentCount+1}})
         console.log(this.state.commentInfo);
@@ -112,7 +113,8 @@ class TweetDetail extends React.Component{
         let com_res = await com.json();
         console.log(com_res);
         let new_comments = this.state.commentInfo;
-        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: "Just now"});
+        console.log(new_comments)
         this.setState({commentInfo: new_comments});
         let com_count = this.state.tweetInfo.commentCount+1
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: com_count}});
@@ -154,7 +156,7 @@ class TweetDetail extends React.Component{
                         {/* <CommentList tid={window.location.pathname.split('/')[2]} commentInfo={this.state.commentInfo}/> */}
                         <div className="list-group w-auto">
                             {this.state.commentInfo.map((comment,index)=>
-                                <Comment addReply = {this.addReply.bind(this)} key={index} name={comment.username} content={comment.content} potrait={comment.potrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>
+                                <Comment addReply = {this.addReply.bind(this)} key={index} name={comment.username} content={comment.content} portrait={comment.portrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>
                             )}
                         </div>
                     </InfiniteScroll>
