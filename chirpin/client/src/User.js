@@ -21,7 +21,6 @@ function UserCard({ userInfo }) {
   //const uid = userInfo["uid"];
   const portraitUrl = userInfo["portraitUrl"];
 
-
   const handleFollow = () => {
     fetch(BACK_END + "profile/" + getLoginInfo()['username'] + "/" + username + "/follow", {
       method: "PUT",

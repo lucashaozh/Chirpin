@@ -1550,7 +1550,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
@@ -1582,7 +1582,7 @@ db.once('open', function () {
                         "commentCount": tweet['comments'].length,
                         "retweetCount": tweet['retweets'].length,
                         "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "portraitUrl": tweet.poster['portrait'],
                         "tags": tweet['tags']
                     }
                     obj.push(tweetObj);
