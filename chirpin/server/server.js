@@ -1392,12 +1392,14 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.body.username;
         let newpwd = req.body.newpwd;
+        console.log(username);
         Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
                 console.log(1);
                 res.send("No such user.").status(404);
             } 
             else if (newpwd != '') {
+                console.log(newpwd);
                 acc.pwd = newpwd;
                 acc.save();
                 res.send("Update Successfully!").status(200);                 
@@ -1426,11 +1428,14 @@ db.once('open', function () {
                     //res.send("Successfully delete user " + username).status(204);
                 }
                 Tweet.delete({ poster: user._id }).then((tweet) => {
-                    if (!tweet) { return res.send("Successfully delete user " + username).status(204); }
-                    else {
+                    console.log("delete tweet:"+tweet);
+                    if (tweet) 
+                    {
                         console.log("Successfully delete user " + username + "'s tweets");
-                        res.send("Successfully delete user " + username).status(204);
+                        return res.send("Successfully delete user " + username).status(204);
                     }
+                    console.log(2); 
+                    return res.send("Successfully delete user " + username).status(204);
                 })
             }).
                 catch((err) => {

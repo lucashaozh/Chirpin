@@ -205,7 +205,6 @@ class DeleteUserCard extends React.Component {
                 }
             }).then(res=>{
                 if (res.status === 204) {
-                    alert("Delete Successfully!");
                 }
                 return res.text();
             })
