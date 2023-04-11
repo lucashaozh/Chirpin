@@ -272,7 +272,7 @@ db.once('open', function () {
         });
     });
 
-    // get followings (user mode)
+        // get followings (user mode)
     app.get('/profile/:self/:target/followings', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -291,7 +291,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
@@ -316,7 +316,7 @@ db.once('open', function () {
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
                     "isFollowing": false,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "portraitUrl": innerUser['portrait']
                 };
                 retUsers.push(userObj);
             });
@@ -346,7 +346,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
@@ -371,7 +371,7 @@ db.once('open', function () {
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
                     "isFollowing": false,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "portraitUrl": innerUser['portrait']
                 };
                 retUsers.push(userObj);
             });
@@ -381,7 +381,7 @@ db.once('open', function () {
             res.send(err);
         });
     });
-
+    
     // get action info: followings, users_blocked and users_reported
     app.get('/profile/:username/actioninfo', (req, res) => {
         res.set('Content-Type', 'text/plain');
