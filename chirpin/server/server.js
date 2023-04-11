@@ -678,9 +678,11 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
-        Tweet.find().populate('poster').then((tweets) => {
+        Tweet.find().populate(
+            {path: "poster", model: "User", select: "username portrait"}).then((tweets) => {
+            console.log(tweets);
             tweets.filter((tweet) => {
-                return tweet.poster.username !== username;
+                return tweet.poster && tweet.poster.username !== username;
             });
             User.findOne({ "username": username }).then((user) => {
                 let retTweets = tweets.map(tweet => {
