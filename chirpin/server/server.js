@@ -1399,13 +1399,13 @@ db.once('open', function () {
         Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
                 console.log(1);
-                res.send("No such user.").status(404);
+                return res.send("No such user.").status(404);
             } 
             else if (newpwd != '') {
                 console.log(newpwd);
                 acc.pwd = newpwd;
                 acc.save();
-                res.send("Update Successfully!").status(200);                 
+                return res.send("Update Successfully!").status(200);                 
             }
             else {
                 return res.send('Please input a valid new password.').status(404);
@@ -1430,7 +1430,7 @@ db.once('open', function () {
                     console.log("Successfully delete user " + username + " in User db");
                     //res.send("Successfully delete user " + username).status(204);
                 }
-                Tweet.delete({ poster: user._id }).then((tweet) => {
+                Tweet.deleteMany({ poster: user._id }).then((tweet) => {
                     console.log("delete tweet:"+tweet);
                     if (tweet) 
                     {
