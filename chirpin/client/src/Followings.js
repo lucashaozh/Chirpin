@@ -18,17 +18,29 @@ class Followings extends React.Component {
         // fetch followings infomation
         let self = getLoginInfo()['username'];
         let target = window.location.pathname.split('/')[1];
-        let followingsrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/followings", {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-                'Accept': 'application/json'
-            }
-        });
+        let mode = getLoginInfo()['mode'];
+        let followingsrec = [];
+        if (mode === 'user') {
+            followingsrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/followings", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        } else {
+            followingsrec = await fetch(BACK_END + "profile/" + target + "/followings", {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                }
+            });
+        }
         let followings = await followingsrec.json();
         this.state.followings = await followings;
         this.setState((prevState) => ({ followings: followings }));
-        console.log(this.state.followings);
+        // console.log(this.state.followings);
     }
     
     componentWillMount(){

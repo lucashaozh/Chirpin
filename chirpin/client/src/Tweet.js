@@ -42,8 +42,12 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
   const [isReported, setIsReported] = useState(tweetInfo['isReported']);
-  const commentCount = tweetInfo['commentCount'];
-  const retweetCount = tweetInfo['retweetCount'];
+
+
+  // const tweetUserInfo = tweetInfo['user'];
+  // console.log(tweetInfo)
+  const [commentCount, setCommentCount] = useState(tweetInfo['commentCount']);
+  const [retweetCount, setRetweetCount] = useState(tweetInfo['retweetCount']);
   const tweetContent = tweetInfo['content'];
   const portraitUrl = tweetInfo['portraitUrl'];
   const tags = tweetInfo['tags'];
@@ -149,6 +153,25 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     });
   }
 
+  const addCommentMain=()=>{
+    let newCom = {
+        content: document.getElementById('new-comment').value,
+        username: getLoginInfo().username,
+        tid: tweetInfo.tid,
+    };
+    console.log(newCom);
+    fetch(BACK_END + 'tweet/comment', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(newCom),
+    }).then(com=>com.json()).then(com_res=>
+    console.log(com_res));
+    document.getElementById('new-comment').value='';
+    setCommentCount(commentCount+1);
+  }
+
 
   return (
     <div className="card p-2 m-2 mb-4" style={{ borderRadius: "30px" }}>
@@ -212,7 +235,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <a className="btn btn-outline-primary btn-floating" href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
-                    <span className="ms-1 opacity-75">{retweetCount}</span>
+                    <span className="ms-1 opacity-75" id={'retweetCount'+tweetInfo.tid}>{retweetCount}</span>
                   </span>
                   <span className="m-1">
                     <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
@@ -258,14 +281,14 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" onClick={addComment} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+              <button type="button" onClick={addCommentMain} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
             </div>
           </div>
         </div>
       </div>
 
       {/* forward tweet */}
-      <ForwardForm tid={tweetInfo.tid} />
+      {/* <ForwardForm tid={tweetInfo.tid} /> */}
 
       {/* forward select tag*/}
 
@@ -334,6 +357,7 @@ function ForwardForm(tid) {
           editorRef.current.setContent(initialContent);
           setTags([]);
           alert("Retweet success");
+          document.getElementById("retweetCount"+tid).value = 3;
         } else {
           alert("Retweet failed");
         }

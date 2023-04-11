@@ -38,9 +38,13 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
     if (ifLogout) { console.log("Log out"); logout(); onChangeLogin(); }
   });
   const auth = getLoginInfo();
-  return !auth ? <Outlet /> : <Navigate to='/' />;
+  return !auth ? <Outlet /> : (auth['mode']==='user'?<Navigate to='/' />:<Navigate to='/admin'/>);
 }
 
+function AdminRoute(){
+  const auth = getLoginInfo();
+  return auth['mode']==='admin' ? <Outlet /> : <Navigate to='/'/>
+}
 
 
 function App() {
@@ -53,7 +57,6 @@ function App() {
     if (logInfo) {
       console.log("Login as " + logInfo['username'] + " in mode " + logInfo['mode']);
       setLogin(logInfo['username']); setMode(logInfo['mode']);
-      fetchUserPortrait();
     } else {
       console.log("Logout");
       setLogin(false); setMode(false);
@@ -61,12 +64,37 @@ function App() {
   };
 
   const changePwd = () => {
-    let ousername = document.getElementById("originalusername");
-    let newpwd = document.getElementById("changedpwd");
-    const uesrinfo = {
-      uername: ousername,
+    let ousername = getLoginInfo()['username'];
+    let opwd = document.querySelector("#originalpwd").value;
+    let newpwd = document.querySelector("#changedpwd").value;
+    const userinfo = {
+      username: ousername,
+      oldpwd:opwd,
       newpwd: newpwd
     };
+    console.log(userinfo)
+    if (userinfo['newpwd'] === '') {
+      window.alert("Please enter a valid new password.");
+    } else if (userinfo['newpwd'] !== '' && (userinfo['newpwd'].length <= 4 || userinfo['newpwd'].length >= 20)) {
+      window.alert("The length of the new password should be >4 and <20.");
+    }else{
+      fetch(BACK_END + 'changepwd',{
+        method:'PUT',
+        body:JSON.stringify(userinfo),
+        headers: { 
+          'Content-Type': 'application/json'
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+        }
+        return res.text();
+      })
+      .then(data => {alert(data);})
+      .catch(err => {
+        console.log(err);
+      });
+  }
   }
 
   const fetchUserPortrait = () => {
@@ -81,9 +109,9 @@ function App() {
       let portrait = data['portrait'];
       if (!portrait) {
         if (data['gender'] == 'Female') {
-          portrait = require("./img/femaleAvatar.png");
+          portrait = "./img/femaleAvatar.png";
         } else {
-          portrait = require("./img/maleAvatar.png");
+          portrait = "./img/maleAvatar.png";
         }
       }
       setUserPortraitSrc(portrait);
@@ -111,19 +139,19 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <NavLink to="/" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/search" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/search" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/notification" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/notification" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
                   {mode == 'user' && <NavLink to={"/" + getLoginInfo()['username']} className="nav-link text-white" activeclassname="active">
@@ -178,7 +206,7 @@ function App() {
                 <Route path='/tweet/:tweetid' element={<PrivateRoute />}>
                   <Route path='/tweet/:tweetid' element={<TweetDetail />} />
                 </Route>
-                <Route path='/admin' element={<PrivateRoute />}>
+                <Route path='/admin' element={<AdminRoute />}>
                   <Route path='/admin' element={<Admin />} />
                 </Route>
 
@@ -200,15 +228,15 @@ function App() {
             </div>
             <div className="modal-body">
               <div className="mb-3">
-                <label htmlFor="name" className="col-form-label"> Input your username: </label>
-                <input type="text" className="form-control" id="originalusername" />
+                <label htmlFor="name" className="col-form-label"> Input Your Old Password: </label>
+                <input type="text" className="form-control" id="originalpwd" />
                 <label htmlFor="name" className="col-form-label"> Input New Password: </label>
                 <input type="text" className="form-control" id="changedpwd" />
               </div>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal"> Submit </button>
+              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={changePwd}> Submit </button>
             </div>
           </div>
         </div>

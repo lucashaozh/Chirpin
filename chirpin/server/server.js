@@ -57,10 +57,7 @@ db.once('open', function () {
         }],
         dislike_counter: { type: Number, required: true },
         report_counter: { type: Number, required: true },
-        retweets: [{
-            time: { type: Date, required: true },
-            username: { type: String, required: true }
-        }],
+        retweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         post_time: { type: Date, required: true },
     });
 
@@ -221,14 +218,16 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
-            let userObj = {
-                'uid': user['_id'],
-                'username': user['username'],
-                'gender': user['gender'],
-                'interests': user['interests'],
-                'follower_counter': user['follower_counter'],
-                'following_counter': user['following_counter'],
-                'about': user['about']
+            if (user != null && user != '') {
+                let userObj = {
+                    'uid': user['_id'],
+                    'username': user['username'],
+                    'gender': user['gender'],
+                    'interests': user['interests'],
+                    'follower_counter': user['follower_counter'],
+                    'following_counter': user['following_counter'],
+                    'about': user['about']
+                }
             }
             // console.log(userObj);
             res.send(userObj);
@@ -270,7 +269,7 @@ db.once('open', function () {
         });
     });
 
-    // get followings
+    // get followings (user mode)
     app.get('/profile/:self/:target/followings', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -301,7 +300,31 @@ db.once('open', function () {
         });
     });
 
-    // get followers
+    // get followings (admin mode)
+    app.get('/profile/:target/followings', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('followings').exec().then((user) => {
+            let retUsers = []
+            user.followings.forEach(innerUser => {
+                let userObj = {
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "isFollowing": false,
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                };
+                retUsers.push(userObj);
+            });
+            res.send(retUsers);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
+    // get followers (user mode)
     app.get('/profile/:self/:target/followers', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -329,6 +352,30 @@ db.once('open', function () {
                 console.log(err);
                 res.send(err);
             });
+        });
+    });
+
+    // get followers (admin mode)
+    app.get('/profile/:target/followers', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('followers').exec().then((user) => {
+            let retUsers = []
+            user.followers.forEach(innerUser => {
+                let userObj = {
+                    "username": innerUser['username'],
+                    "uid": innerUser['_id'],
+                    "following": innerUser['following_counter'],
+                    "follower": innerUser['follower_counter'],
+                    "isFollowing": false,
+                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                };
+                retUsers.push(userObj);
+            });
+            res.send(retUsers);
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
         });
     });
 
@@ -372,7 +419,7 @@ db.once('open', function () {
                     action: "follow",
                     time: new Date()
                 }).then((noteobj) => {
-                    console.log(noteobj._id);
+                    // console.log(noteobj._id);
                     Notification.updateOne({ nid: noteobj.nid }, { $push: { notification: noteobj._id } }).then(c => {
                         console.log(c);
                     });
@@ -460,7 +507,7 @@ db.once('open', function () {
         })
     });
 
-    // get tweets posted
+    // get tweets posted (user mode)
     app.get('/profile/:self/:target/tweets', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let self = req.params['self'];
@@ -509,6 +556,37 @@ db.once('open', function () {
         });
     });
 
+    // get tweets posted (admin mode)
+    app.get('/profile/:target/tweets', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let target = req.params['target'];
+        User.findOne({ 'username': target }).populate('tweets').exec().then((user) => {
+            let retTweets = [];
+            if (user != null && user != '') {
+                user.tweets.forEach(tweet => {
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": false },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": false },
+                        "user": { "uid": user['_id'], 'username': user['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "isReported": false,
+                        "time": tweet['post_time'],
+                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "tags": tweet['tags']
+                    }
+                    retTweets.push(tweetObj);
+                });
+                res.send(retTweets);
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.send(err);
+        });
+    });
+
     // get tweets liked
     app.get('/profile/:username/likes', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -516,20 +594,14 @@ db.once('open', function () {
         User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' } }).exec().then((user) => {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
-                let isReported = isLiked = isDisliked = false;
-                if (user.tweets_liked.includes(tweet._id)) {
-                    isLiked = true;
-                }
-                if (user.tweets_disliked.includes(tweet._id)) {
-                    isDisliked = true;
-                }
+                let isReported = false;
                 if (user.tweets_reported.includes(tweet._id)) {
                     isReported = true;
                 }
                 let tweetObj = {
                     "tid": tweet['_id'],
-                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": isLiked },
-                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": isDisliked },
+                    "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": true },
+                    "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": false },
                     "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                     "content": tweet.tweet_content,
                     "commentCount": tweet['comments'].length,
@@ -539,6 +611,7 @@ db.once('open', function () {
                     "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
                     "tags": tweet['tags']
                 }
+                // console.log(tweetObj);
                 retLikes.push(tweetObj);
             });
             res.send(retLikes);
@@ -1062,7 +1135,7 @@ db.once('open', function () {
             let time = new Date();
             User.findOne({ 'username': username }).then((user) => {
                 if (!user) { return res.send('User does not exist').status(404); }
-                let content = "Re Floor" + floor_reply + ": " + req.body.content;
+                let content = "Re Floor " + floor_reply + ": " + req.body.content;
                 let new_reply = {
                     username: username,
                     portrait: user.portrait,
@@ -1136,6 +1209,13 @@ db.once('open', function () {
 
                 Tweet.create(new_tweet).then((new_tweet_) => {
                     console.log(new_tweet_);
+                    // update the user
+                    user.tweets.push(new_tweet_._id);
+                    user.save();
+                    // update the parent tweet
+                    tweet.retweets.push(new_tweet_._id);
+                    tweet.save();
+                    // create a notification
                     Notification.create({
                         // nid: notificationID,
                         username: tweet.poster.username,
@@ -1271,25 +1351,67 @@ db.once('open', function () {
 
     //change pwd by user/admin
     app.put('/changepwd', (req, res) => {
-        res.set('Content-Type', 'text-plain');
+        res.set('Content-Type', 'text/plain');
         let username = req.body.username;
         let newpwd = req.body.newpwd;
-
+        let oldpwd = req.body.oldpwd;
+        console.log("newpwd:"+newpwd);
         Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
+                console.log(username);
                 res.sendStatus(404);
-            } else if (newpwd != '') {
-                acc.pwd = newpwd;
-                acc.save();
-                res.send("Update Successfully!").status(200);
+            } 
+            else if (newpwd != '') {
+                if(oldpwd != acc.pwd){
+                    console.log("o:"+oldpwd);
+                    console.log("acc:"+acc.pwd);
+                    res.send("The old password is incorrect!").status(404);
+                }
+                else{
+                    console.log(3);
+                    acc.pwd = newpwd;
+                    acc.save();
+                    res.send("Update Successfully!").status(200);
+                }
+                
             }
             else {
-                return res.send('User does not exist').status(404);
+                return res.send('Please input a valid new password.').status(404);
             }
         }).catch((err) => {
             res.send(err);
         });
     });
+    // app.put('/changepwd', (req, res) => {
+    //     res.set('Content-Type', 'text-plain');
+    //     let oldpwd = req.body.opwd;
+    //     let username = req.body.username;
+    //     let newpwd = req.body.newpwd;
+    //     Account.findOne({ username: username }).then((acc) => {
+    //         console.log(acc);
+    //         if (!acc) {
+    //             console.log(username);
+    //             res.sendStatus(404);
+    //         } else if (newpwd != '') {
+    //             if(oldpwd != acc.pwd){
+    //                 console.log(1);
+    //                 res.send("The old password is incorrect.").status(404);
+    //             }
+    //             else{
+    //                 acc.pwd = newpwd;
+    //                 acc.save();
+    //                 console.log(2);
+    //                 res.send("Update Successfully!").status(200);
+    //             }  
+    //         }
+    //         else if (newpwd == '') {
+    //             console.log(3);
+    //             res.send('Please input a valid new password.').status(404);
+    //         }
+    //     }).catch((err) => {
+    //         res.send(err);
+    //     });
+    // });
 
     //delete a user
     app.delete('/user/:username', (req, res) => {
@@ -1372,6 +1494,16 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         Account.find().then((users) => {
             console.log(users);
+            res.send(users);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
+    //get all users and sort by report_counter
+    app.get('/reportusers', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        User.find().sort({"report_counter":-1}).then((users) => {
             res.send(users);
         }).catch((err) => {
             res.send(err);
