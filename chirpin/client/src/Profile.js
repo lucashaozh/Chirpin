@@ -459,7 +459,8 @@ class Profile extends React.Component {
                                     </div>
 
                                     <div className="row">
-                                        {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                        <button style={{visibility: "hidden"}} onClick={() => { console.log(this.state.target.username); }}></button>
+                                        {this.state.viewMode === "MyTweets" && <MyTweetsList username={this.state.target.username}/>}
                                         {this.state.viewMode === "Likes" && <LikesList />}
                                     </div>
 
@@ -523,7 +524,7 @@ class Profile extends React.Component {
                                     <button type="button" className={"btn btn-primary w-100"}> Tweets </button>
                                 </div>
                                 <div className="row">
-                                    {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                    {this.state.viewMode === "MyTweets" && <MyTweetsList username={this.state.target.username}/>}
                                 </div>
 
                                 <div className="modal fade" id="report-user" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -558,14 +559,15 @@ class MyTweetsList extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            tweets: []
+            tweets: [],
+            target: props.username
         };
     }
 
     async fetchInfo() {
         // fetch self information
         let self = getLoginInfo()['username'];
-        let target = window.location.pathname.split('/')[1];
+        let target = this.state.target;
         let mode = getLoginInfo()['mode'];
         let tweetrec = [];
         if (mode === 'user') {
@@ -673,7 +675,6 @@ class LikesList extends React.Component {
             </InfiniteScroll>
         );
     }
-
 }
 
 // Function to use the useParams hook in a class component

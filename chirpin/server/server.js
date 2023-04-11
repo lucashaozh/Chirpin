@@ -381,7 +381,7 @@ db.once('open', function () {
             res.send(err);
         });
     });
-    
+
     // get action info: followings, users_blocked and users_reported
     app.get('/profile/:username/actioninfo', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -680,36 +680,37 @@ db.once('open', function () {
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
         Tweet.find().populate(
-            {path: "poster", model: "User", select: "username portrait"}).then((tweets) => {
-            console.log(tweets);
-            tweets.filter((tweet) => {
-                return tweet.poster && tweet.poster.username !== username;
-            });
-            User.findOne({ "username": username }).then((user) => {
-                let retTweets = tweets.map(tweet => {
-                    return {
-                        "tid": tweet['_id'],
-                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user['tweets_liked'].includes(tweet['_id']) },
-                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user['tweets_disliked'].includes(tweet['_id']) },
-                        "isReported": user['tweets_reported'].includes(tweet['_id']),
-                        "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
-                        "content": tweet.tweet_content,
-                        "commentCount": tweet['comments'].length,
-                        "retweetCount": tweet['retweets'].length,
-                        "time": tweet['post_time'],
-                        "portraitUrl": tweet['poster']['portrait'],
-                        "tags": tweet['tags']
-                    }
+            { path: "poster", model: "User", select: "username portrait" }).then((tweets) => {
+                tweets = tweets.filter((tweet) => {
+                    return tweet.poster != null && tweet.poster.username !== username;
                 });
-                console.log("---Get recommended tweets---");
-                // console.log(retTweets);
-                res.status(200).send(retTweets);
+                console.log("-------Recommend Tweets---------");
+                console.log(tweets);
+                User.findOne({ "username": username }).then((user) => {
+                    let retTweets = tweets.map(tweet => {
+                        return {
+                            "tid": tweet['_id'],
+                            "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user['tweets_liked'].includes(tweet['_id']) },
+                            "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user['tweets_disliked'].includes(tweet['_id']) },
+                            "isReported": user['tweets_reported'].includes(tweet['_id']),
+                            "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
+                            "content": tweet.tweet_content,
+                            "commentCount": tweet['comments'].length,
+                            "retweetCount": tweet['retweets'].length,
+                            "time": tweet['post_time'],
+                            "portraitUrl": tweet['poster']['portrait'],
+                            "tags": tweet['tags']
+                        }
+                    });
+                    console.log("---Get recommended tweets---");
+                    // console.log(retTweets);
+                    res.status(200).send(retTweets);
+                });
+            }).catch((err) => {
+                console.log("---Recommended tweets error---");
+                console.log(err);
+                return res.status(404).send(err);
             });
-        }).catch((err) => {
-            console.log("---Recommended tweets error---");
-            console.log(err);
-            return res.status(404).send(err);
-        });
     });
 
     // get all the followings' tweets of the user
@@ -1362,25 +1363,25 @@ db.once('open', function () {
         let username = req.body.username;
         let newpwd = req.body.newpwd;
         let oldpwd = req.body.oldpwd;
-        console.log("newpwd:"+newpwd);
+        console.log("newpwd:" + newpwd);
         Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
                 console.log(username);
                 res.sendStatus(404);
-            } 
+            }
             else if (newpwd != '') {
-                if(oldpwd != acc.pwd){
-                    console.log("o:"+oldpwd);
-                    console.log("acc:"+acc.pwd);
+                if (oldpwd != acc.pwd) {
+                    console.log("o:" + oldpwd);
+                    console.log("acc:" + acc.pwd);
                     res.send("The old password is incorrect!").status(404);
                 }
-                else{
+                else {
                     console.log(3);
                     acc.pwd = newpwd;
                     acc.save();
                     res.send("Update Successfully!").status(200);
                 }
-                
+
             }
             else {
                 return res.send('Please input a valid new password.').status(404);
@@ -1400,12 +1401,12 @@ db.once('open', function () {
             if (!acc) {
                 console.log(1);
                 res.send("No such user.").status(404);
-            } 
+            }
             else if (newpwd != '') {
                 console.log(newpwd);
                 acc.pwd = newpwd;
                 acc.save();
-                res.send("Update Successfully!").status(200);                 
+                res.send("Update Successfully!").status(200);
             }
             else {
                 return res.send('Please input a valid new password.').status(404);
@@ -1431,13 +1432,12 @@ db.once('open', function () {
                     //res.send("Successfully delete user " + username).status(204);
                 }
                 Tweet.delete({ poster: user._id }).then((tweet) => {
-                    console.log("delete tweet:"+tweet);
-                    if (tweet) 
-                    {
+                    console.log("delete tweet:" + tweet);
+                    if (tweet) {
                         console.log("Successfully delete user " + username + "'s tweets");
                         return res.send("Successfully delete user " + username).status(204);
                     }
-                    console.log(2); 
+                    console.log(2);
                     return res.send("Successfully delete user " + username).status(204);
                 })
             }).
@@ -1508,7 +1508,7 @@ db.once('open', function () {
     //get all users and sort by report_counter
     app.get('/reportusers', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        User.find().sort({"report_counter":-1}).then((users) => {
+        User.find().sort({ "report_counter": -1 }).then((users) => {
             res.send(users);
         }).catch((err) => {
             res.send(err);
@@ -1550,7 +1550,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
