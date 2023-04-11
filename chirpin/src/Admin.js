@@ -93,7 +93,7 @@ class UpdateUser extends React.Component {
         } else if (newObj['newpwd'] !== '' && (newObj['newpwd'].length <= 4 || newObj['newpwd'].length >= 20)) {
           window.alert("Invalid input.\n The length of the password should be >4 and <20.");
         } else {
-          fetch(BACK_END + 'changepwd',{
+          fetch(BACK_END + 'adminchangepwd',{
             method:'PUT',
             body:JSON.stringify(newObj),
             headers: { 
@@ -102,7 +102,6 @@ class UpdateUser extends React.Component {
           })
           .then(res => {
             if (res.status === 200) {
-              alert("Update Successfully!");
             }
             return res.text();
           })

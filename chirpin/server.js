@@ -1317,7 +1317,7 @@ db.once('open', function () {
     });
 
 
-    //change pwd by user/admin
+    //change pwd by user
     app.put('/changepwd', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.body.username;
@@ -1350,36 +1350,29 @@ db.once('open', function () {
             res.send(err);
         });
     });
-    // app.put('/changepwd', (req, res) => {
-    //     res.set('Content-Type', 'text-plain');
-    //     let oldpwd = req.body.opwd;
-    //     let username = req.body.username;
-    //     let newpwd = req.body.newpwd;
-    //     Account.findOne({ username: username }).then((acc) => {
-    //         console.log(acc);
-    //         if (!acc) {
-    //             console.log(username);
-    //             res.sendStatus(404);
-    //         } else if (newpwd != '') {
-    //             if(oldpwd != acc.pwd){
-    //                 console.log(1);
-    //                 res.send("The old password is incorrect.").status(404);
-    //             }
-    //             else{
-    //                 acc.pwd = newpwd;
-    //                 acc.save();
-    //                 console.log(2);
-    //                 res.send("Update Successfully!").status(200);
-    //             }  
-    //         }
-    //         else if (newpwd == '') {
-    //             console.log(3);
-    //             res.send('Please input a valid new password.').status(404);
-    //         }
-    //     }).catch((err) => {
-    //         res.send(err);
-    //     });
-    // });
+
+    //change pwd by admin
+    app.put('/adminchangepwd', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        let username = req.body.username;
+        let newpwd = req.body.newpwd;
+        Account.findOne({ username: username }).then((acc) => {
+            if (!acc) {
+                console.log(1);
+                res.send("No such user.").status(404);
+            } 
+            else if (newpwd != '') {
+                acc.pwd = newpwd;
+                acc.save();
+                res.send("Update Successfully!").status(200);                 
+            }
+            else {
+                return res.send('Please input a valid new password.').status(404);
+            }
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
 
     //delete a user
     app.delete('/user/:username', (req, res) => {
