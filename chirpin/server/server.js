@@ -1400,13 +1400,13 @@ db.once('open', function () {
         Account.findOne({ username: username }).then((acc) => {
             if (!acc) {
                 console.log(1);
-                res.send("No such user.").status(404);
-            }
+                return res.send("No such user.").status(404);
+            } 
             else if (newpwd != '') {
                 console.log(newpwd);
                 acc.pwd = newpwd;
                 acc.save();
-                res.send("Update Successfully!").status(200);
+                return res.send("Update Successfully!").status(200);                 
             }
             else {
                 return res.send('Please input a valid new password.').status(404);
@@ -1431,9 +1431,10 @@ db.once('open', function () {
                     console.log("Successfully delete user " + username + " in User db");
                     //res.send("Successfully delete user " + username).status(204);
                 }
-                Tweet.delete({ poster: user._id }).then((tweet) => {
-                    console.log("delete tweet:" + tweet);
-                    if (tweet) {
+                Tweet.deleteMany({ poster: user._id }).then((tweet) => {
+                    console.log("delete tweet:"+tweet);
+                    if (tweet) 
+                    {
                         console.log("Successfully delete user " + username + "'s tweets");
                         return res.send("Successfully delete user " + username).status(204);
                     }
@@ -1582,7 +1583,7 @@ db.once('open', function () {
                         "commentCount": tweet['comments'].length,
                         "retweetCount": tweet['retweets'].length,
                         "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "portraitUrl": tweet.poster['portrait'],
                         "tags": tweet['tags']
                     }
                     obj.push(tweetObj);
