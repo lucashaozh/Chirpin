@@ -6,6 +6,7 @@ import Comment from './Comment';
 import { TweetCard } from './Tweet';
 import { BACK_END } from './App';
 import { getLoginInfo } from './Login';
+import { timeDifference } from './Utils';
 // const tweetInfo = tweetInfoExample[0];
 
 
@@ -88,7 +89,7 @@ class TweetDetail extends React.Component{
         let com_res = await com.json();
         console.log(com_res);
         let new_comments = this.state.commentInfo;
-        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: "Just now"});
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: timeDifference(com_res.time)});
         this.setState({commentInfo: new_comments});
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: this.state.tweetInfo.commentCount+1}})
         console.log(this.state.commentInfo);
