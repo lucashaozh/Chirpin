@@ -353,15 +353,15 @@ class Profile extends React.Component {
                             <div className='border' style={{ backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative' }}>
                                 <div style={{ display: 'inline-block' }}>
                                     {/* <img src={femaleAvatar} alt='female avatar'></img> */}
-                                    <img src={this.state.target.portrait} width={200} height={200} alt='avatar'></img>
+                                    <img src={this.state.target.portrait} width={180} height={180} alt='avatar'></img>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
-                                    <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> Name: {this.state.target['username']} </Badge>
-                                    <Badge pill bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> ID: {this.state.target['uid']} </Badge>
+                                    <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-74px' }}> Name: {this.state.target['username']} </Badge>
+                                    <Badge pill bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-74px' }}> ID: {this.state.target['uid']} </Badge>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
-                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['gender']} </Badge>
-                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['interests']} </Badge>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-78px' }}> {this.state.target['gender']} </Badge>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-78px' }}> {this.state.target['interests']} </Badge>
                                 </div>
                                 <div className="btn-group-vertical" style={{ display: 'inline-block', float: 'right', marginRight: '20px', width: '150px' }}>
                                     <Button component={Link} to={"/" + this.state.target['username'] + "/followings"} id='followings' style={{ textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black' }}> Followings: {this.state.target['following_counter']} </Button>
