@@ -64,6 +64,8 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   useEffect(() => {
     setLikeInfo(tweetInfo['likeInfo']);
     setDislikeInfo(tweetInfo['dislikeInfo']);
+    setCommentCount(tweetInfo['commentCount']);
+    setRetweetCount(tweetInfo['retweetCount']);
   }, [tweetInfo]);
 
   const clickLikeTweet = () => {
@@ -233,7 +235,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <a className="btn btn-outline-primary btn-floating" href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
-                    <span className="ms-1 opacity-75" id={'retweetCount'+tweetInfo.tid}>{retweetCount}</span>
+                    <span className="ms-1 opacity-75" id='retweetCount'>{retweetCount}</span>
                   </span>
                   <span className="m-1">
                     <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
@@ -279,14 +281,14 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" onClick={addCommentMain} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+              <button type="button" onClick={isDetailPage? addComment: addCommentMain} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
             </div>
           </div>
         </div>
       </div>
 
       {/* forward tweet */}
-      {/* <ForwardForm tid={tweetInfo.tid} /> */}
+      <ForwardForm tid={tweetInfo.tid} retweetCount={retweetCount} setRetweetCount={setRetweetCount}/>
 
       {/* forward select tag*/}
 
@@ -294,7 +296,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   )
 }
 
-function ForwardForm(tid) {
+function ForwardForm(props) {
   const editorRef = useRef(null);
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
   const log = () => {
@@ -339,9 +341,9 @@ function ForwardForm(tid) {
         username: getLoginInfo()['username'],
         tweet_content: editorRef.current.getContent(),
         tags: tags,
-        tid: tid.tid //parent id whyyyy???
+        tid: props.tid
       }
-      console.log(tid)
+      console.log(props.tid)
 
       fetch('http://localhost:8000/retweet', {
         method: 'POST',
@@ -353,9 +355,9 @@ function ForwardForm(tid) {
         console.log(res)
         if (res.status === 201) {
           editorRef.current.setContent(initialContent);
+          props.setRetweetCount(props.retweetCount + 1);
           setTags([]);
           alert("Retweet success");
-          document.getElementById("retweetCount"+tid).value = 3;
         } else {
           alert("Retweet failed");
         }

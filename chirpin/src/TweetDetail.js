@@ -44,7 +44,7 @@ class TweetDetail extends React.Component{
             }
         });
         let tweetInfoRes = await tweetInfo.json();
-        console.log(tweetInfoRes);
+        // console.log(tweetInfoRes);
         this.setState({tweetInfo: tweetInfoRes},()=>console.log(this.state.tweetInfo));
 
 
@@ -57,7 +57,7 @@ class TweetDetail extends React.Component{
             }
         });
         let commentInfoRes = await commentInfo.json();
-        console.log(commentInfoRes);
+        // console.log(commentInfoRes);
         
         // just not right
         this.setState({commentInfo: commentInfoRes},()=>console.log(this.state.commentInfo));
@@ -113,6 +113,7 @@ class TweetDetail extends React.Component{
         console.log(com_res);
         let new_comments = this.state.commentInfo;
         new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        console.log(new_comments)
         this.setState({commentInfo: new_comments});
         let com_count = this.state.tweetInfo.commentCount+1
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: com_count}});
