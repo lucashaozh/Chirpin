@@ -41,6 +41,10 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
   return !auth ? <Outlet /> : (auth['mode']==='user'?<Navigate to='/' />:<Navigate to='/admin'/>);
 }
 
+function AdminRoute(){
+  const auth = getLoginInfo();
+  return auth['mode']==='admin' ? <Outlet /> : <Navigate to='/'/>
+}
 
 
 function App() {
@@ -202,7 +206,7 @@ function App() {
                 <Route path='/tweet/:tweetid' element={<PrivateRoute />}>
                   <Route path='/tweet/:tweetid' element={<TweetDetail />} />
                 </Route>
-                <Route path='/admin' element={<PrivateRoute />}>
+                <Route path='/admin' element={<AdminRoute />}>
                   <Route path='/admin' element={<Admin />} />
                 </Route>
 
