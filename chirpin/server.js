@@ -1468,6 +1468,16 @@ db.once('open', function () {
         });
     });
 
+    //get all users and sort by report_counter
+    app.get('/reportusers', (req, res) => {
+        res.set('Content-Type', 'text/plain');
+        User.find().sort({"report_counter":-1}).then((users) => {
+            res.send(users);
+        }).catch((err) => {
+            res.send(err);
+        });
+    });
+
     //delete an account for testing
     app.delete('/acc/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');

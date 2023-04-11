@@ -38,7 +38,7 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
     if (ifLogout) { console.log("Log out"); logout(); onChangeLogin(); }
   });
   const auth = getLoginInfo();
-  return !auth ? <Outlet /> : <Navigate to='/' />;
+  return !auth ? <Outlet /> : (auth['mode']==='user'?<Navigate to='/' />:<Navigate to='/admin'/>);
 }
 
 
@@ -135,19 +135,19 @@ function App() {
               <hr />
               <ul className="nav nav-pills flex-column mb-auto">
                 <li className="nav-item">
-                  <NavLink to="/" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faHome} className='me-2' />Home</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/search" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/search" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faSearch} className='me-2' />Search</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
-                  <NavLink to="/notification" className="nav-link text-white" activeclassname="active">
+                {mode == 'user'&&<NavLink to="/notification" className="nav-link text-white" activeclassname="active">
                     <span><FontAwesomeIcon icon={faBell} className='me-2' />Notification</span>
-                  </NavLink>
+                  </NavLink>}
                 </li>
                 <li>
                   {mode == 'user' && <NavLink to={"/" + getLoginInfo()['username']} className="nav-link text-white" activeclassname="active">

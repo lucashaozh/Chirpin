@@ -4,6 +4,7 @@ import InfiniteScroll from 'react-infinite-scroll-component';
 import { deleteUserExample } from './Example';
 import { useState } from 'react';
 import {BACK_END} from './App';
+import { Link } from "react-router-dom";
 
 class Admin extends React.Component {
 
@@ -152,7 +153,7 @@ class DeleteUser extends React.Component {
       }
     
     async getAllUser(){
-        let res = await fetch(BACK_END + 'users',{
+        let res = await fetch(BACK_END + 'reportusers',{
           method:'GET',
           headers: { 
             'Content-Type': 'application/json',
@@ -222,7 +223,7 @@ class DeleteUserCard extends React.Component {
                     <label for="uid" class="col-form-label"> {uid} </label>
                 </div> */}
                 <div class="col-auto" style={{width: '50%', textAlign: 'center'}}>
-                    <label for="gender" class="col-form-label"> {this.props.name} </label>
+                    <Link to={'/'+this.props.name}><label for="gender" class="col-form-label"> {this.props.name} </label></Link>
                 </div>
                 <div class="col-auto" style={{width: '25%', textAlign: 'center'}}>
                     <label for="interest" class="col-form-label"> {this.props.report} </label>
