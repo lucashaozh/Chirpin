@@ -9,7 +9,7 @@ import TweetDetail from './TweetDetail';
 import { Notification } from './Notification';
 import Search from './Search'
 import { Admin } from './Admin';
-import { Profile } from './Profile';
+import ProfileWrapper from './Profile';
 
 import "bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
@@ -193,7 +193,8 @@ function App() {
                   <Route path='/search' element={<Search />} />
                 </Route>
                 <Route path='/:username' element={<PrivateRoute />}>
-                  <Route path="/:username" element={<Profile />} />
+                  // get the username from the url
+                  <Route path="/:username" element={<ProfileWrapper />} />
                 </Route>
                 <Route path='/:username/followings' element={<PrivateRoute />}>
                   <Route path='/:username/followings' element={<Followings />} />

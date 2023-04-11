@@ -5,17 +5,18 @@ import Col from 'react-bootstrap/Col';
 import Badge from 'react-bootstrap/Badge';
 import { Link } from 'react-router-dom'
 import Button from '@material-ui/core/Button';
-import femaleAvatar from './img/femaleAvatar.png';
-import { useState, useRef } from 'react';
-import UserListView from './User';
 import { TweetListView } from './Tweet';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { userInfoExample, tweetInfoExample } from './Example';
 import { getLoginInfo } from './Login';
-import cookie from 'react-cookies';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BACK_END } from './App';
+import { useParams } from 'react-router-dom';
+// import femaleAvatar from './img/femaleAvatar.png';
+// import { useState, useRef } from 'react';
+// import UserListView from './User';
+// import { userInfoExample, tweetInfoExample } from './Example';
+// import cookie from 'react-cookies';
 
 class Profile extends React.Component {
 
@@ -33,12 +34,13 @@ class Profile extends React.Component {
             },
             target: {
                 uid: "Loading",
-                username: window.location.pathname.split('/')[1],
+                username: props.username,
                 gender: "Loading",
                 interests: "Loading",
                 following_counter: "Loading",
                 follower_counter: "Loading",
-                about: "Loading"
+                about: "Loading",
+                portrait: "Loading"
             },
             follow: false,
             block: false,
@@ -110,9 +112,34 @@ class Profile extends React.Component {
         }
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
+
+    componentDidUpdate(prevProps) {
+        // Check if the username param has changed
+        console.log("componentDidUpdate");
+        if (prevProps.username !== this.props.username) {
+            // Set the new username in state and fetch new data
+            this.setState({ target: { username: this.props.username } });
+            // Code to fetch data with the new username
+            this.fetchInfo();
+        }
+    }
+
+    // componentDidUpdate(prevProps) {
+    //     // Check if the username param has changed
+    //     console.log("componentDidUpdate");
+    //     const { match } = this.props;
+    //     const { username: prevUsername } = prevProps.match.params;
+    //     const { username } = match.params;
+    //     if (prevUsername !== username) {
+    //         // Set the new username in state and fetch new data
+    //         this.setState({ target: { username: username } });
+    //         // Code to fetch data with the new username
+    //         this.fetchInfo();
+    //     }
+    // }
 
     handleFollowClick = () => {
         if (this.state.follow === false) {
@@ -250,15 +277,49 @@ class Profile extends React.Component {
         }
         // read the image from portrait input
         let portrait = document.getElementById("portrait").files[0];
-        // convert the image into base64 string
-        let reader = new FileReader();
-        reader.readAsDataURL(portrait);
-        reader.onload = () => {
-            const base64String = reader.result;
+        if (portrait !== undefined) {
+            // convert the image into base64 string
+            let reader = new FileReader();
+            reader.readAsDataURL(portrait);
+            reader.onload = () => {
+                const base64String = reader.result;
+                let userObj = {
+                    gender: gender,
+                    interests: document.getElementById("interests").value,
+                    portrait: base64String,
+                    about: document.getElementById("about").value
+                }
+                // console.log(userObj);
+                fetch(BACK_END + "profile/" + this.state.self['username'], {
+                    method: 'PUT',
+                    body: JSON.stringify(userObj),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(
+                    (data) => {
+                        // console.log(data.status);
+                        if (data.status === 200) {
+                            alert("Update Profile Successfully!");
+                            window.location.reload(true);
+                        } else if (data.status === 413) {
+                            alert("Please upload a portrait with size less than 10 Mb.");
+                        } else {
+                            alert("There seems to be some error. Please try again.");
+                        }
+                    }
+                ).catch((err) => {
+                    console.log(err);
+                });
+            };
+            reader.onerror = (error) => {
+                console.log('Error: ', error);
+            };
+        } else {
             let userObj = {
                 gender: gender,
                 interests: document.getElementById("interests").value,
-                portrait: base64String,
+                portrait: "",
                 about: document.getElementById("about").value
             }
             // console.log(userObj);
@@ -281,11 +342,7 @@ class Profile extends React.Component {
             ).catch((err) => {
                 console.log(err);
             });
-        };
-        reader.onerror = (error) => {
-            console.log('Error: ', error);
-        };
-
+        }
 
     }
 
@@ -321,15 +378,16 @@ class Profile extends React.Component {
                         <Col>
                             <div className='border' style={{ backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative' }}>
                                 <div style={{ display: 'inline-block' }}>
-                                    <img src={femaleAvatar} alt='female avatar'></img>
+                                    {/* <img src={femaleAvatar} alt='female avatar'></img> */}
+                                    <img src={this.state.target.portrait} width={180} height={180} alt='avatar'></img>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
-                                    <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> Name: {this.state.target['username']} </Badge>
-                                    <Badge pill bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> ID: {this.state.target['uid']} </Badge>
+                                    <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-74px' }}> Name: {this.state.target['username']} </Badge>
+                                    <Badge pill bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-74px' }}> ID: {this.state.target['uid']} </Badge>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
-                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['gender']} </Badge>
-                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['interests']} </Badge>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-78px' }}> {this.state.target['gender']} </Badge>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-78px' }}> {this.state.target['interests']} </Badge>
                                 </div>
                                 <div className="btn-group-vertical" style={{ display: 'inline-block', float: 'right', marginRight: '20px', width: '150px' }}>
                                     <Button component={Link} to={"/" + this.state.target['username'] + "/followings"} id='followings' style={{ textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black' }}> Followings: {this.state.target['following_counter']} </Button>
@@ -441,7 +499,7 @@ class Profile extends React.Component {
                                                             <input type="text" className="form-control" id="interests" value={this.state.interestsTempValue} onChange={this.handleInterestsChange} />
                                                         </div>
                                                         <div className="mb-3">
-                                                            <label htmlFor="text" className="col-sm-2 col-form-label"> Portrait: </label>
+                                                            <label htmlFor="text" className="col-sm-12 col-form-label"> Portrait (no larger than 10 Mb): </label>
                                                             <input type="file" className="form-control" id="portrait" />
                                                         </div>
                                                         <div className="mb-3">
@@ -545,7 +603,7 @@ class MyTweetsList extends React.Component {
         return 0;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
 
@@ -600,9 +658,10 @@ class LikesList extends React.Component {
         return 0;
     }
 
-    componentWillMount() {
+    componentDidMount() {
         this.fetchInfo();
     }
+
 
     render() {
         return (
@@ -617,4 +676,10 @@ class LikesList extends React.Component {
 
 }
 
-export { Profile };
+// Function to use the useParams hook in a class component
+function ProfileWrapper(props) {
+    const { username } = useParams();
+    return <Profile {...props} username={username} />;
+}
+
+export default ProfileWrapper;

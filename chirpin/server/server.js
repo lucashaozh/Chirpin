@@ -19,7 +19,8 @@ import mongoose from 'mongoose';
 
 const app = express();
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ extended: false, limit: '10mb' }));
 app.use(express.json());
 
 // const send = require('express/lib/response');
@@ -290,7 +291,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
@@ -315,7 +316,7 @@ db.once('open', function () {
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
                     "isFollowing": false,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "portraitUrl": innerUser['portrait']
                 };
                 retUsers.push(userObj);
             });
@@ -345,7 +346,7 @@ db.once('open', function () {
                         "following": innerUser['following_counter'],
                         "follower": innerUser['follower_counter'],
                         "isFollowing": isFollowing,
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                        "portraitUrl": innerUser['portrait']
                     };
                     retUsers.push(userObj);
                 });
@@ -370,7 +371,7 @@ db.once('open', function () {
                     "following": innerUser['following_counter'],
                     "follower": innerUser['follower_counter'],
                     "isFollowing": false,
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp"
+                    "portraitUrl": innerUser['portrait']
                 };
                 retUsers.push(userObj);
             });
@@ -380,7 +381,7 @@ db.once('open', function () {
             res.send(err);
         });
     });
-
+    
     // get action info: followings, users_blocked and users_reported
     app.get('/profile/:username/actioninfo', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -541,7 +542,7 @@ db.once('open', function () {
                             "retweetCount": tweet['retweets'].length,
                             "isReported": isReported,
                             "time": tweet['post_time'],
-                            "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                            "portraitUrl": user['portrait'],
                             "tags": tweet['tags']
                         }
                         retTweets.push(tweetObj);
@@ -576,7 +577,7 @@ db.once('open', function () {
                         "retweetCount": tweet['retweets'].length,
                         "isReported": false,
                         "time": tweet['post_time'],
-                        "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                        "portraitUrl": user['portrait'],
                         "tags": tweet['tags']
                     }
                     retTweets.push(tweetObj);
@@ -610,7 +611,7 @@ db.once('open', function () {
                     "retweetCount": tweet['retweets'].length,
                     "isReported": isReported,
                     "time": tweet['post_time'],
-                    "portraitUrl": "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp",
+                    "portraitUrl": tweet['poster']['portrait'],
                     "tags": tweet['tags']
                 }
                 // console.log(tweetObj);
@@ -678,9 +679,11 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
-        Tweet.find().populate('poster').then((tweets) => {
+        Tweet.find().populate(
+            {path: "poster", model: "User", select: "username portrait"}).then((tweets) => {
+            console.log(tweets);
             tweets.filter((tweet) => {
-                return tweet.poster.username !== username;
+                return tweet.poster && tweet.poster.username !== username;
             });
             User.findOne({ "username": username }).then((user) => {
                 let retTweets = tweets.map(tweet => {
@@ -699,7 +702,7 @@ db.once('open', function () {
                     }
                 });
                 console.log("---Get recommended tweets---");
-                console.log(retTweets);
+                // console.log(retTweets);
                 res.status(200).send(retTweets);
             });
         }).catch((err) => {
