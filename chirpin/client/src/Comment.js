@@ -20,7 +20,7 @@ class Comment extends React.Component{
                     <div>{this.props.floor}</div>
                 </div>
                 <Link to={'/' + this.props.name}>
-                     <img className="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
+                     <img className="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.portrait} alt="Card image cap"/>
                 </Link>
                 <div className="d-flex w-100 px-2 justify-content-between">
                     <div>

@@ -45,7 +45,7 @@ db.once('open', function () {
         tweet_content: { type: String },
         tags: [{ type: String, required: true }],
         comments: [{
-            username: { type: String, minlength: 4, maxlength: 20 },
+            user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
             portrait: { type: String },
             content: { type: String },
             floor: { type: Number },
@@ -1044,10 +1044,9 @@ db.once('open', function () {
                 if (tweet.comments == null) { tweet.comments = []; floor_num = 1; }
                 else { floor_num = tweet.comments.length + 1; }
                 // get user info
-                let user_potrait = user.portrait;
                 let new_comment = {
-                    username: username,
-                    portrait: user_potrait,
+                    user: user._id,
+                    portrait: user.portrait,
                     content: req.body.content,
                     time: time,
                     floor: floor_num
@@ -1098,7 +1097,7 @@ db.once('open', function () {
                     commentCount: tweet.comments.length,
                     retweetCount: tweet.retweets.length,
                     time: tweet.post_time,
-                    portraitUrl: tweet.portrait,
+                    portraitUrl: tweet.poster.portrait,
                     tags: tweet.tags,
                 }
                 console.log('get tweet successfully');
@@ -1116,11 +1115,24 @@ db.once('open', function () {
     app.get('/tweet/:tid/comment', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
-        Tweet.findById(tid).then((tweet) => {
+        Tweet.findById(tid).populate({path:'comments', populate:{path:"user"}}).exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let comment_list = tweet.comments;
+            let comments_res = [];
+            // console.log(comment_list);
+            comment_list.forEach((comment) => {
+                let comment_tmp = {
+                    username: comment.user.username,
+                    portrait: comment.user.portrait,
+                    content: comment.content,
+                    time: comment.time,
+                    floor: comment.floor
+                };
+                comments_res.push(comment_tmp);
+            });
+            console.log(comments_res);
             console.log('get comment successfully');
-            res.send(comment_list);
+            res.send(comments_res);
         }).catch((err) => {
             console.log("-----Get Comment Error--------");
             console.log(err);
@@ -1134,7 +1146,7 @@ db.once('open', function () {
         let tid = req.body.tid;
         let username = req.body.username;
         let floor_reply = req.body.floor_reply;
-        Tweet.findById(tid).populate('poster').exec().then((tweet) => {
+        Tweet.findById(tid).populate('poster').populate({path:'comments', populate:{path:'user'}}).exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let floor_num = tweet.comments.length + 1;
             let time = new Date();
@@ -1142,7 +1154,7 @@ db.once('open', function () {
                 if (!user) { return res.send('User does not exist').status(404); }
                 let content = "Re Floor " + floor_reply + ": " + req.body.content;
                 let new_reply = {
-                    username: username,
+                    user: user._id,
                     portrait: user.portrait,
                     content: content,
                     time: time,
@@ -1165,7 +1177,7 @@ db.once('open', function () {
                 });
                 Notification.create({
                     // nid: notificationID,
-                    username: tweet.comments[floor_reply - 1].username,
+                    username: tweet.comments[floor_reply - 1].user._id,
                     actor_id: user._id,
                     action: "reply",
                     tid: tweet._id,

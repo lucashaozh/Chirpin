@@ -461,6 +461,20 @@ function ForwardForm(props) {
                 }}
               />
             </div>
+            <div className="modal-body">
+              <h4>Choose a tag</h4>
+              {randomSelect(availableTags, 5).map((tag, index) => {
+                return (
+                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                );
+              })}
+              <div>
+                <div className="input-group m-2">
+                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
+                </div>
+              </div>
+            </div>
             <div className="modal-footer">
               <div>
                 {tags != undefined && tags.map((tag, index) => {
@@ -477,7 +491,7 @@ function ForwardForm(props) {
       </div>
 
       {/* modal for choosing tags*/}
-      <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+      {/* <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -503,7 +517,7 @@ function ForwardForm(props) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

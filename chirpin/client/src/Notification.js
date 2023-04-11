@@ -100,9 +100,9 @@ class NotificationListView extends React.Component{
             <div className='list-group w-auto'>
                 {this.props.notifications.map((note,index)=>
                 note.icon!="follow" ?
-                <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>
+                <Link to={'/tweet/'+note.tid} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} portrait={note.portrait}/></Link>
                 :
-                <Link to={'/'+note.name} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} potrait={note.potrait}/></Link>)
+                <Link to={'/'+note.name} style={{ textDecoration: 'none', color :'black'}}><SingleNotification key={index} icon={note.icon} action={note.action} name={note.name} time={note.time} content={note.content} portrait={note.portrait}/></Link>)
                 }
                 
             </div>
@@ -113,6 +113,7 @@ class NotificationListView extends React.Component{
 class SingleNotification extends React.Component{
     constructor(props){
         super(props);
+        // console.log(this.props.portrait)
     }
     render(){
         return(
@@ -120,9 +121,9 @@ class SingleNotification extends React.Component{
                 <div class="card-body">
                     <div className="d-inline-block m-2"> <FontAwesomeIcon color='grey' icon={iconMap[this.props.icon]} size='small'/> </div>
                     <Link to={'/' + this.props.name}>
-                        <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.potrait} alt="Card image cap"/>
+                        <img class="img d-inline-block m-2 rounded-circle" style={{width:"50px", height: "50px"}} src={this.props.portrait} alt="Card image cap"/>
                     </Link>
-                    <p class="card-text d-inline-block m-2">{this.props.name} {actionMap[this.props.action]} {this.props.content}</p>
+                    <p class="card-text d-inline-block m-2">{this.props.name} {actionMap[this.props.action]} "{this.props.content}"</p>
                     <p class="card-text"><small class="text-muted">Last updated {timeDifference(this.props.time)} ago</small></p>
                 </div>
             </div>

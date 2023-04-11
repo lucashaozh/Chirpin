@@ -88,7 +88,7 @@ class TweetDetail extends React.Component{
         let com_res = await com.json();
         console.log(com_res);
         let new_comments = this.state.commentInfo;
-        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: "Just now"});
         this.setState({commentInfo: new_comments});
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: this.state.tweetInfo.commentCount+1}})
         console.log(this.state.commentInfo);
@@ -112,7 +112,7 @@ class TweetDetail extends React.Component{
         let com_res = await com.json();
         console.log(com_res);
         let new_comments = this.state.commentInfo;
-        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
+        new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, portrait: com_res.portrait, time: "Just now"});
         console.log(new_comments)
         this.setState({commentInfo: new_comments});
         let com_count = this.state.tweetInfo.commentCount+1
@@ -155,7 +155,7 @@ class TweetDetail extends React.Component{
                         {/* <CommentList tid={window.location.pathname.split('/')[2]} commentInfo={this.state.commentInfo}/> */}
                         <div className="list-group w-auto">
                             {this.state.commentInfo.map((comment,index)=>
-                                <Comment addReply = {this.addReply.bind(this)} key={index} name={comment.username} content={comment.content} potrait={comment.potrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>
+                                <Comment addReply = {this.addReply.bind(this)} key={index} name={comment.username} content={comment.content} portrait={comment.portrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>
                             )}
                         </div>
                     </InfiniteScroll>
