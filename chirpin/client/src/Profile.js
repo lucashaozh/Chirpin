@@ -38,7 +38,8 @@ class Profile extends React.Component {
                 interests: "Loading",
                 following_counter: "Loading",
                 follower_counter: "Loading",
-                about: "Loading"
+                about: "Loading",
+                portrait: "Loading"
             },
             follow: false,
             block: false,
@@ -250,15 +251,49 @@ class Profile extends React.Component {
         }
         // read the image from portrait input
         let portrait = document.getElementById("portrait").files[0];
-        // convert the image into base64 string
-        let reader = new FileReader();
-        reader.readAsDataURL(portrait);
-        reader.onload = () => {
-            const base64String = reader.result;
+        if (portrait !== undefined) {
+            // convert the image into base64 string
+            let reader = new FileReader();
+            reader.readAsDataURL(portrait);
+            reader.onload = () => {
+                const base64String = reader.result;
+                let userObj = {
+                    gender: gender,
+                    interests: document.getElementById("interests").value,
+                    portrait: base64String,
+                    about: document.getElementById("about").value
+                }
+                // console.log(userObj);
+                fetch(BACK_END + "profile/" + this.state.self['username'], {
+                    method: 'PUT',
+                    body: JSON.stringify(userObj),
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                }).then(
+                    (data) => {
+                        // console.log(data.status);
+                        if (data.status === 200) {
+                            alert("Update Profile Successfully!");
+                            window.location.reload(true);
+                        } else if (data.status === 413) {
+                            alert("Please upload a portrait with size less than 10 Mb.");
+                        } else {
+                            alert("There seems to be some error. Please try again.");
+                        }
+                    }
+                ).catch((err) => {
+                    console.log(err);
+                });
+            };
+            reader.onerror = (error) => {
+                console.log('Error: ', error);
+            };
+        } else {
             let userObj = {
                 gender: gender,
                 interests: document.getElementById("interests").value,
-                portrait: base64String,
+                portrait: "",
                 about: document.getElementById("about").value
             }
             // console.log(userObj);
@@ -281,11 +316,7 @@ class Profile extends React.Component {
             ).catch((err) => {
                 console.log(err);
             });
-        };
-        reader.onerror = (error) => {
-            console.log('Error: ', error);
-        };
-
+        }
 
     }
 
@@ -321,7 +352,8 @@ class Profile extends React.Component {
                         <Col>
                             <div className='border' style={{ backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative' }}>
                                 <div style={{ display: 'inline-block' }}>
-                                    <img src={femaleAvatar} alt='female avatar'></img>
+                                    {/* <img src={femaleAvatar} alt='female avatar'></img> */}
+                                    <img src={this.state.target.portrait} width={200} height={200} alt='avatar'></img>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
                                     <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> Name: {this.state.target['username']} </Badge>
@@ -441,7 +473,7 @@ class Profile extends React.Component {
                                                             <input type="text" className="form-control" id="interests" value={this.state.interestsTempValue} onChange={this.handleInterestsChange} />
                                                         </div>
                                                         <div className="mb-3">
-                                                            <label htmlFor="text" className="col-sm-2 col-form-label"> Portrait: </label>
+                                                            <label htmlFor="text" className="col-sm-12 col-form-label"> Portrait (no larger than 10 Mb): </label>
                                                             <input type="file" className="form-control" id="portrait" />
                                                         </div>
                                                         <div className="mb-3">
