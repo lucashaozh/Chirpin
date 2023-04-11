@@ -57,6 +57,7 @@ function App() {
     if (logInfo) {
       console.log("Login as " + logInfo['username'] + " in mode " + logInfo['mode']);
       setLogin(logInfo['username']); setMode(logInfo['mode']);
+      fetchUserPortrait();
     } else {
       console.log("Logout");
       setLogin(false); setMode(false);
@@ -98,6 +99,7 @@ function App() {
   }
 
   const fetchUserPortrait = () => {
+    console.log(BACK_END + "profile/" + isLogin);
     fetch(BACK_END + "profile/" + isLogin, {
       method: "GET",
       headers: {
@@ -106,12 +108,13 @@ function App() {
     }).then(res => {
         return res.json();
     }).then(data => {
+      console.log(data);
       let portrait = data['portrait'];
       if (!portrait) {
         if (data['gender'] == 'Female') {
-          portrait = "./img/femaleAvatar.png";
+          portrait = require("./img/femaleAvatar.png");
         } else {
-          portrait = "./img/maleAvatar.png";
+          portrait = require("./img/maleAvatar.png");
         }
       }
       setUserPortraitSrc(portrait);

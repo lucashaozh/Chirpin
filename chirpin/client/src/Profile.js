@@ -8,22 +8,20 @@ import Button from '@material-ui/core/Button';
 import femaleAvatar from './img/femaleAvatar.png';
 import { useState, useRef } from 'react';
 import UserListView from './User';
-import {TweetListView} from './Tweet';
+import { TweetListView } from './Tweet';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { userInfoExample, tweetInfoExample } from './Example';
 import { getLoginInfo } from './Login';
 import cookie from 'react-cookies';
 import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import {BACK_END} from './App';
-import { set } from 'mongoose';
-import { get } from 'jquery';
+import { BACK_END } from './App';
 
 class Profile extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             viewMode: "MyTweets",
             mode: getLoginInfo()['mode'],
             self: {
@@ -42,7 +40,7 @@ class Profile extends React.Component {
                 follower_counter: "Loading",
                 about: "Loading"
             },
-            follow: false, 
+            follow: false,
             block: false,
             report: false,
             textAreaValue: "",
@@ -111,8 +109,8 @@ class Profile extends React.Component {
             }
         }
     }
-    
-    componentWillMount(){
+
+    componentWillMount() {
         this.fetchInfo();
     }
 
@@ -120,7 +118,7 @@ class Profile extends React.Component {
         if (this.state.follow === false) {
             fetch(BACK_END + "profile/" + this.state.self['username'] + "/" + this.state.target['username'] + "/follow", {
                 method: 'PUT',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(
@@ -141,7 +139,7 @@ class Profile extends React.Component {
         } else {
             fetch(BACK_END + "profile/" + this.state.self['username'] + "/" + this.state.target['username'] + "/unfollow", {
                 method: 'PUT',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(
@@ -166,7 +164,7 @@ class Profile extends React.Component {
         if (this.state.block === false) {
             fetch(BACK_END + "profile/" + this.state.self['username'] + "/" + this.state.target['username'] + "/block", {
                 method: 'PUT',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(
@@ -185,7 +183,7 @@ class Profile extends React.Component {
         } else {
             fetch(BACK_END + "profile/" + this.state.self['username'] + "/" + this.state.target['username'] + "/unblock", {
                 method: 'PUT',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(
@@ -208,7 +206,7 @@ class Profile extends React.Component {
         if (this.state.report === false) {
             fetch(BACK_END + "profile/" + this.state.self['username'] + "/" + this.state.target['username'] + "/report", {
                 method: 'PUT',
-                headers:{
+                headers: {
                     'Content-Type': 'application/json',
                 }
             }).then(
@@ -250,33 +248,45 @@ class Profile extends React.Component {
         if (document.getElementById("radio-others").checked) {
             gender = document.getElementById("radio-others").value;
         }
-        let userObj = {
-            gender: gender,
-            // gender: document.getElementById("gender").value,
-            interests: document.getElementById("interests").value,
-            portrait: document.getElementById("portrait").value,
-            about: document.getElementById("about").value
-        }
-        // console.log(userObj);
-        fetch(BACK_END + "profile/" + this.state.self['username'], {
-            method: 'PUT',
-            body:JSON.stringify(userObj),
-            headers:{
-                'Content-Type': 'application/json',
+        // read the image from portrait input
+        let portrait = document.getElementById("portrait").files[0];
+        // convert the image into base64 string
+        let reader = new FileReader();
+        reader.readAsDataURL(portrait);
+        reader.onload = () => {
+            const base64String = reader.result;
+            let userObj = {
+                gender: gender,
+                interests: document.getElementById("interests").value,
+                portrait: base64String,
+                about: document.getElementById("about").value
             }
-        }).then(
-            (data) => {
-                // console.log(data.status);
-                if (data.status === 200) {
-                    alert("Update Profile Successfully!");
-                    window.location.reload(true);
-                } else {
-                    alert("There seems to be some error. Please try again.");
+            // console.log(userObj);
+            fetch(BACK_END + "profile/" + this.state.self['username'], {
+                method: 'PUT',
+                body: JSON.stringify(userObj),
+                headers: {
+                    'Content-Type': 'application/json',
                 }
-            }
-        ).catch((err) => {
-            console.log(err);
-        });
+            }).then(
+                (data) => {
+                    // console.log(data.status);
+                    if (data.status === 200) {
+                        alert("Update Profile Successfully!");
+                        window.location.reload(true);
+                    } else {
+                        alert("There seems to be some error. Please try again.");
+                    }
+                }
+            ).catch((err) => {
+                console.log(err);
+            });
+        };
+        reader.onerror = (error) => {
+            console.log('Error: ', error);
+        };
+
+
     }
 
     handleInterestsChange = (event) => {
@@ -295,74 +305,74 @@ class Profile extends React.Component {
                 <div id="scrollableDiv" className='border' style={{ height: "100vh", overflowX: "hidden", overflowY: "scroll" }}>
                     <Row>
                         <Col>
-                        {
-                            (this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] && 
-                            <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                                My Profile
-                            </div>) ||
-                            <div className='bg-light border' style={{textAlign: 'center', padding: '15px'}}>
-                                {this.state.target['username']}'s Profile
-                            </div>
-                        }
+                            {
+                                (this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] &&
+                                    <div className='bg-light border' style={{ textAlign: 'center', padding: '15px' }}>
+                                        My Profile
+                                    </div>) ||
+                                <div className='bg-light border' style={{ textAlign: 'center', padding: '15px' }}>
+                                    {this.state.target['username']}'s Profile
+                                </div>
+                            }
                         </Col>
                     </Row>
 
                     <Row>
                         <Col>
-                            <div className='border' style={{backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative'}}>
-                                <div style={{display: 'inline-block'}}>
+                            <div className='border' style={{ backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative' }}>
+                                <div style={{ display: 'inline-block' }}>
                                     <img src={femaleAvatar} alt='female avatar'></img>
                                 </div>
-                                <div style={{display: 'inline-block'}}>
-                                    <Badge pill id='username' bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> Name: {this.state.target['username']} </Badge>
-                                    <Badge pill bg="" style={{backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px'}}> ID: {this.state.target['uid']} </Badge>
+                                <div style={{ display: 'inline-block' }}>
+                                    <Badge pill id='username' bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> Name: {this.state.target['username']} </Badge>
+                                    <Badge pill bg="" style={{ backgroundColor: 'rgb(0, 153, 153)', margin: '17px', padding: '12px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-77px' }}> ID: {this.state.target['uid']} </Badge>
                                 </div>
-                                <div style={{display: 'inline-block'}}>
-                                    <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> {this.state.target['gender']} </Badge>
-                                    <Badge bg="" style={{backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px'}}> {this.state.target['interests']} </Badge>
+                                <div style={{ display: 'inline-block' }}>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['gender']} </Badge>
+                                    <Badge bg="" style={{ backgroundColor: 'rgb(51, 153, 51)', margin: '10px', padding: '8px', position: 'relative', bottom: '-82px' }}> {this.state.target['interests']} </Badge>
                                 </div>
-                                <div className="btn-group-vertical" style={{display: 'inline-block', float: 'right', marginRight: '20px', width: '150px'}}>
-                                    <Button component={Link} to={"/" + this.state.target['username'] + "/followings"} id='followings' style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black'}}> Followings: {this.state.target['following_counter']} </Button>
-                                    <Button component={Link} to={"/" + this.state.target['username'] + "/followers"} id='followers' style={{textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-15px', fontSize: '15px', color: 'black'}}> Followers: {this.state.target['follower_counter']} </Button>
+                                <div className="btn-group-vertical" style={{ display: 'inline-block', float: 'right', marginRight: '20px', width: '150px' }}>
+                                    <Button component={Link} to={"/" + this.state.target['username'] + "/followings"} id='followings' style={{ textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '0px', fontSize: '15px', color: 'black' }}> Followings: {this.state.target['following_counter']} </Button>
+                                    <Button component={Link} to={"/" + this.state.target['username'] + "/followers"} id='followers' style={{ textTransform: 'none', backgroundColor: 'rgb(242, 242, 242)', margin: '10px', display: 'flex', flexDirection: 'column', position: 'relative', bottom: '-15px', fontSize: '15px', color: 'black' }}> Followers: {this.state.target['follower_counter']} </Button>
                                     {
-                                        this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] && 
-                                        <button type="button" onClick={this.handleEditClick} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileForm" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
-                                            Edit Profile 
+                                        this.state.mode === 'user' && this.state.target['username'] === this.state.self['username'] &&
+                                        <button type="button" onClick={this.handleEditClick} className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#editProfileForm" data-bs-whatever="@mdo" style={{ width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px' }}>
+                                            Edit Profile
                                         </button>
                                     }
                                 </div>
                                 {
-                                    this.state.mode === 'user' && this.state.target['username'] !== this.state.self['username'] && 
-                                    <div style={{position: "absolute", top: "140px", right: "30px"}}>
+                                    this.state.mode === 'user' && this.state.target['username'] !== this.state.self['username'] &&
+                                    <div style={{ position: "absolute", top: "140px", right: "30px" }}>
                                         {
                                             this.state.mode === 'user' && (
-                                            (this.state.follow &&
-                                            <button type="button" onClick={this.handleFollowClick} className="btn btn-light" id="follow" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
-                                                Unfollow
-                                            </button>) ||
-                                            <button type="button" onClick={this.handleFollowClick} className="btn btn-primary" id="follow" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
-                                                Follow
-                                            </button>)
+                                                (this.state.follow &&
+                                                    <button type="button" onClick={this.handleFollowClick} className="btn btn-light" id="follow" style={{ width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px' }}>
+                                                        Unfollow
+                                                    </button>) ||
+                                                <button type="button" onClick={this.handleFollowClick} className="btn btn-primary" id="follow" style={{ width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px' }}>
+                                                    Follow
+                                                </button>)
                                         }
                                         {
                                             this.state.mode === 'user' && (
-                                            (this.state.block &&
-                                            <button type="button" onClick={this.handleBlockClick} className="btn btn-light" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
-                                                Unblock
-                                            </button>) ||
-                                            <button type="button" onClick={this.handleBlockClick} className="btn btn-dark" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}}> 
-                                                Block
-                                            </button>)
+                                                (this.state.block &&
+                                                    <button type="button" onClick={this.handleBlockClick} className="btn btn-light" id="block" style={{ width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px' }}>
+                                                        Unblock
+                                                    </button>) ||
+                                                <button type="button" onClick={this.handleBlockClick} className="btn btn-dark" id="block" style={{ width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px' }}>
+                                                    Block
+                                                </button>)
                                         }
                                         {
                                             this.state.mode === 'user' && (
-                                            (this.state.report &&
-                                            <button type="button" className="btn btn-light" id="block" style={{width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px'}} disabled> 
-                                                Reported 
-                                            </button>) ||
-                                            <button type="button" className="btn btn-warning" id='report' data-bs-toggle="modal" data-bs-target="#report-user" data-bs-whatever="@mdo" style={{width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px'}}> 
-                                                Report 
-                                            </button>)
+                                                (this.state.report &&
+                                                    <button type="button" className="btn btn-light" id="block" style={{ width: '130px', fontSize: '18px', margin: '10px', borderRadius: '30px' }} disabled>
+                                                        Reported
+                                                    </button>) ||
+                                                <button type="button" className="btn btn-warning" id='report' data-bs-toggle="modal" data-bs-target="#report-user" data-bs-whatever="@mdo" style={{ width: '130px', fontSize: '18px', margin: '10px', bottom: '-20px', borderRadius: '30px' }}>
+                                                    Report
+                                                </button>)
                                         }
                                     </div>
                                 }
@@ -372,83 +382,83 @@ class Profile extends React.Component {
 
                     <Row>
                         <Col>
-                        <div className="p-4 p-md-5 mb-4 rounded text-bg-white">
-                            <div className="col-md-12 px-0">
-                                <h1 className="display-4 fst-italic"> About </h1>
-                                <p className="lead my-3"> {this.state.target['about']} </p>
+                            <div className="p-4 p-md-5 mb-4 rounded text-bg-white">
+                                <div className="col-md-12 px-0">
+                                    <h1 className="display-4 fst-italic"> About </h1>
+                                    <p className="lead my-3"> {this.state.target['about']} </p>
+                                </div>
                             </div>
-                        </div>
                         </Col>
                     </Row>
-                    
+
                     {
-                        (this.state.target['username'] === this.state.self['username'] && 
-                        <Row>
-                            <Col>
-                                <div className="btn-group d-flex mb-3" role="group" aria-label="...">
-                                    <button type="button" className={"btn btn-" + (this.state.viewMode !== 'MyTweets' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"MyTweets"})}> My Tweets </button>
-                                    <button type="button" className={"btn btn-" + (this.state.viewMode !== 'Likes' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({viewMode:"Likes"})}> Likes </button>
-                                </div>
+                        (this.state.target['username'] === this.state.self['username'] &&
+                            <Row>
+                                <Col>
+                                    <div className="btn-group d-flex mb-3" role="group" aria-label="...">
+                                        <button type="button" className={"btn btn-" + (this.state.viewMode !== 'MyTweets' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({ viewMode: "MyTweets" })}> My Tweets </button>
+                                        <button type="button" className={"btn btn-" + (this.state.viewMode !== 'Likes' ? "outline-" : "") + "primary w-100"} onClick={() => this.setState({ viewMode: "Likes" })}> Likes </button>
+                                    </div>
 
-                                <div className="row">
-                                    {this.state.viewMode === "MyTweets" && <MyTweetsList />}
-                                    {this.state.viewMode === "Likes" && <LikesList />}
-                                </div>
+                                    <div className="row">
+                                        {this.state.viewMode === "MyTweets" && <MyTweetsList />}
+                                        {this.state.viewMode === "Likes" && <LikesList />}
+                                    </div>
 
-                                <div className="modal fade" id="editProfileForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                    <div className="modal-dialog">
-                                        <div className="modal-content">
-                                        <div className="modal-header">
-                                            <h1 className="modal-title fs-5" id="exampleModalLabel"> Edit Profile </h1>
-                                            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                        </div>
-                                        <div className="modal-body">
-                                            <form>
-                                            <div className="mb-3">
-                                                <label htmlFor="gender" className="col-form-label"> Gender: </label>
-                                                <div className="form-check">
-                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-male" value="Male" />
-                                                    <label className="form-check-label" htmlFor="radio-male">
-                                                        Male
-                                                    </label>
+                                    <div className="modal fade" id="editProfileForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div className="modal-dialog">
+                                            <div className="modal-content">
+                                                <div className="modal-header">
+                                                    <h1 className="modal-title fs-5" id="exampleModalLabel"> Edit Profile </h1>
+                                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                                                 </div>
-                                                <div className="form-check">
-                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-female" value="Female" />
-                                                    <label className="form-check-label" htmlFor="radio-female">
-                                                        Female
-                                                    </label>
+                                                <div className="modal-body">
+                                                    <form>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="gender" className="col-form-label"> Gender: </label>
+                                                            <div className="form-check">
+                                                                <input className="form-check-input" type="radio" name="radio-gender" id="radio-male" value="Male" />
+                                                                <label className="form-check-label" htmlFor="radio-male">
+                                                                    Male
+                                                                </label>
+                                                            </div>
+                                                            <div className="form-check">
+                                                                <input className="form-check-input" type="radio" name="radio-gender" id="radio-female" value="Female" />
+                                                                <label className="form-check-label" htmlFor="radio-female">
+                                                                    Female
+                                                                </label>
+                                                            </div>
+                                                            <div className="form-check">
+                                                                <input className="form-check-input" type="radio" name="radio-gender" id="radio-others" value="Others" />
+                                                                <label className="form-check-label" htmlFor="radio-others">
+                                                                    Others
+                                                                </label>
+                                                            </div>
+                                                            {/* <input type="text" className="form-control" id="gender" /> */}
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="interest" className="col-form-label"> Interests: </label>
+                                                            <input type="text" className="form-control" id="interests" value={this.state.interestsTempValue} onChange={this.handleInterestsChange} />
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="text" className="col-sm-2 col-form-label"> Portrait: </label>
+                                                            <input type="file" className="form-control" id="portrait" />
+                                                        </div>
+                                                        <div className="mb-3">
+                                                            <label htmlFor="about-text" className="col-form-label"> About: </label>
+                                                            <textarea className="form-control" id="about" rows="4" value={this.state.textAreaValue} onChange={this.handleAboutChange} />
+                                                        </div>
+                                                    </form>
                                                 </div>
-                                                <div className="form-check">
-                                                    <input className="form-check-input" type="radio" name="radio-gender" id="radio-others" value="Others" />
-                                                    <label className="form-check-label" htmlFor="radio-others">
-                                                        Others
-                                                    </label>
+                                                <div className="modal-footer">
+                                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
+                                                    <button type="button" className="btn btn-primary" onClick={this.handleEditSubmit} data-bs-dismiss="modal"> Submit </button>
                                                 </div>
-                                                {/* <input type="text" className="form-control" id="gender" /> */}
                                             </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="interest" className="col-form-label"> Interests: </label>
-                                                <input type="text" className="form-control" id="interests" value={this.state.interestsTempValue} onChange={this.handleInterestsChange} />
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="text" className="col-sm-2 col-form-label"> Portrait: </label>
-                                                <input type="file" className="form-control" id="portrait" />
-                                            </div>
-                                            <div className="mb-3">
-                                                <label htmlFor="about-text" className="col-form-label"> About: </label>
-                                                <textarea className="form-control" id="about" rows="4" value={this.state.textAreaValue} onChange={this.handleAboutChange} />
-                                            </div>
-                                            </form>
-                                        </div>
-                                        <div className="modal-footer">
-                                            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-                                            <button type="button" className="btn btn-primary" onClick={this.handleEditSubmit} data-bs-dismiss="modal"> Submit </button>
-                                        </div>
                                         </div>
                                     </div>
-                                </div>
-                            </Col>
-                        </Row>) ||
+                                </Col>
+                            </Row>) ||
                         <Row>
                             <Col>
                                 <div className="btn-group d-flex mb-3" role="group" aria-label="...">
@@ -487,9 +497,9 @@ class Profile extends React.Component {
 
 class MyTweetsList extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             tweets: []
         };
     }
@@ -525,17 +535,17 @@ class MyTweetsList extends React.Component {
         this.setState((prevState) => ({ tweets: tweets }));
     }
 
-    compare = ( tweetA, tweetB ) => {
-        if ( tweetA.time > tweetB.time ) {
+    compare = (tweetA, tweetB) => {
+        if (tweetA.time > tweetB.time) {
             return -1;
         }
-        if ( tweetA.time < tweetB.time ) {
+        if (tweetA.time < tweetB.time) {
             return 1;
         }
         return 0;
     }
-    
-    componentWillMount(){
+
+    componentWillMount() {
         this.fetchInfo();
     }
 
@@ -545,7 +555,7 @@ class MyTweetsList extends React.Component {
                 endMessage={<p style={{ textAlign: 'center' }}>
                     <b>Yay! You have seen it all</b>
                 </p>}>
-                <TweetListView tweetInfos={this.state.tweets}/>
+                <TweetListView tweetInfos={this.state.tweets} />
             </InfiniteScroll>
         );
     }
@@ -554,9 +564,9 @@ class MyTweetsList extends React.Component {
 
 class LikesList extends React.Component {
 
-    constructor(props){
+    constructor(props) {
         super(props);
-        this.state = { 
+        this.state = {
             likes: []
         };
     }
@@ -580,17 +590,17 @@ class LikesList extends React.Component {
         this.setState((prevState) => ({ likes: likes }));
     }
 
-    compare = ( tweetA, tweetB ) => {
-        if ( tweetA.time > tweetB.time ) {
+    compare = (tweetA, tweetB) => {
+        if (tweetA.time > tweetB.time) {
             return -1;
         }
-        if ( tweetA.time < tweetB.time ) {
+        if (tweetA.time < tweetB.time) {
             return 1;
         }
         return 0;
     }
-    
-    componentWillMount(){
+
+    componentWillMount() {
         this.fetchInfo();
     }
 
@@ -600,7 +610,7 @@ class LikesList extends React.Component {
                 endMessage={<p style={{ textAlign: 'center' }}>
                     <b>Yay! You have seen it all</b>
                 </p>}>
-                <TweetListView tweetInfos={this.state.likes}/>
+                <TweetListView tweetInfos={this.state.likes} />
             </InfiniteScroll>
         );
     }

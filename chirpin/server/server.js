@@ -218,15 +218,17 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
+            let userObj = null;
             if (user != null && user != '') {
-                let userObj = {
+                userObj = {
                     'uid': user['_id'],
                     'username': user['username'],
                     'gender': user['gender'],
                     'interests': user['interests'],
                     'follower_counter': user['follower_counter'],
                     'following_counter': user['following_counter'],
-                    'about': user['about']
+                    'about': user['about'],
+                    'portrait': user['portrait']
                 }
             }
             // console.log(userObj);
@@ -1278,8 +1280,10 @@ db.once('open', function () {
                     // let imgPath = path.join(__dirname, 'src', 'img', 'maleAvatar.png');
                     let default_portrait = fs.readFileSync("./img/maleAvatar.png");
                     // convert binary data to blob data
-                    let blob = new Blob([default_portrait], { type: "image/png" });
+                    // let blob = new Blob([default_portrait], { type: "image/png" });
                     let base64String = Buffer.from(default_portrait).toString('base64');
+                    base64String = "data:image/png;base64," + base64String;
+                    console.log(base64String);
                     let user = {
                         username: req.body['newusername'],
                         // uid: new mongoose.Types.ObjectId(),
