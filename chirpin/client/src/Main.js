@@ -225,7 +225,7 @@ function Main() {
     fetch(BACK_END + "users/" + getLoginInfo()['username'], { "method": "GET" })
       .then((res) => res.json()).then((data) => {
         console.log(data);
-        setRecommendUsers(data);
+        setRecommendUsers(randomSelect(data, 6));
       }).catch((err) => {
         console.log(err);
       });
@@ -235,7 +235,7 @@ function Main() {
     fetch(BACK_END + "tweets/" + getLoginInfo()['username'], { "method": "GET" })
       .then((res) => res.json()).then((data) => {
         console.log(data);
-        setRecommendTweets(data);
+        setRecommendTweets(randomSelect(data, 12));
       }).catch((err) => {
         console.log(err);
       });

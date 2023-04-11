@@ -51,6 +51,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const tweetContent = tweetInfo['content'];
   const portraitUrl = tweetInfo['portraitUrl'];
   const tags = tweetInfo['tags'];
+  const username = tweetInfo['user']['username'];
 
 
   // update time interval every second
@@ -66,6 +67,8 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     setDislikeInfo(tweetInfo['dislikeInfo']);
     setCommentCount(tweetInfo['commentCount']);
     setRetweetCount(tweetInfo['retweetCount']);
+    setIsReported(tweetInfo['isReported']);
+
   }, [tweetInfo]);
 
   const clickLikeTweet = () => {
@@ -105,7 +108,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     //   updatedDislikeInfo.dislikeCount -= 1;
     // }
     // setDislikeInfo(updatedDislikeInfo);
-    console.log(tweetInfo)
+    // console.log(tweetInfo)
     if (dislikeInfo.bDislikeByUser) {
       updateTweetInfo("cancel-dislike");
     } else {
@@ -180,11 +183,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
           <div>
             <div className="d-flex justify-content-center text-center">
               {/* link to the user profile */}
-              <Link to={"/" + tweetInfo.username}>
+              <Link to={"/" + username}>
                 <img src={portraitUrl} alt="Generic placeholder image" className="img-fluid rounded-circle w-75" />
               </Link>
             </div>
-            <h3 className="my-2 text-bold text-center">{tweetInfo.username}</h3>
+            <h3 className="my-2 text-bold text-center">{username}</h3>
             <hr />
             <p className="opacity-50 text-nowrap text-center">{timeInterval}</p>
           </div>
