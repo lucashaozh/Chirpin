@@ -1,14 +1,27 @@
-const express = require('express');
+// const express = require('express');
+// const cors = require('cors');
+// const bodyParser = require('body-parser');
+// const fs = require('fs');
+// const path = require('path');
+// const fetch = require('node-fetch');
+// const { Blob } = require('fetch-blob');
+// const mongoose = require('mongoose');
+
+import express from 'express';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+import fs from 'fs';
+// import Blob from 'node-fetch';
+import Blob from 'fetch-blob';
+import path from 'path';
+import fetch from 'node-fetch';
+import mongoose from 'mongoose';
+
 const app = express();
-
-const cors = require('cors'); app.use(cors());
-
-const bodyParser = require('body-parser');
+app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
-
 app.use(express.json());
 
-const mongoose = require('mongoose');
 // const send = require('express/lib/response');
 console.log("Connecting to MongoDB...");
 mongoose.connect('mongodb+srv://csci3100e1:csci3100e1@chirpin.pjvjlns.mongodb.net/Chirpin?authMechanism=DEFAULT');
@@ -87,7 +100,7 @@ db.once('open', function () {
         content: { type: String, required: true },
         time: { type: Date, default: Date.now }
     });
-    
+
     const Account = mongoose.model('Account', AccountSchema);
     const Tweet = mongoose.model('Tweet', TweetSchema);
     const User = mongoose.model('User', UserSchema);
@@ -205,6 +218,7 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).populate('tweets').exec().then((user) => {
+            let userObj = null;
             if (user != null && user != '') {
                 userObj = {
                     'uid': user['_id'],
@@ -213,7 +227,8 @@ db.once('open', function () {
                     'interests': user['interests'],
                     'follower_counter': user['follower_counter'],
                     'following_counter': user['following_counter'],
-                    'about': user['about']
+                    'about': user['about'],
+                    'portrait': user['portrait']
                 }
             }
             // console.log(userObj);
@@ -371,7 +386,7 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         User.findOne({ 'username': username }).then((user) => {
-            userObj = {
+            let userObj = {
                 'uid': user['_id'],
                 'username': user['username'],
                 'followings': user['followings'],
@@ -504,7 +519,9 @@ db.once('open', function () {
                 let retTweets = [];
                 if (user != null && user != '') {
                     user.tweets.forEach(tweet => {
-                        let isReported = isLiked = isDisliked = false;
+                        let isReported = false;
+                        let isLiked = false;
+                        let isDisliked = false;
                         if (self.tweets_liked.includes(tweet._id)) {
                             isLiked = true;
                         }
@@ -576,7 +593,7 @@ db.once('open', function () {
     app.get('/profile/:username/likes', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
-        User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' }}).exec().then((user) => {
+        User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' } }).exec().then((user) => {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
                 let isReported = false;
@@ -665,7 +682,7 @@ db.once('open', function () {
             tweets.filter((tweet) => {
                 return tweet.poster.username !== username;
             });
-            User.findOne({"username": username}).then((user) => {
+            User.findOne({ "username": username }).then((user) => {
                 let retTweets = tweets.map(tweet => {
                     return {
                         "tid": tweet['_id'],
@@ -682,7 +699,7 @@ db.once('open', function () {
                     }
                 });
                 console.log("---Get recommended tweets---");
-                // console.log(retTweets);
+                console.log(retTweets);
                 res.status(200).send(retTweets);
             });
         }).catch((err) => {
@@ -698,9 +715,15 @@ db.once('open', function () {
         // consecutive populate: first find the user, then populate the following field, then populate the tweet field
         User.findOne({ 'username': req.params['username'] })
             .populate({
-                path: 'followings', populate: {
+                path: 'followings',
+                populate: {
                     path: 'tweets',
-                    model: 'Tweet'
+                    model: 'Tweet',
+                    populate: {
+                        path: 'poster',
+                        model: 'User',
+                        select: 'username'
+                    }
                 }
             }).exec().then((user) => {
                 let following = user.followings;
@@ -717,7 +740,7 @@ db.once('open', function () {
                         "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": user.tweets_liked.includes(tweet['_id']) },
                         "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": user.tweets_disliked.includes(tweet['_id']) },
                         "isReported": user.tweets_reported.includes(tweet['_id']),
-                        "user": { "uid": tweet['poster'], 'username': tweet['poster']['username']},
+                        "user": { "uid": tweet['poster']['_id'], 'username': tweet['poster']['username'] },
                         "content": tweet['tweet_content'],
                         "commentCount": tweet['comments'].length,
                         "retweetCount": tweet['retweets'].length,
@@ -1065,9 +1088,9 @@ db.once('open', function () {
                 else { console.log('User found') }
                 let tweet_info = {
                     tid: tweet._id,
-                    likeInfo: {likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id)},
-                    dislikeInfo: {dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id)},
-                    user: {uid: tweet.poster._id},
+                    likeInfo: { likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id) },
+                    dislikeInfo: { dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id) },
+                    user: { uid: tweet.poster._id },
                     content: tweet.tweet_content,
                     commentCount: tweet.comments.length,
                     retweetCount: tweet.retweets.length,
@@ -1242,43 +1265,56 @@ db.once('open', function () {
     app.post('/createuser', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let _username = req.body['username'];
-        Account.findOne({ username: _username }).then((acc)=>{
-            if(acc){console.log(acc);return res.status(201).send("The username has already been used. Please change a username.");}
-            else{
-            Account.create({
-                // uid:new mongoose.Types.ObjectId(),
-                username: req.body['newusername'],
-                pwd: req.body['newpwd'],
-                identity: 'user'
-            }).then((acc) => {
-                //if(!acc){return res.send("Sign up unsuccessfully").status(404);}
-                console.log(acc);
-                let user = {
+        Account.findOne({ username: _username }).then((acc) => {
+            if (acc) { console.log(acc); return res.status(201).send("The username has already been used. Please change a username."); }
+            else {
+                Account.create({
+                    // uid:new mongoose.Types.ObjectId(),
                     username: req.body['newusername'],
-                    // uid: new mongoose.Types.ObjectId(),
-                    gender: '',
-                    interest: [],
-                    about: '',
-                    follower_counter: 0,
-                    following_counter: 0,
-                    tweets: [],
-                    follows: [],
-                    followings: [],
-                    tweets_reported: [],
-                    users_reported: [],
-                    users_blocked: [],
-                    report_counter: 0,
-                    tweets_liked: [],
-                    tweets_disliked: [],
-                    portrait: ''
-                }
-                User.create(user).then((user) => {
-                    console.log(user);
-                    res.status(201).send("User created successfully");
-                })
-            }).catch((err) => {
-                    res.send("The username has already existed. Please change a username.");
-                });}
+                    pwd: req.body['newpwd'],
+                    identity: 'user'
+                }).then((acc) => {
+                    //if(!acc){return res.send("Sign up unsuccessfully").status(404);}
+                    // console.log(acc);
+                    // read default image from file "/img/maleAvatar.png"
+                    // let imgPath = path.join(__dirname, 'src', 'img', 'maleAvatar.png');
+                    let default_portrait = fs.readFileSync("./img/maleAvatar.png");
+                    // convert binary data to blob data
+                    // let blob = new Blob([default_portrait], { type: "image/png" });
+                    let base64String = Buffer.from(default_portrait).toString('base64');
+                    base64String = "data:image/png;base64," + base64String;
+                    console.log(base64String);
+                    let user = {
+                        username: req.body['newusername'],
+                        // uid: new mongoose.Types.ObjectId(),
+                        gender: '',
+                        interest: [],
+                        about: '',
+                        follower_counter: 0,
+                        following_counter: 0,
+                        tweets: [],
+                        follows: [],
+                        followings: [],
+                        tweets_reported: [],
+                        users_reported: [],
+                        users_blocked: [],
+                        report_counter: 0,
+                        tweets_liked: [],
+                        tweets_disliked: [],
+                        portrait: base64String
+                    }
+                    User.create(user).then((user) => {
+                        console.log(user);
+                        res.status(201).send("User created successfully");
+                    })
+                }).catch((err) => {
+                    if (err.code == 11000) {
+                        return res.status(201).send("The username has already existed. Please change a username.");
+                    }
+                    console.log(err);
+                    return res.status(400).send(err);
+                });
+            }
         });
     });
 
@@ -1493,7 +1529,7 @@ db.once('open', function () {
         let self = req.params['selfname'];
         let target = req.params['targetname'];
         User.findOne({ 'username': self }).then((self) => {
-            User.find({ 'username': { $regex: target }}).then((user) => {
+            User.find({ 'username': { $regex: target } }).then((user) => {
                 let retUsers = [];
                 user.forEach(innerUser => {
                     let isFollowing = false;
@@ -1521,13 +1557,13 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': {$all:[req.params['tag']]} }).populate('poster').exec().then((tweet) => {
-            let obj=[];
-            if(!tweet){
+        Tweet.find({ 'tags': { $all: [req.params['tag']] } }).populate('poster').exec().then((tweet) => {
+            let obj = [];
+            if (!tweet) {
                 console.log("no such tweet");
                 res.sendStatus(404);
             }
-            else{
+            else {
                 tweet.forEach(tweet => {
                     let tweetObj = {
                         "tid": tweet['_id'],
@@ -1597,38 +1633,38 @@ db.once('open', function () {
     /* -------------------------------------------------------------- */
     /* ------------------------Chat DU Yunhao------------------------*/
     /* ---------------------------------------------------------------*/
-    
+
 
     // define route for sending a private message
     app.post('/message', (req, res) => {
-    // retrieve message data from request body
-    const { from, to, content } = req.body;
-    // create new message object
-    const message = new Message({ from, to, content });
-    // save message to database
-    message.save((err) => {
-        if (err) {
-        console.error(err);
-        res.sendStatus(500);
-        } else {
-        res.sendStatus(200);
-        }
-    });
+        // retrieve message data from request body
+        const { from, to, content } = req.body;
+        // create new message object
+        const message = new Message({ from, to, content });
+        // save message to database
+        message.save((err) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+            } else {
+                res.sendStatus(200);
+            }
+        });
     });
 
     // define route for retrieving all messages between two users
     app.get('/messages', (req, res) => {
-    // retrieve sender and recipient usernames from query parameters
-    const { sender, recipient } = req.query;
-    // find all messages between the two users
-    Message.find({ $or: [{ from: sender, to: recipient }, { from: recipient, to: sender }] }, (err, messages) => {
-        if (err) {
-        console.error(err);
-        res.sendStatus(500);
-        } else {
-        res.send(messages);
-        }
-    });
+        // retrieve sender and recipient usernames from query parameters
+        const { sender, recipient } = req.query;
+        // find all messages between the two users
+        Message.find({ $or: [{ from: sender, to: recipient }, { from: recipient, to: sender }] }, (err, messages) => {
+            if (err) {
+                console.error(err);
+                res.sendStatus(500);
+            } else {
+                res.send(messages);
+            }
+        });
     });
 
 });
