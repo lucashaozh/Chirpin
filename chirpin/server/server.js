@@ -1116,6 +1116,13 @@ db.once('open', function () {
                     time: time,
                     floor: floor_num
                 };
+                let new_comment_res = {
+                    username: user.username,
+                    portrait: user.portrait,
+                    content: req.body.content,
+                    time: time,
+                    floor: floor_num
+                };
                 console.log(new_comment)
                 tweet.comments.push(new_comment);
                 tweet.save();
@@ -1133,7 +1140,7 @@ db.once('open', function () {
                     });
                 });
                 console.log("comment successfully");
-                return res.status(201).send(JSON.stringify(new_comment));
+                return res.status(201).send(JSON.stringify(new_comment_res));
             });
         }).catch((err) => {
             console.log("-----Comment Error--------");
@@ -1226,6 +1233,13 @@ db.once('open', function () {
                     floor: floor_num
                 }
                 tweet.comments.push(new_reply);
+                let new_reply_res ={
+                    username: user.username,
+                    portrait: user.portrait,
+                    content: content,
+                    time: time,
+                    floor: floor_num
+                }
                 tweet.save();
                 Notification.create({
                     // nid: notificationID,
@@ -1255,7 +1269,7 @@ db.once('open', function () {
                 });
                 console.log(new_reply)
                 console.log("reply successfully");
-                return res.status(201).send(JSON.stringify(new_reply));
+                return res.status(201).send(JSON.stringify(new_reply_res));
             });
         }).catch((err) => {
             console.log("-----Reply Error--------");
