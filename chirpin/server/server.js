@@ -657,7 +657,7 @@ db.once('open', function () {
         User.find({ 'username': { $ne: username } }).then((users) => {
             User.findOne({ 'username': username }).then((currUser) => {
                 let retUsers = users.map(user => {
-                    return !currUser['followings'].includes(user['_id'])  && {
+                    return {
                         "username": user['username'],
                         "uid": user['_id'],
                         "following": user['followings'].length,
@@ -665,6 +665,9 @@ db.once('open', function () {
                         "isFollowing": currUser['followings'].includes(user['_id']),
                         "portraitUrl": user['portrait']
                     }
+                });
+                retUsers = retUsers.filter(user => {
+                    return user.isFollowing === false;
                 });
                 console.log("Get recommended users");
                 res.status(200).send(retUsers);
