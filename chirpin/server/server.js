@@ -657,7 +657,7 @@ db.once('open', function () {
         User.find({ 'username': { $ne: username } }).then((users) => {
             User.findOne({ 'username': username }).then((currUser) => {
                 let retUsers = users.map(user => {
-                    return {
+                    return !currUser['followings'].includes(user['_id'])  && {
                         "username": user['username'],
                         "uid": user['_id'],
                         "following": user['followings'].length,
