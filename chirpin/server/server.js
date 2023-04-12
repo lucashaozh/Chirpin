@@ -16,6 +16,7 @@ import Blob from 'fetch-blob';
 import path from 'path';
 import fetch from 'node-fetch';
 import mongoose from 'mongoose';
+import { ObjectId } from "mongodb";
 
 const app = express();
 app.use(cors());
@@ -1654,6 +1655,40 @@ db.once('open', function () {
         let target = req.params['targetname'];
         User.findOne({ 'username': self }).then((self) => {
             User.find({ 'username': { $regex: target } }).then((user) => {
+                let retUsers = [];
+                user.forEach(innerUser => {
+                    let isFollowing = false;
+                    if (innerUser.followers.includes(self._id)) {
+                        isFollowing = true;
+                    }
+                    let userObj = {
+                        "username": innerUser['username'],
+                        "uid": innerUser['_id'],
+                        "following": innerUser['following_counter'],
+                        "follower": innerUser['follower_counter'],
+                        "isFollowing": isFollowing,
+                        "portraitUrl": innerUser['portrait']
+                    };
+                    retUsers.push(userObj);
+                });
+                res.send(retUsers);
+            }).catch((err) => {
+                console.log(err);
+                res.send(err);
+            });
+        });
+    });
+
+    //search for users by uid
+    app.get('/searchuserbyid/:selfname/:targetname', (req, res) => {
+        res.set('Content-Type', 'text/plain'); 
+        let self = req.params['selfname'];
+        let target = req.params['targetname'];
+        var o_id = new ObjectId(target);
+        console.log(target)
+        User.findOne({ 'username': self }).then((self) => {
+            User.find({'_id': o_id}).then((user) => {
+                console.log(user);
                 let retUsers = [];
                 user.forEach(innerUser => {
                     let isFollowing = false;
