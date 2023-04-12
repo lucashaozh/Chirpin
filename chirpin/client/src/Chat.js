@@ -2,6 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import "./css/Chatbox.css";
 import { faPaperclip, faSmile, faPaperPlane, faSearch } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'; 
+import { getLoginInfo, login } from './Login';
+
 function ChatBox() {
   const [messages, setMessages] = useState([]);
   const [inputValue, setInputValue] = useState('');
@@ -72,75 +74,25 @@ function ChatBox() {
                                   <div class="d-flex flex-row">
                                     <div>
                                       <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        src={[require('./img/femaleAvatar.png')]}
                                         alt="avatar" class="d-flex align-self-center me-3" width="60" />
                                       <span class="badge bg-success badge-dot"></span>
                                     </div>
                                     <div class="pt-1" >
-                                      <p class="small text-muted">user_02</p>
+                                      <p class="small text-muted" style={{color:'white'}}>Ziqi</p>
                                     </div>
                                   </div>
 
                                 </a>
                               </button>
                               
-                              <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
-                              <a href="#!" class="d-flex justify-content-between" >
-                                  <div class="d-flex flex-row">
-                                    <div>
-                                      <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                      <span class="badge bg-success badge-dot"></span>
-                                    </div>
-                                    <div class="pt-1" >
-                                      <p class="small text-muted">user_03</p>
-                                    </div>
-                                  </div>
-
-                                </a>
-                              </button>
-
-
-                              <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">
-                              <a href="#!" class="d-flex justify-content-between" >
-                                  <div class="d-flex flex-row">
-                                    <div>
-                                      <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                      <span class="badge bg-success badge-dot"></span>
-                                    </div>
-                                    <div class="pt-1" >
-                                      <p class="small text-muted">user_04</p>
-                                    </div>
-                                  </div>
-
-                                </a>
-                              </button>
-
-
-                              <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">
-                              <a href="#!" class="d-flex justify-content-between" >
-                                  <div class="d-flex flex-row">
-                                    <div>
-                                      <img
-                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                      <span class="badge bg-success badge-dot"></span>
-                                    </div>
-                                    <div class="pt-1" >
-                                      <p class="small text-muted">user_05</p>
-                                    </div>
-                                  </div>
-
-                                </a>
-                              </button>
+                              
                             </div>
                             <div class="tab-content" id="v-pills-tabContent">
                               <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
                               <div className="chat-box">
                                   <div className="chat-body" ref={messageContainerRef}>
+                                    {getLoginInfo()['username']=='Ziqi'&& <button style={{ backgroundColor: "green", color: "white", fontSize: "17px", borderRadius: "4px", border: "white" }} >test</button>}
                                     {messages.map((message) => (
                                         <div
                                         key={message.id}
