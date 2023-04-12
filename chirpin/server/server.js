@@ -228,8 +228,8 @@ db.once('open', function () {
                     'username': user['username'],
                     'gender': user['gender'],
                     'interests': user['interests'],
-                    'follower_counter': user['follower_counter'],
-                    'following_counter': user['following_counter'],
+                    'follower_counter': user['followers'].length,
+                    'following_counter': user['followings'].length,
                     'about': user['about'],
                     'portrait': user['portrait']
                 }
