@@ -12,7 +12,7 @@ import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
 // const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
-const tinyMCEApiKey = "sectfzujjivlo90kpiqptvlao0lrn8b79rf326hs1v6b9oyu"
+export const tinyMCEApiKey = "sectfzujjivlo90kpiqptvlao0lrn8b79rf326hs1v6b9oyu"
 
 
 function DisplayRichText({ content }) {
@@ -431,7 +431,7 @@ function ForwardForm(props) {
             </div>
             <div className="modal-body">
               <Editor
-                apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
+                apiKey={tinyMCEApiKey}
                 onInit={(evt, editor) => editorRef.current = editor}
                 initialValue={initialContent}
                 onFocus={handleFocus}

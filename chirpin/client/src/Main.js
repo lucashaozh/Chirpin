@@ -12,6 +12,7 @@ import { BACK_END } from './App';
 import { Dropdown } from 'react-bootstrap';
 import { ButtonGroup } from '@material-ui/core';
 import Button from 'react-bootstrap/Button';
+import { tinyMCEApiKey } from './Tweet';
 
 
 function NewPost() {
@@ -115,7 +116,7 @@ function NewPost() {
         <div className='card-body p-1 mx-1 mb-2 row'>
           <Editor
             // tinymceScriptSrc={process.env.PUBLIC_URL + '/tinymce/tinymce.min.js'}
-            apiKey='bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2'
+            apiKey= {tinyMCEApiKey}
             onInit={(evt, editor) => editorRef.current = editor}
             initialValue={initialContent}
             onFocus={handleFocus}
