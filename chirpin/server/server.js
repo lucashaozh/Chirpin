@@ -1032,7 +1032,7 @@ db.once('open', function () {
                 tweet.report_counter++;
                 user.save();
                 tweet.save();
-                console.log("Report successfully");
+                console.log(username + " report " + tid + " successfully");
                 return res.status(201).send('Report successfully');
             });
         }).catch((err) => {

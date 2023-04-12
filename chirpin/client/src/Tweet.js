@@ -146,6 +146,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const handleTweetReport = () => {
+    // console.log("Report tweet for user: " + tweetInfo['user']['username'] + " and tweet content " + tweetInfo['content']);
     fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
       method: 'PUT',
       headers: {
@@ -248,7 +249,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <span className="ms-1 opacity-75" id='retweetCount'>{retweetCount}</span>
                   </span>
                   <span className="m-1">
-                    <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
+                    <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target={"#report-popup" + tweetInfo['tid']}>
                       <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                     </button>
                   </span>
@@ -265,7 +266,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* Modal */}
-      <div className="modal fade" id="report-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal fade" id={"report-popup"+tweetInfo['tid']} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
