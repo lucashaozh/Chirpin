@@ -1132,6 +1132,13 @@ db.once('open', function () {
                     time: time,
                     floor: floor_num
                 };
+                let new_comment_res = {
+                    username: user.username,
+                    portrait: user.portrait,
+                    content: req.body.content,
+                    time: time,
+                    floor: floor_num
+                };
                 console.log(new_comment)
                 tweet.comments.push(new_comment);
                 tweet.save();
@@ -1149,7 +1156,7 @@ db.once('open', function () {
                     });
                 });
                 console.log("comment successfully");
-                return res.status(201).send(JSON.stringify(new_comment));
+                return res.status(201).send(JSON.stringify(new_comment_res));
             });
         }).catch((err) => {
             console.log("-----Comment Error--------");
@@ -1173,7 +1180,7 @@ db.once('open', function () {
                     tid: tweet._id,
                     likeInfo: { likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id) },
                     dislikeInfo: { dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id) },
-                    user: { uid: tweet.poster._id },
+                    user: { uid: tweet.poster._id, username: tweet.poster.username },
                     content: tweet.tweet_content,
                     commentCount: tweet.comments.length,
                     retweetCount: tweet.retweets.length,
@@ -1242,6 +1249,13 @@ db.once('open', function () {
                     floor: floor_num
                 }
                 tweet.comments.push(new_reply);
+                let new_reply_res ={
+                    username: user.username,
+                    portrait: user.portrait,
+                    content: content,
+                    time: time,
+                    floor: floor_num
+                }
                 tweet.save();
                 Notification.create({
                     // nid: notificationID,
@@ -1271,7 +1285,7 @@ db.once('open', function () {
                 });
                 console.log(new_reply)
                 console.log("reply successfully");
-                return res.status(201).send(JSON.stringify(new_reply));
+                return res.status(201).send(JSON.stringify(new_reply_res));
             });
         }).catch((err) => {
             console.log("-----Reply Error--------");
@@ -1772,7 +1786,7 @@ db.once('open', function () {
         Tag.aggregate([
             { $project: { "tag": "$tag", cnt: { $size: '$tid' } } },
             { $sort: { cnt: -1 } },
-            { $limit: 10 }]).then((tweets) => {
+            { $limit: 8 }]).then((tweets) => {
                 if (!tweets) {
                     console.log("no tags");
                     res, send(404);
