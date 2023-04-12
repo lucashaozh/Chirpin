@@ -518,8 +518,8 @@ db.once('open', function () {
         let self_ = req.params['self'];
         let target = req.params['target'];
         let retTweets = [];
-        if(self_ != null && self_ != '' && self_==target){
-            User.findOne({ 'username': self_ }).populate({path:'tweets'}).exec().then((self) => {
+        if (self_ != null && self_ != '' && self_ == target) {
+            User.findOne({ 'username': self_ }).populate({ path: 'tweets' }).exec().then((self) => {
                 console.log('self found');
                 self.tweets.forEach(tweet => {
                     let isReported = false;
@@ -551,15 +551,15 @@ db.once('open', function () {
                     retTweets.push(tweetObj);
                     console.log(tweetObj)
                 });
-                
+
                 console.log('get self tweets success')
                 return res.status(200).send(retTweets);
             }).catch((err) => {
                 return res.send(err);
             })
         }
-        else if (self_ != null && self_ != '' && self_!=target){
-            User.findOne({ 'username': target }).populate({path: 'tweets', match:{'private':'false'} }).exec().then((user) => {
+        else if (self_ != null && self_ != '' && self_ != target) {
+            User.findOne({ 'username': target }).populate({ path: 'tweets', match: { 'private': 'false' } }).exec().then((user) => {
                 user.tweets.forEach(tweet => {
                     let isReported = false;
                     let isLiked = false;
@@ -588,13 +588,13 @@ db.once('open', function () {
                         'private': tweet['private']
                     }
                     retTweets.push(tweetObj);
-                }); 
+                });
                 console.log('get other tweets success')
-                return res.status(200).send(retTweets);  
+                return res.status(200).send(retTweets);
             }).catch((err) => {
                 return res.send(err);
             })
-        }    
+        }
     });
 
     // get tweets posted (admin mode)
@@ -732,7 +732,7 @@ db.once('open', function () {
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
         // sort tweets by post time (newest first)
-        Tweet.find({'private':'false'}).sort({ post_time: 'desc' }).populate(
+        Tweet.find({ 'private': 'false' }).sort({ post_time: 'desc' }).populate(
             { path: "poster", model: "User", select: "username portrait" }).then((tweets) => {
                 tweets = tweets.filter((tweet) => {
                     return tweet.poster != null && tweet.poster.username !== username;
@@ -847,14 +847,30 @@ db.once('open', function () {
                 retweets: [],
                 private: req.body.private
             }
-            Tweet.create(tweet).then((tweet) => {
-                // add the tweet to the user's tweets
-                user.tweets.push(tweet._id);
-                user.save();
-                return res.sendStatus(201);
+
+            // find all the tags in the tweet
+            let tags = req.body.tags;
+            Tag.find({ 'tag': { $in: tags } }).then((tagList) => {
+                Tweet.create(tweet).then((tweet) => {
+                    // add the tweet to the user's tweets
+                    // for each tag, add the tweet to the tag's tweets
+                    user.tweets.push(tweet._id);
+                    tagList.forEach((tag) => {
+                        tag.tid.push(tweet._id);
+                        tag.save();
+                    });
+                    console.log("Save tweet to tags");
+                    user.save();
+                    return res.sendStatus(201);
+                }).catch((err) => {
+                    return res.status().send(err);
+                });
             }).catch((err) => {
-                return res.status().send(err);
+                console.log(err);
+                return res.status(400).send(err);
             });
+
+
         });
     });
 
@@ -1681,13 +1697,13 @@ db.once('open', function () {
 
     //search for users by uid
     app.get('/searchuserbyid/:selfname/:targetname', (req, res) => {
-        res.set('Content-Type', 'text/plain'); 
+        res.set('Content-Type', 'text/plain');
         let self = req.params['selfname'];
         let target = req.params['targetname'];
         var o_id = new ObjectId(target);
         console.log(target)
         User.findOne({ 'username': self }).then((self) => {
-            User.find({'_id': o_id}).then((user) => {
+            User.find({ '_id': o_id }).then((user) => {
                 console.log(user);
                 let retUsers = [];
                 user.forEach(innerUser => {
@@ -1716,7 +1732,7 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': { $all: [req.params['tag']] }, private:'false' }).populate('poster').exec().then((tweet) => {
+        Tweet.find({ 'tags': { $all: [req.params['tag']] }, private: 'false' }).populate('poster').exec().then((tweet) => {
             tweet = tweet.filter((tweet) => {
                 return tweet.poster != null;
             });
