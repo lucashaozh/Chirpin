@@ -42,6 +42,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
   const [isReported, setIsReported] = useState(tweetInfo['isReported']);
+  // const [privacy, setPrivacy] = useState(tweetInfo['private']);
 
 
   // const tweetUserInfo = tweetInfo['user'];
@@ -68,6 +69,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     setCommentCount(tweetInfo['commentCount']);
     setRetweetCount(tweetInfo['retweetCount']);
     setIsReported(tweetInfo['isReported']);
+    // setPrivacy(tweetInfo['private']);
 
   }, [tweetInfo]);
 
@@ -245,6 +247,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                       <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                     </button>
                   </span>
+                  {/* {privacy == 'true' &&
+                  <span className='m-1 success'>
+                    Private
+                  </span>
+                  } */}
                 </>
               }
             </div>

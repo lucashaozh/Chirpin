@@ -60,6 +60,7 @@ db.once('open', function () {
         report_counter: { type: Number, required: true },
         retweets: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Tweet' }],
         post_time: { type: Date, required: true },
+        private: { type: Boolean, required: true },
     });
 
     const UserSchema = mongoose.Schema({
@@ -513,50 +514,86 @@ db.once('open', function () {
     // get tweets posted (user mode)
     app.get('/profile/:self/:target/tweets', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        let self = req.params['self'];
+        let self_ = req.params['self'];
         let target = req.params['target'];
-        User.findOne({ 'username': self }).then((self) => {
-            User.findOne({ 'username': target }).populate('tweets').exec().then((user) => {
-                let retTweets = [];
-                if (user != null && user != '') {
-                    user.tweets.forEach(tweet => {
-                        let isReported = false;
-                        let isLiked = false;
-                        let isDisliked = false;
-                        if (self.tweets_liked.includes(tweet._id)) {
-                            isLiked = true;
-                        }
-                        if (self.tweets_disliked.includes(tweet._id)) {
-                            isDisliked = true;
-                        }
-                        if (self.tweets_reported.includes(tweet._id)) {
-                            isReported = true;
-                        }
-                        let tweetObj = {
-                            "tid": tweet['_id'],
-                            "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": isLiked },
-                            "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": isDisliked },
-                            "user": { "uid": user['_id'], 'username': user['username'] },
-                            "content": tweet.tweet_content,
-                            "commentCount": tweet['comments'].length,
-                            "retweetCount": tweet['retweets'].length,
-                            "isReported": isReported,
-                            "time": tweet['post_time'],
-                            "portraitUrl": user['portrait'],
-                            "tags": tweet['tags']
-                        }
-                        retTweets.push(tweetObj);
-                    });
-                    res.send(retTweets);
-                }
+        let retTweets = [];
+        if(self_ != null && self_ != '' && self_==target){
+            User.findOne({ 'username': self_ }).populate({path:'tweets'}).exec().then((self) => {
+                console.log('self found');
+                self.tweets.forEach(tweet => {
+                    let isReported = false;
+                    let isLiked = false;
+                    let isDisliked = false;
+                    if (self.tweets_liked.includes(tweet._id)) {
+                        isLiked = true;
+                    }
+                    if (self.tweets_disliked.includes(tweet._id)) {
+                        isDisliked = true;
+                    }
+                    if (self.tweets_reported.includes(tweet._id)) {
+                        isReported = true;
+                    }
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": isLiked },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": isDisliked },
+                        "user": { "uid": self['_id'], 'username': self['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "isReported": isReported,
+                        "time": tweet['post_time'],
+                        "portraitUrl": self['portrait'],
+                        "tags": tweet['tags'],
+                        'private': tweet['private']
+                    }
+                    retTweets.push(tweetObj);
+                    console.log(tweetObj)
+                });
+                
+                console.log('get self tweets success')
+                return res.status(200).send(retTweets);
             }).catch((err) => {
-                console.log(err);
-                res.send(err);
-            });
-        }).catch((err) => {
-            console.log(err);
-            res.send(err);
-        });
+                return res.send(err);
+            })
+        }
+        else if (self_ != null && self_ != '' && self_!=target){
+            User.findOne({ 'username': target }).populate({path: 'tweets', match:{'private':'false'} }).exec().then((user) => {
+                user.tweets.forEach(tweet => {
+                    let isReported = false;
+                    let isLiked = false;
+                    let isDisliked = false;
+                    if (user.tweets_liked.includes(tweet._id)) {
+                        isLiked = true;
+                    }
+                    if (user.tweets_disliked.includes(tweet._id)) {
+                        isDisliked = true;
+                    }
+                    if (user.tweets_reported.includes(tweet._id)) {
+                        isReported = true;
+                    }
+                    let tweetObj = {
+                        "tid": tweet['_id'],
+                        "likeInfo": { "likeCount": tweet['likes'].length, "bLikeByUser": isLiked },
+                        "dislikeInfo": { "dislikeCount": tweet['dislike_counter'], "bDislikeByUser": isDisliked },
+                        "user": { "uid": user['_id'], 'username': user['username'] },
+                        "content": tweet.tweet_content,
+                        "commentCount": tweet['comments'].length,
+                        "retweetCount": tweet['retweets'].length,
+                        "isReported": isReported,
+                        "time": tweet['post_time'],
+                        "portraitUrl": user['portrait'],
+                        "tags": tweet['tags'],
+                        'private': tweet['private']
+                    }
+                    retTweets.push(tweetObj);
+                }); 
+                console.log('get other tweets success')
+                return res.status(200).send(retTweets);  
+            }).catch((err) => {
+                return res.send(err);
+            })
+        }    
     });
 
     // get tweets posted (admin mode)
@@ -679,7 +716,7 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
-        Tweet.find().populate(
+        Tweet.find({'private':'false'}).populate(
             { path: "poster", model: "User", select: "username portrait" }).then((tweets) => {
                 tweets = tweets.filter((tweet) => {
                     return tweet.poster != null && tweet.poster.username !== username;
@@ -699,7 +736,8 @@ db.once('open', function () {
                             "retweetCount": tweet['retweets'].length,
                             "time": tweet['post_time'],
                             "portraitUrl": tweet['poster']['portrait'],
-                            "tags": tweet['tags']
+                            "tags": tweet['tags'],
+                            "private": tweet['private']
                         }
                     });
                     console.log("---Get recommended tweets---");
@@ -723,6 +761,7 @@ db.once('open', function () {
                 populate: {
                     path: 'tweets',
                     model: 'Tweet',
+                    match: { 'private': 'false' },
                     populate: {
                         path: 'poster',
                         model: 'User',
@@ -751,6 +790,7 @@ db.once('open', function () {
                         "time": tweet['post_time'],
                         "portraitUrl": tweet['poster']['portrait'],
                         "tags": tweet['tags'],
+                        "private": tweet['private']
                     }
                 });
                 console.log("----Get Followings Tweets------");
@@ -781,7 +821,8 @@ db.once('open', function () {
                 post_time: time,
                 likes: [],
                 comments: [],
-                retweets: []
+                retweets: [],
+                private: req.body.private
             }
             Tweet.create(tweet).then((tweet) => {
                 // add the tweet to the user's tweets
@@ -1618,7 +1659,7 @@ db.once('open', function () {
     //search for tweets whose tags contain the tag.    
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
-        Tweet.find({ 'tags': { $all: [req.params['tag']] } }).populate('poster').exec().then((tweet) => {
+        Tweet.find({ 'tags': { $all: [req.params['tag']] }, private:'false' }).populate('poster').exec().then((tweet) => {
             let obj = [];
             if (!tweet) {
                 console.log("no such tweet");
@@ -1636,7 +1677,8 @@ db.once('open', function () {
                         "retweetCount": tweet['retweets'].length,
                         "time": tweet['post_time'],
                         "portraitUrl": tweet.poster['portrait'],
-                        "tags": tweet['tags']
+                        "tags": tweet['tags'],
+                        'private': tweet['private']
                     }
                     obj.push(tweetObj);
                 });
