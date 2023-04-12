@@ -597,6 +597,10 @@ db.once('open', function () {
         User.findOne({ 'username': username }).populate({ path: 'tweets_liked', populate: { path: 'poster' } }).exec().then((user) => {
             let retLikes = []
             user.tweets_liked.forEach(tweet => {
+                if (tweet['poster'] == null) {
+                    console.log("Warning: tweet with id " + tweet['_id'] + " has no poster");
+                    return;
+                }
                 let isReported = false;
                 if (user.tweets_reported.includes(tweet._id)) {
                     isReported = true;
@@ -617,6 +621,13 @@ db.once('open', function () {
                 // console.log(tweetObj);
                 retLikes.push(tweetObj);
             });
+            // sort according to the post time
+            retLikes.sort((a, b) => {
+                let time1 = new Date(a.time);
+                let time2 = new Date(b.time);
+                return time2 - time1;
+            });
+
             res.send(retLikes);
         }).catch((err) => {
             console.log(err);
@@ -683,7 +694,7 @@ db.once('open', function () {
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
         // sort tweets by post time (newest first)
-        Tweet.find().sort({post_time: 'desc'}).populate(
+        Tweet.find().sort({ post_time: 'desc' }).populate(
             { path: "poster", model: "User", select: "username portrait" }).then((tweets) => {
                 tweets = tweets.filter((tweet) => {
                     return tweet.poster != null && tweet.poster.username !== username;
@@ -1127,7 +1138,7 @@ db.once('open', function () {
     app.get('/tweet/:tid/comment', (req, res) => {
         res.set('Content-Type', 'text/plain');
         let tid = req.params['tid'];
-        Tweet.findById(tid).populate({path:'comments', populate:{path:"user"}}).exec().then((tweet) => {
+        Tweet.findById(tid).populate({ path: 'comments', populate: { path: "user" } }).exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let comment_list = tweet.comments;
             let comments_res = [];
@@ -1158,7 +1169,7 @@ db.once('open', function () {
         let tid = req.body.tid;
         let username = req.body.username;
         let floor_reply = req.body.floor_reply;
-        Tweet.findById(tid).populate('poster').populate({path:'comments', populate:{path:'user'}}).exec().then((tweet) => {
+        Tweet.findById(tid).populate('poster').populate({ path: 'comments', populate: { path: 'user' } }).exec().then((tweet) => {
             if (!tweet) { return res.send('Tweet does not exist').status(404); }
             let floor_num = tweet.comments.length + 1;
             let time = new Date();
@@ -1273,16 +1284,16 @@ db.once('open', function () {
     app.get('/notification/:username', (req, res) => {
         res.set('Content-Type', 'text/plain');
         Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).populate('actor_id').populate('tid').exec().then((notes) => {
-            
-        // Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).then((notes) => {
+
+            // Notification.find({ 'username': req.params['username'] }).sort({ 'time': -1 }).then((notes) => {
             console.log('notifications found');
             // console.log(notes);
             let notification_list = [];
             // let test = []
-            notes.forEach(note =>{
+            notes.forEach(note => {
                 // console.log(note)
-                if (note.action!='follow'){
-                    let content_len = note.tid.tweet_content.length>30?30:note.tid.tweet_content.length;
+                if (note.action != 'follow') {
+                    let content_len = note.tid.tweet_content.length > 30 ? 30 : note.tid.tweet_content.length;
                     let notification = {
                         "icon": note.action,
                         "tid": note.tid._id,
@@ -1293,7 +1304,7 @@ db.once('open', function () {
                         "content": note.tid.tweet_content.slice(0, content_len),
                     }
                     notification_list.push(notification);
-                } 
+                }
                 else {
                     let notification = {
                         "icon": note.action,
@@ -1313,7 +1324,7 @@ db.once('open', function () {
             console.log(notification_list);
             // console.log(test);
             // res.status(201).send("success");
-            
+
             res.status(201).send(JSON.stringify(notification_list));
         }).catch((err) => {
             console.log("-----Get Notification Error--------");
@@ -1464,12 +1475,12 @@ db.once('open', function () {
             if (!acc) {
                 console.log(1);
                 return res.send("No such user.").status(404);
-            } 
+            }
             else if (newpwd != '') {
                 console.log(newpwd);
                 acc.pwd = newpwd;
                 acc.save();
-                return res.send("Update Successfully!").status(200);                 
+                return res.send("Update Successfully!").status(200);
             }
             else {
                 return res.send('Please input a valid new password.').status(404);
@@ -1495,9 +1506,8 @@ db.once('open', function () {
                     //res.send("Successfully delete user " + username).status(204);
                 }
                 Tweet.deleteMany({ poster: user._id }).then((tweet) => {
-                    console.log("delete tweet:"+tweet);
-                    if (tweet) 
-                    {
+                    console.log("delete tweet:" + tweet);
+                    if (tweet) {
                         console.log("Successfully delete user " + username + "'s tweets");
                         return res.send("Successfully delete user " + username).status(204);
                     }
