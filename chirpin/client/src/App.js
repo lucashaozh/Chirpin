@@ -9,6 +9,7 @@ import TweetDetail from './TweetDetail';
 import { Notification } from './Notification';
 import Search from './Search'
 import { Admin } from './Admin';
+import Searchid from './Searchid';
 import ProfileWrapper from './Profile';
 
 import "bootstrap";
@@ -207,6 +208,9 @@ function App() {
                 </Route>
                 <Route path='/searchtag/:tag' element={<PrivateRoute />}>
                   <Route path='/searchtag/:tag' element={<SearchTweet />} />
+                </Route>
+                <Route path='/searchuserbyid/:id' element={<PrivateRoute />}>
+                  <Route path='/searchuserbyid/:id' element={<Searchid />} />
                 </Route>
                 <Route path='/tweet/:tweetid' element={<PrivateRoute />}>
                   <Route path='/tweet/:tweetid' element={<TweetDetail />} />

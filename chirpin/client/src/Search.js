@@ -26,6 +26,9 @@ class Search extends React.Component{
         else if(this.state.viewMode  == 'searchtweet'){
             window.location = '/searchtag/'+search;
         }
+        else if(this.state.viewMode == 'searchuserid'){
+            window.location = '/searchuserbyid/'+search;
+        }
         else{
             alert("please select what you want to search")
         }
@@ -46,8 +49,9 @@ class Search extends React.Component{
                 <Button variant="primary" id="searchclick" onClick={this.clickSearch} >Search</Button>
                 <Dropdown.Toggle split variant="primary" id="dropdown-split-basic" />
                 <Dropdown.Menu>
-                <Dropdown.Item  onClick={() => {this.setState({viewMode:"searchuser"});document.getElementById('searchclick').innerHTML = "Search for Users"; }}>Search for users</Dropdown.Item>
+                <Dropdown.Item  onClick={() => {this.setState({viewMode:"searchuser"});document.getElementById('searchclick').innerHTML = "Search for Users by Username"; }}>Search for users by username</Dropdown.Item>
                 <Dropdown.Item  onClick={() => {this.setState({viewMode:"searchtweet"});document.getElementById('searchclick').innerHTML = "Search for Tweets";}}>Search for tweets</Dropdown.Item>
+                <Dropdown.Item  onClick={() => {this.setState({viewMode:"searchuserid"});document.getElementById('searchclick').innerHTML = "Search for Users by Uid";}}>Search for users by uid</Dropdown.Item>
                 </Dropdown.Menu>
                 </Dropdown>
                 </div>
