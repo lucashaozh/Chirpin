@@ -18,7 +18,7 @@ class Followers extends React.Component {
         // fetch followers infomation
         let self = getLoginInfo()['username'];
         let target = window.location.pathname.split('/')[1];
-        let mode = getLoginInfo()['username'];
+        let mode = getLoginInfo()['mode'];
         let followersrec = [];
         if (mode === 'user') {
             followersrec = await fetch(BACK_END + "profile/" + self + "/" + target + "/followers", {
