@@ -243,7 +243,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <span className="ms-1 opacity-75">{commentCount}</span>
                   </span>
                   <span className="m-1">
-                    <a className="btn btn-outline-primary btn-floating" href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
+                    <a className="btn btn-outline-primary btn-floating" href={"#tweetForwardForm"+tweetInfo.tid} data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
                     <span className="ms-1 opacity-75" id='retweetCount'>{retweetCount}</span>
@@ -423,7 +423,7 @@ function ForwardForm(props) {
   }
   return (
     <div>
-      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+      <div className="modal fade" id={"tweetForwardForm"+props.tid} aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">

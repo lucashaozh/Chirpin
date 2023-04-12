@@ -130,7 +130,7 @@ db.once('open', function () {
         // var userID = new mongoose.Types.ObjectId();
         Account.create({
             // uid: userID,
-            username: "user_03",
+            username: "Hongxu",
             pwd: "123456",
             identity: "user"
         }).then((user) => {
