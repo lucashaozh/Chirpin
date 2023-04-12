@@ -1682,6 +1682,9 @@ db.once('open', function () {
     app.get('/searchtag/:tag', (req, res) => {
         res.set('Content-Type', 'text/plain');
         Tweet.find({ 'tags': { $all: [req.params['tag']] }, private:'false' }).populate('poster').exec().then((tweet) => {
+            tweet = tweet.filter((tweet) => {
+                return tweet.poster != null;
+            });
             let obj = [];
             if (!tweet) {
                 console.log("no such tweet");
