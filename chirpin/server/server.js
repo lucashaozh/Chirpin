@@ -1285,7 +1285,8 @@ db.once('open', function () {
                     post_time: time,
                     likes: [],
                     comments: [],
-                    retweets: []
+                    retweets: [],
+                    private: req.body.private,
                 }
 
                 Tweet.create(new_tweet).then((new_tweet_) => {
