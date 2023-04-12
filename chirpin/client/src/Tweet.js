@@ -153,23 +153,23 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     });
   }
 
-  const addCommentMain=()=>{
+  const addCommentMain = () => {
     let newCom = {
-        content: document.getElementById('new-comment').value,
-        username: getLoginInfo().username,
-        tid: tweetInfo.tid,
+      content: document.getElementById('new-comment').value,
+      username: getLoginInfo().username,
+      tid: tweetInfo.tid,
     };
     console.log(newCom);
     fetch(BACK_END + 'tweet/comment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCom),
-    }).then(com=>com.json()).then(com_res=>
-    console.log(com_res));
-    document.getElementById('new-comment').value='';
-    setCommentCount(commentCount+1);
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCom),
+    }).then(com => com.json()).then(com_res =>
+      console.log(com_res));
+    document.getElementById('new-comment').value = '';
+    setCommentCount(commentCount + 1);
   }
 
 
@@ -235,7 +235,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <a className="btn btn-outline-primary btn-floating" href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
-                    <span className="ms-1 opacity-75" id={'retweetCount'+tweetInfo.tid}>{retweetCount}</span>
+                    <span className="ms-1 opacity-75" id={'retweetCount' + tweetInfo.tid}>{retweetCount}</span>
                   </span>
                   <span className="m-1">
                     <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
@@ -288,7 +288,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* forward tweet */}
-      {/* <ForwardForm tid={tweetInfo.tid} /> */}
+      <ForwardForm tid={tweetInfo.tid} />
 
       {/* forward select tag*/}
 
@@ -299,11 +299,8 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
 function ForwardForm(tid) {
   const editorRef = useRef(null);
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  };
+  const [availableTags, setAvailableTags] = useState([]);
+  const [tags, setTags] = useState([]);
 
   const handleFocus = () => {
     if (editorRef.current.getContent() === initialContent) {
@@ -331,8 +328,10 @@ function ForwardForm(tid) {
     });
   };
 
-  const [availableTags, setAvailableTags] = useState([]);
-  const [tags, setTags] = useState([]);
+  useEffect(() => {
+    fetchAvailableTags();
+  }, []);
+
 
   const postRetweet = () => {
     if (editorRef.current) {
@@ -357,7 +356,9 @@ function ForwardForm(tid) {
           editorRef.current.setContent(initialContent);
           setTags([]);
           alert("Retweet success");
-          document.getElementById("retweetCount"+tid).value = 3;
+          // console.log("retweetCount" + tid.tid);
+          // console.log(document.getElementById("retweetCount" + tid.tid).value);
+          document.getElementById("retweetCount" + tid.tid).innerHTML = parseInt(document.getElementById("retweetCount" + tid.tid).innerHTML) + 1;
         } else {
           alert("Retweet failed");
         }
@@ -369,6 +370,12 @@ function ForwardForm(tid) {
 
 
   const addNewTags = () => {
+    let newTagsDom = document.getElementById("new-tag-retweet");
+    if (newTagsDom == null) {
+      console.log("Error: newTagsDom is null");
+      return;
+    }
+    console.log(newTagsDom);
     let newTags = document.getElementById("new-tag-retweet").value;
     // check if the tag is already in the list
     if (!availableTags.includes(newTags)) {
@@ -399,7 +406,7 @@ function ForwardForm(tid) {
   }
   return (
     <div>
-      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -457,6 +464,21 @@ function ForwardForm(tid) {
                   content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                 }}
               />
+              <div className="modal-body">
+                <h5>Choose a tag</h5>
+                <hr></hr>
+                {randomSelect(availableTags, 5).map((tag, index) => {
+                  return (
+                    <button type="button" className="btn btn-outline-primary mx-2 my-1" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                  );
+                })}
+                <div>
+                  <div className="input-group m-2">
+                    <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                    <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" onClick={addNewTags}>Add</button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="modal-footer">
               <div>
@@ -465,7 +487,7 @@ function ForwardForm(tid) {
                     <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
                   );
                 })}
-                <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button>
+                {/* <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button> */}
               </div>
               <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button>
             </div>
@@ -474,7 +496,7 @@ function ForwardForm(tid) {
       </div>
 
       {/* modal for choosing tags*/}
-      <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
+      {/* <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -485,13 +507,13 @@ function ForwardForm(tid) {
               <h4>Choose a tag</h4>
               {randomSelect(availableTags, 5).map((tag, index) => {
                 return (
-                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                  <button type="button" className="btn btn-outline-primary mx-2 my-1" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
                 );
               })}
               <div>
                 <div className="input-group m-2">
-                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
-                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
+                  <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" onClick={addNewTags}>Add</button>
                 </div>
               </div>
             </div>
@@ -500,7 +522,7 @@ function ForwardForm(tid) {
             </div>
           </div>
         </div>
-      </div>
+      </div> */}
     </div>
   )
 }

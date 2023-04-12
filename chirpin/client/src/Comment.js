@@ -88,7 +88,7 @@ class CommentForm extends React.Component{
 
     render(){
         return(
-            <div class="modal fade" id={"commentForm"+this.props.floor} tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal fade" id={"commentForm"+this.props.floor} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
                 <div class="modal-dialog">
                     <div class="modal-content">
                         <div class="modal-header">
