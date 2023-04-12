@@ -71,7 +71,18 @@ function ChatBox() {
 
                               <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
                                 <a href="#!" class="d-flex justify-content-between" >
-                                  <div class="d-flex flex-row">
+                                  {getLoginInfo()['username']!='Ziqi'&&<div class="d-flex flex-row">
+                                    <div>
+                                      <img
+                                        src={[require('./img/maleAvatar.png')]}
+                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
+                                      <span class="badge bg-success badge-dot"></span>
+                                    </div>
+                                    <div class="pt-1" >
+                                      <p class="small text-muted" style={{color:'white'}}>Ziqi</p>
+                                    </div>
+                                  </div>}
+                                  {getLoginInfo()['username']=='Ziqi'&&<div class="d-flex flex-row">
                                     <div>
                                       <img
                                         src={[require('./img/femaleAvatar.png')]}
@@ -79,9 +90,9 @@ function ChatBox() {
                                       <span class="badge bg-success badge-dot"></span>
                                     </div>
                                     <div class="pt-1" >
-                                      <p class="small text-muted" style={{color:'white'}}>Ziqi</p>
+                                      <p class="small text-muted" style={{color:'white'}}>test</p>
                                     </div>
-                                  </div>
+                                  </div>}
 
                                 </a>
                               </button>
