@@ -146,6 +146,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const handleTweetReport = () => {
+    // console.log("Report tweet for user: " + tweetInfo['user']['username'] + " and tweet content " + tweetInfo['content']);
     fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
       method: 'PUT',
       headers: {
@@ -242,13 +243,13 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                     <span className="ms-1 opacity-75">{commentCount}</span>
                   </span>
                   <span className="m-1">
-                    <a className="btn btn-outline-primary btn-floating" href="#tweetForwardForm" data-bs-toggle="modal" role='button'>
+                    <a className="btn btn-outline-primary btn-floating" href={"#tweetForwardForm"+tweetInfo.tid} data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
                     <span className="ms-1 opacity-75" id='retweetCount'>{retweetCount}</span>
                   </span>
                   <span className="m-1">
-                    <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target="#report-popup">
+                    <button type="button" className={"btn btn-floating" + (isReported ? "btn-primary disabled" : " btn-outline-primary")} data-bs-toggle="modal" data-bs-target={"#report-popup" + tweetInfo['tid']}>
                       <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                     </button>
                   </span>
@@ -265,7 +266,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* Modal */}
-      <div className="modal fade" id="report-popup" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal fade" id={"report-popup"+tweetInfo['tid']} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -422,7 +423,7 @@ function ForwardForm(props) {
   }
   return (
     <div>
-      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+      <div className="modal fade" id={"tweetForwardForm"+props.tid} aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
