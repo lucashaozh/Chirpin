@@ -158,23 +158,23 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     });
   }
 
-  const addCommentMain=()=>{
+  const addCommentMain = () => {
     let newCom = {
-        content: document.getElementById('new-comment').value,
-        username: getLoginInfo().username,
-        tid: tweetInfo.tid,
+      content: document.getElementById('new-comment').value,
+      username: getLoginInfo().username,
+      tid: tweetInfo.tid,
     };
     console.log(newCom);
     fetch(BACK_END + 'tweet/comment', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(newCom),
-    }).then(com=>com.json()).then(com_res=>
-    console.log(com_res));
-    document.getElementById('new-comment').value='';
-    setCommentCount(commentCount+1);
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(newCom),
+    }).then(com => com.json()).then(com_res =>
+      console.log(com_res));
+    document.getElementById('new-comment').value = '';
+    setCommentCount(commentCount + 1);
   }
 
 
@@ -309,11 +309,8 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
 function ForwardForm(props) {
   const editorRef = useRef(null);
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
-  const log = () => {
-    if (editorRef.current) {
-      console.log(editorRef.current.getContent());
-    }
-  };
+  const [availableTags, setAvailableTags] = useState([]);
+  const [tags, setTags] = useState([]);
 
   const handleFocus = () => {
     if (editorRef.current.getContent() === initialContent) {
@@ -341,8 +338,10 @@ function ForwardForm(props) {
     });
   };
 
-  const [availableTags, setAvailableTags] = useState([]);
-  const [tags, setTags] = useState([]);
+  useEffect(() => {
+    fetchAvailableTags();
+  }, []);
+
 
   const postRetweet = () => {
     if (editorRef.current) {
@@ -379,6 +378,12 @@ function ForwardForm(props) {
 
 
   const addNewTags = () => {
+    let newTagsDom = document.getElementById("new-tag-retweet");
+    if (newTagsDom == null) {
+      console.log("Error: newTagsDom is null");
+      return;
+    }
+    console.log(newTagsDom);
     let newTags = document.getElementById("new-tag-retweet").value;
     // check if the tag is already in the list
     if (!availableTags.includes(newTags)) {
@@ -409,7 +414,7 @@ function ForwardForm(props) {
   }
   return (
     <div>
-      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabindex="-1">
+      <div className="modal fade" id="tweetForwardForm" aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -467,6 +472,21 @@ function ForwardForm(props) {
                   content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }'
                 }}
               />
+              <div className="modal-body">
+                <h5>Choose a tag</h5>
+                <hr></hr>
+                {randomSelect(availableTags, 5).map((tag, index) => {
+                  return (
+                    <button type="button" className="btn btn-outline-primary mx-2 my-1" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                  );
+                })}
+                <div>
+                  <div className="input-group m-2">
+                    <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                    <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" onClick={addNewTags}>Add</button>
+                  </div>
+                </div>
+              </div>
             </div>
             <div className="modal-body">
               <h4>Choose a tag</h4>
@@ -489,7 +509,7 @@ function ForwardForm(props) {
                     <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
                   );
                 })}
-                <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button>
+                {/* <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button> */}
               </div>
               <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button>
             </div>
@@ -509,13 +529,13 @@ function ForwardForm(props) {
               <h4>Choose a tag</h4>
               {randomSelect(availableTags, 5).map((tag, index) => {
                 return (
-                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
+                  <button type="button" className="btn btn-outline-primary mx-2 my-1" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
                 );
               })}
               <div>
                 <div className="input-group m-2">
-                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
-                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
+                  <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" onClick={addNewTags}>Add</button>
                 </div>
               </div>
             </div>
