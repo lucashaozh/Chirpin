@@ -1756,7 +1756,7 @@ db.once('open', function () {
         Tag.aggregate([
             { $project: { "tag": "$tag", cnt: { $size: '$tid' } } },
             { $sort: { cnt: -1 } },
-            { $limit: 10 }]).then((tweets) => {
+            { $limit: 8 }]).then((tweets) => {
                 if (!tweets) {
                     console.log("no tags");
                     res, send(404);
