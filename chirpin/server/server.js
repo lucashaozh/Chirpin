@@ -290,8 +290,8 @@ db.once('open', function () {
                     let userObj = {
                         "username": innerUser['username'],
                         "uid": innerUser['_id'],
-                        "following": innerUser['following_counter'],
-                        "follower": innerUser['follower_counter'],
+                        "following": innerUser['followings'].length,
+                        "follower": innerUser['followers'].length,
                         "isFollowing": isFollowing,
                         "portraitUrl": innerUser['portrait']
                     };
@@ -315,8 +315,8 @@ db.once('open', function () {
                 let userObj = {
                     "username": innerUser['username'],
                     "uid": innerUser['_id'],
-                    "following": innerUser['following_counter'],
-                    "follower": innerUser['follower_counter'],
+                    "following": innerUser['followings'].length,
+                    "follower": innerUser['followers'].length,
                     "isFollowing": false,
                     "portraitUrl": innerUser['portrait']
                 };
@@ -345,8 +345,8 @@ db.once('open', function () {
                     let userObj = {
                         "username": innerUser['username'],
                         "uid": innerUser['_id'],
-                        "following": innerUser['following_counter'],
-                        "follower": innerUser['follower_counter'],
+                        "following": innerUser['followings'].length,
+                        "follower": innerUser['followers'].length,
                         "isFollowing": isFollowing,
                         "portraitUrl": innerUser['portrait']
                     };
@@ -370,8 +370,8 @@ db.once('open', function () {
                 let userObj = {
                     "username": innerUser['username'],
                     "uid": innerUser['_id'],
-                    "following": innerUser['following_counter'],
-                    "follower": innerUser['follower_counter'],
+                    "following": innerUser['followings'].length,
+                    "follower": innerUser['followers'].length,
                     "isFollowing": false,
                     "portraitUrl": innerUser['portrait']
                 };
@@ -1694,8 +1694,8 @@ db.once('open', function () {
                     let userObj = {
                         "username": innerUser['username'],
                         "uid": innerUser['_id'],
-                        "following": innerUser['following_counter'],
-                        "follower": innerUser['follower_counter'],
+                        "following": innerUser['following'].length,
+                        "follower": innerUser['follower'].length,
                         "isFollowing": isFollowing,
                         "portraitUrl": innerUser['portrait']
                     };
@@ -1728,8 +1728,8 @@ db.once('open', function () {
                     let userObj = {
                         "username": innerUser['username'],
                         "uid": innerUser['_id'],
-                        "following": innerUser['following_counter'],
-                        "follower": innerUser['follower_counter'],
+                        "following": innerUser['followings'].length,
+                        "follower": innerUser['followers'].length,
                         "isFollowing": isFollowing,
                         "portraitUrl": innerUser['portrait']
                     };
