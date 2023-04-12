@@ -496,7 +496,7 @@ function ForwardForm(props) {
                 </div>
               </div>
             </div>
-            <div className="modal-body">
+            {/* <div className="modal-body">
               <h4>Choose a tag</h4>
               {randomSelect(availableTags, 5).map((tag, index) => {
                 return (
@@ -509,7 +509,7 @@ function ForwardForm(props) {
                   <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
                 </div>
               </div>
-            </div>
+            </div> */}
             <div className="modal-footer">
               <div>
                 {tags != undefined && tags.map((tag, index) => {
