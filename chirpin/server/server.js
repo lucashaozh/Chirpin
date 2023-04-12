@@ -1694,8 +1694,8 @@ db.once('open', function () {
                     let userObj = {
                         "username": innerUser['username'],
                         "uid": innerUser['_id'],
-                        "following": innerUser['following'].length,
-                        "follower": innerUser['follower'].length,
+                        "following": innerUser['followings'].length,
+                        "follower": innerUser['followers'].length,
                         "isFollowing": isFollowing,
                         "portraitUrl": innerUser['portrait']
                     };
