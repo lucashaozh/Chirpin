@@ -64,60 +64,225 @@ function ChatBox() {
                     <div data-mdb-perfect-scrollbar="true" style={{position: "relative", height: "400px"}}>
                       <ul class="list-unstyled mb-0">
                         <li class="p-2 border-bottom">
+                          <div class="d-flex align-items-start">
+                            <div class="nav flex-column nav-pills me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
 
-                          <a href="#!" class="d-flex justify-content-between" >
-                            <div class="d-flex flex-row">
-                              <div>
-                                <img
-                                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                  alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                <span class="badge bg-success badge-dot"></span>
-                              </div>
-                              <div class="pt-1" >
-                                <p class="fw-bold mb-0">user_02</p>
-                                <p class="small text-muted">Hello, Are you there?</p>
-                              </div>
-                            </div>
-                            <div class="pt-1">
-                              <p class="small text-muted mb-1">Just now</p>
-                            </div>
-                          </a>
-                          
-                          <a href="#!" class="d-flex justify-content-between">
-                            <div class="d-flex flex-row">
-                              <div>
-                                <img
-                                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                  alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                <span class="badge bg-success badge-dot"></span>
-                              </div>
-                              <div class="pt-1">
-                                <p class="fw-bold mb-0">user_03</p>
-                                <p class="small text-muted">Hello, Are you there?</p>
-                              </div>
-                            </div>
-                            <div class="pt-1">
-                              <p class="small text-muted mb-1">Just now</p>
-                            </div>
-                          </a>
+                              <button class="nav-link active" id="v-pills-home-tab" data-bs-toggle="pill" data-bs-target="#v-pills-home" type="button" role="tab" aria-controls="v-pills-home" aria-selected="true">
+                                <a href="#!" class="d-flex justify-content-between" >
+                                  <div class="d-flex flex-row">
+                                    <div>
+                                      <img
+                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
+                                      <span class="badge bg-success badge-dot"></span>
+                                    </div>
+                                    <div class="pt-1" >
+                                      <p class="small text-muted">user_02</p>
+                                    </div>
+                                  </div>
 
-                          <a href="#!" class="d-flex justify-content-between">
-                            <div class="d-flex flex-row">
-                              <div>
-                                <img
-                                  src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
-                                  alt="avatar" class="d-flex align-self-center me-3" width="60" />
-                                <span class="badge bg-success badge-dot"></span>
+                                </a>
+                              </button>
+                              
+                              <button class="nav-link" id="v-pills-profile-tab" data-bs-toggle="pill" data-bs-target="#v-pills-profile" type="button" role="tab" aria-controls="v-pills-profile" aria-selected="false">
+                              <a href="#!" class="d-flex justify-content-between" >
+                                  <div class="d-flex flex-row">
+                                    <div>
+                                      <img
+                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
+                                      <span class="badge bg-success badge-dot"></span>
+                                    </div>
+                                    <div class="pt-1" >
+                                      <p class="small text-muted">user_03</p>
+                                    </div>
+                                  </div>
+
+                                </a>
+                              </button>
+
+
+                              <button class="nav-link" id="v-pills-messages-tab" data-bs-toggle="pill" data-bs-target="#v-pills-messages" type="button" role="tab" aria-controls="v-pills-messages" aria-selected="false">
+                              <a href="#!" class="d-flex justify-content-between" >
+                                  <div class="d-flex flex-row">
+                                    <div>
+                                      <img
+                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
+                                      <span class="badge bg-success badge-dot"></span>
+                                    </div>
+                                    <div class="pt-1" >
+                                      <p class="small text-muted">user_04</p>
+                                    </div>
+                                  </div>
+
+                                </a>
+                              </button>
+
+
+                              <button class="nav-link" id="v-pills-settings-tab" data-bs-toggle="pill" data-bs-target="#v-pills-settings" type="button" role="tab" aria-controls="v-pills-settings" aria-selected="false">
+                              <a href="#!" class="d-flex justify-content-between" >
+                                  <div class="d-flex flex-row">
+                                    <div>
+                                      <img
+                                        src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava1-bg.webp"
+                                        alt="avatar" class="d-flex align-self-center me-3" width="60" />
+                                      <span class="badge bg-success badge-dot"></span>
+                                    </div>
+                                    <div class="pt-1" >
+                                      <p class="small text-muted">user_05</p>
+                                    </div>
+                                  </div>
+
+                                </a>
+                              </button>
+                            </div>
+                            <div class="tab-content" id="v-pills-tabContent">
+                              <div class="tab-pane fade show active" id="v-pills-home" role="tabpanel" aria-labelledby="v-pills-home-tab" tabindex="0">
+                              <div className="chat-box">
+                                  <div className="chat-body" ref={messageContainerRef}>
+                                    {messages.map((message) => (
+                                        <div
+                                        key={message.id}
+                                        className={`message ${message.sent ? 'sent' : ''}`}
+                                        >
+                                        {message.text}
+                                        {message.sent && (
+                                            <button
+                                            className="withdraw-button"
+                                            onClick={() => handleWithdrawButtonClick(message.id)}
+                                            >
+                                            </button>
+                                        )}
+                                        </div>
+                                    ))}
+                                    </div>
+                                    <div className="chat-footer">
+                                    <input
+                                        type="text"
+                                        className="message-input"
+                                        placeholder="Type your message..."
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyPress={handleInputKeyPress}
+                                    />
+                                    <button className="send-button" onClick={handleSendButtonClick}>
+                                    <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
+                                    </button>
+                                    </div>
                               </div>
-                              <div class="pt-1">
-                                <p class="fw-bold mb-0">user_04</p>
-                                <p class="small text-muted">Hello, Are you there?</p>
+                              </div>
+
+
+                              <div class="tab-pane fade" id="v-pills-profile" role="tabpanel" aria-labelledby="v-pills-profile-tab" tabindex="0">
+                              <div className="chat-box">
+                                  <div className="chat-body" ref={messageContainerRef}>
+                                    {messages.map((message) => (
+                                        <div
+                                        key={message.id}
+                                        className={`message ${message.sent ? 'sent' : ''}`}
+                                        >
+                                        {message.text}
+                                        {message.sent && (
+                                            <button
+                                            className="withdraw-button"
+                                            onClick={() => handleWithdrawButtonClick(message.id)}
+                                            >
+                                            </button>
+                                        )}
+                                        </div>
+                                    ))}
+                                    </div>
+                                    <div className="chat-footer">
+                                    <input
+                                        type="text"
+                                        className="message-input"
+                                        placeholder="Type your message..."
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyPress={handleInputKeyPress}
+                                    />
+                                    <button className="send-button" onClick={handleSendButtonClick}>
+                                    <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
+                                    </button>
+                                    </div>
+                              </div>
+                              </div>
+
+
+                              <div class="tab-pane fade" id="v-pills-messages" role="tabpanel" aria-labelledby="v-pills-messages-tab" tabindex="0">
+                              <div className="chat-box">
+                                  <div className="chat-body" ref={messageContainerRef}>
+                                    {messages.map((message) => (
+                                        <div
+                                        key={message.id}
+                                        className={`message ${message.sent ? 'sent' : ''}`}
+                                        >
+                                        {message.text}
+                                        {message.sent && (
+                                            <button
+                                            className="withdraw-button"
+                                            onClick={() => handleWithdrawButtonClick(message.id)}
+                                            >
+                                            </button>
+                                        )}
+                                        </div>
+                                    ))}
+                                    </div>
+                                    <div className="chat-footer">
+                                    <input
+                                        type="text"
+                                        className="message-input"
+                                        placeholder="Type your message..."
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyPress={handleInputKeyPress}
+                                    />
+                                    <button className="send-button" onClick={handleSendButtonClick}>
+                                    <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
+                                    </button>
+                                    </div>
+                              </div>
+                              </div>
+
+
+                              <div class="tab-pane fade" id="v-pills-settings" role="tabpanel" aria-labelledby="v-pills-settings-tab" tabindex="0">
+                              <div className="chat-box">
+                                  <div className="chat-body" ref={messageContainerRef}>
+                                    {messages.map((message) => (
+                                        <div
+                                        key={message.id}
+                                        className={`message ${message.sent ? 'sent' : ''}`}
+                                        >
+                                        {message.text}
+                                        {message.sent && (
+                                            <button
+                                            className="withdraw-button"
+                                            onClick={() => handleWithdrawButtonClick(message.id)}
+                                            >
+                                            </button>
+                                        )}
+                                        </div>
+                                    ))}
+                                    </div>
+                                    <div className="chat-footer">
+                                    <input
+                                        type="text"
+                                        className="message-input"
+                                        placeholder="Type your message..."
+                                        value={inputValue}
+                                        onChange={handleInputChange}
+                                        onKeyPress={handleInputKeyPress}
+                                    />
+                                    <button className="send-button" onClick={handleSendButtonClick}>
+                                    <FontAwesomeIcon icon={faPaperPlane}></FontAwesomeIcon>
+                                    </button>
+                                    </div>
+                              </div>
                               </div>
                             </div>
-                            <div class="pt-1">
-                              <p class="small text-muted mb-1">Just now</p>
-                            </div>
-                          </a>
+                          </div>
+
                         </li>
                       </ul>
                     </div>
@@ -125,42 +290,7 @@ function ChatBox() {
 
                 </div>
 
-                <div class="col-md-6 col-lg-7 col-xl-8">
 
-                  <div className="chat-box">
-                    <div className="chat-body" ref={messageContainerRef}>
-                    {messages.map((message) => (
-                        <div
-                        key={message.id}
-                        className={`message ${message.sent ? 'sent' : ''}`}
-                        >
-                        {message.text}
-                        {message.sent && (
-                            <button
-                            className="withdraw-button"
-                            onClick={() => handleWithdrawButtonClick(message.id)}
-                            >
-                            </button>
-                        )}
-                        </div>
-                    ))}
-                    </div>
-                    <div className="chat-footer">
-                    <input
-                        type="text"
-                        className="message-input"
-                        placeholder="Type your message..."
-                        value={inputValue}
-                        onChange={handleInputChange}
-                        onKeyPress={handleInputKeyPress}
-                    />
-                    <button className="send-button" onClick={handleSendButtonClick}>
-                        Send
-                    </button>
-                    </div>
-                </div>
-
-                </div>
               </div>
 
             </div>
