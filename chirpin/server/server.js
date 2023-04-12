@@ -679,13 +679,14 @@ db.once('open', function () {
         res.set('Content-Type', 'text/plain');
         let username = req.params['username'];
         // find all the tweets except for the user's tweets
-        Tweet.find().populate(
+        // sort tweets by post time (newest first)
+        Tweet.find().sort({post_time: 'desc'}).populate(
             { path: "poster", model: "User", select: "username portrait" }).then((tweets) => {
                 tweets = tweets.filter((tweet) => {
                     return tweet.poster != null && tweet.poster.username !== username;
                 });
-                console.log("-------Recommend Tweets---------");
-                console.log(tweets);
+                // console.log("-------Recommend Tweets---------");
+                // console.log(tweets);
                 User.findOne({ "username": username }).then((user) => {
                     let retTweets = tweets.map(tweet => {
                         return {
@@ -752,6 +753,13 @@ db.once('open', function () {
                         "portraitUrl": tweet['poster']['portrait'],
                         "tags": tweet['tags'],
                     }
+                });
+                // sort tweets by post time (newest first)
+                tweetsInfo.sort((a, b) => {
+                    // convert time to date
+                    let time1 = new Date(a.time);
+                    let time2 = new Date(b.time);
+                    return time2 - time1;
                 });
                 console.log("----Get Followings Tweets------");
                 return res.status(200).send(tweetsInfo);
