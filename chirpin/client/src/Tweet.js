@@ -387,13 +387,14 @@ function ForwardForm(props) {
 
 
   const addNewTags = () => {
-    let newTagsDom = document.getElementById("new-tag-retweet");
+    let newTagsDom = document.getElementById("new-tag-retweet" + props.tid);
     if (newTagsDom == null) {
       console.log("Error: newTagsDom is null");
       return;
     }
     console.log(newTagsDom);
-    let newTags = document.getElementById("new-tag-retweet").value;
+    let newTags = newTagsDom.value;
+    // console.log(newTags);
     // check if the tag is already in the list
     if (!availableTags.includes(newTags)) {
       // insert the new tag into the database
@@ -419,7 +420,7 @@ function ForwardForm(props) {
       alert("Tag already exists");
     }
     // clear the input field
-    document.getElementById("new-tag-retweet").value = '';
+    newTagsDom.value = '';
   }
   return (
     <div>
@@ -491,7 +492,7 @@ function ForwardForm(props) {
                 })}
                 <div>
                   <div className="input-group m-2">
-                    <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                    <input type="text" id={"new-tag-retweet" + props.tid } className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
                     <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" onClick={addNewTags}>Add</button>
                   </div>
                 </div>
