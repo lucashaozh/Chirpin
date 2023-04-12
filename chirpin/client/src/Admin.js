@@ -44,9 +44,10 @@ class AddUser extends React.Component {
               
             }
             return res.text();
-          })
-          .then(data => {alert(data);})
-          .catch(err => {
+          }).then(data => {
+            alert(data);
+            window.location.reload(true);
+        }).catch(err => {
             console.log(err);
           });
         event.preventDefault();
@@ -104,9 +105,11 @@ class UpdateUser extends React.Component {
             if (res.status === 200) {
             }
             return res.text();
-          })
-          .then(data => {alert(data);})
-          .catch(err => {
+          }).then(data => {
+            alert(data);
+          }).then(() => {
+            window.location.reload(true);
+          }).catch(err => {
             console.log(err);
           });
         }
@@ -161,7 +164,7 @@ class DeleteUser extends React.Component {
         });
         let l = await res.json();
         await this.setState({userList:l});
-        console.log(this.state.userList)
+        console.log(this.state.userList);
         // .then(res => {
         //     if (res.status === 200) {
         //     }
@@ -207,8 +210,10 @@ class DeleteUserCard extends React.Component {
                 if (res.status === 204) {
                 }
                 return res.text();
+            }).then(data => {
+                alert(data);
+                window.location.reload(true);
             })
-            .then(data => {alert(data);})
           .catch(err => {
             console.log(err);
           });
