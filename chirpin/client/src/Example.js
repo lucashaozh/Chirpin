@@ -398,17 +398,17 @@ export const deleteUserExample = [
 ]
 
 export const notificationExample = [
-    { icon: "like", tweetid: 1, action: "liked your tweet", name: "CSCI1", time: "3 min", content: '"laalall"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "dislike", tweetid: 2, action: "disliked your tweet", name: "CSCI2", time: "3 min", content: '"lalalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "like", tid: 1, action: "liked your tweet", name: "CSCI1", time: "3 min", content: '"laalall"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "dislike", tid: 2, action: "disliked your tweet", name: "CSCI2", time: "3 min", content: '"lalalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
     { icon: "follow", action: "started following you", name: "CSCI3", time: "3 min", content: '', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "comment", tweetid: 2, action: "commented on your tweet", name: "CSCI4", time: "3 min", content: '"lalalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "retweet", tweetid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
-    { icon: "follow", tweetid: 1, action: "started following you", name: "CSCI3", time: "3 min", content: '', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "comment", tid: 2, action: "commented on your tweet", name: "CSCI4", time: "3 min", content: '"lalalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "retweet", tid: 3, action: "retweeted your tweet", name: "CSCI5", time: "3 min", content: '"alalal"', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
+    { icon: "follow", tid: 1, action: "started following you", name: "CSCI3", time: "3 min", content: '', potrait: "https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-profiles/avatar-1.webp" },
 ]
 
 export const commentExample = [
