@@ -1491,7 +1491,7 @@ db.once('open', function () {
                 }
                 if (val.identity == 'admin') {
                     if (val != null && _pwd == val.pwd) {
-                        res.status(200).send('Login As Amin Successfully!\n');
+                        res.status(200).send('Login As Admin Successfully!\n');
                     }
                     else {
                         res.status(404).send("Incorrect Username or Password.\n");
