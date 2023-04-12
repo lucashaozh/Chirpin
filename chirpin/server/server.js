@@ -1163,7 +1163,7 @@ db.once('open', function () {
                     tid: tweet._id,
                     likeInfo: { likeCount: tweet.likes.length, bLikeByUser: user.tweets_liked.includes(tweet._id) },
                     dislikeInfo: { dislikeCount: tweet.dislike_counter, bDislikeByUser: user.tweets_disliked.includes(tweet._id) },
-                    user: { uid: tweet.poster._id },
+                    user: { uid: tweet.poster._id, username: tweet.poster.username },
                     content: tweet.tweet_content,
                     commentCount: tweet.comments.length,
                     retweetCount: tweet.retweets.length,
