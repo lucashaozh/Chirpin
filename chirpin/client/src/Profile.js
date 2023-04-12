@@ -588,7 +588,7 @@ class MyTweetsList extends React.Component {
             });
         }
         let tweets = await tweetrec.json();
-
+        console.log(tweets);
         tweets.sort(this.compare);
 
         this.state.tweets = await tweets;

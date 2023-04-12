@@ -7,8 +7,13 @@ import { Link } from "react-router-dom";
 import { getLoginInfo } from './Login';
 import { BACK_END } from './App';
 import { randomSelect } from './Utils';
+import Dropdown from 'react-bootstrap/Dropdown';
+import Button from 'react-bootstrap/Button';
+import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
+// const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
+const tinyMCEApiKey = "sectfzujjivlo90kpiqptvlao0lrn8b79rf326hs1v6b9oyu"
+
 
 function DisplayRichText({ content }) {
   return (
@@ -42,6 +47,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
   const [isReported, setIsReported] = useState(tweetInfo['isReported']);
+  // const [privacy, setPrivacy] = useState(tweetInfo['private']);
 
 
   // const tweetUserInfo = tweetInfo['user'];
@@ -68,6 +74,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     setCommentCount(tweetInfo['commentCount']);
     setRetweetCount(tweetInfo['retweetCount']);
     setIsReported(tweetInfo['isReported']);
+    // setPrivacy(tweetInfo['private']);
 
   }, [tweetInfo]);
 
@@ -245,6 +252,11 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                       <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                     </button>
                   </span>
+                  {/* {privacy == 'true' &&
+                  <span className='m-1 success'>
+                    Private
+                  </span>
+                  } */}
                 </>
               }
             </div>
@@ -304,6 +316,7 @@ function ForwardForm(props) {
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
   const [availableTags, setAvailableTags] = useState([]);
   const [tags, setTags] = useState([]);
+  const [privacy, setPrivacy] = useState('false');
 
   const handleFocus = () => {
     if (editorRef.current.getContent() === initialContent) {
@@ -339,13 +352,15 @@ function ForwardForm(props) {
   const postRetweet = () => {
     if (editorRef.current) {
       console.log(editorRef.current.getContent());
+      
       let postBody = {
         username: getLoginInfo()['username'],
         tweet_content: editorRef.current.getContent(),
         tags: tags,
-        tid: props.tid
+        tid: props.tid,
+        private: privacy
       }
-      console.log(props.tid)
+      console.log(postBody)
 
       fetch('http://localhost:8000/retweet', {
         method: 'POST',
@@ -504,7 +519,19 @@ function ForwardForm(props) {
                 })}
                 {/* <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button> */}
               </div>
-              <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button>
+              <div>
+              <Dropdown as={ButtonGroup}>
+                {/* <Button varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={()=>{console.log(privacy)}}>New post</Button> */}
+                <Button type="button" varient='primary' id='retweet-privacy' className="btn btn-primary mx-2" onClick={postRetweet}>Send</Button>
+                <Dropdown.Toggle split variant="primary" id="retweet-dropdown-split-privacy" />
+                <Dropdown.Menu>
+                  {/* <Dropdown.Item  onClick={() => {console.log('click')}}>Public</Dropdown.Item> */}
+                  <Dropdown.Item  onClick={() => {setPrivacy('false'); document.getElementById('retweet-privacy').innerHTML = "Send Public"}}>Public</Dropdown.Item>
+                  <Dropdown.Item  onClick={() => {setPrivacy('true');document.getElementById('retweet-privacy').innerHTML = "Send Private"; console.log(privacy)}}>Private</Dropdown.Item>
+                </Dropdown.Menu>
+              </Dropdown>
+              </div>
+              {/* <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button> */}
             </div>
           </div>
         </div>

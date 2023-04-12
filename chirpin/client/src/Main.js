@@ -9,6 +9,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
 import { getLoginInfo } from './Login';
 import { BACK_END } from './App';
+import { Dropdown } from 'react-bootstrap';
+import { ButtonGroup } from '@material-ui/core';
+import Button from 'react-bootstrap/Button';
 
 
 function NewPost() {
@@ -31,6 +34,7 @@ function NewPost() {
   const initialContent = '<p style="opacity: 0.5;">Type your post content here</p>';
   const [availableTags, setAvailableTags] = useState([]);
   const [tags, setTags] = useState([]);
+  const [privacy, setPrivacy] = useState('false');
 
   const postNewTweet = () => {
     if (editorRef.current) {
@@ -38,7 +42,8 @@ function NewPost() {
       let postBody = {
         username: getLoginInfo()['username'],
         tweet_content: editorRef.current.getContent(),
-        tags: tags
+        tags: tags,
+        private:privacy
       }
 
       fetch('http://localhost:8000/new-tweet', {
@@ -169,7 +174,17 @@ function NewPost() {
             })}
             <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-bs-target="#add-tag" data-bs-whatever="@mdo" onClick={() => { fetchAvailableTags(); }}>Add Tag</button>
           </div>
-          <button type="button" className="btn btn-primary mx-2" onClick={postNewTweet}>New post</button>
+          
+          <Dropdown as={ButtonGroup}>
+            {/* <Button varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={()=>{console.log(privacy)}}>New post</Button> */}
+            <Button type="button" varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={postNewTweet}>New post</Button>
+            <Dropdown.Toggle split variant="primary" id="dropdown-split-privacy" />
+            <Dropdown.Menu>
+              <Dropdown.Item  onClick={() => {setPrivacy('false'); document.getElementById('privacy').innerHTML = "New Public Post" }}>Public</Dropdown.Item>
+              <Dropdown.Item  onClick={() => {setPrivacy('true');document.getElementById('privacy').innerHTML = "New Private Post";}}>Private</Dropdown.Item>
+            </Dropdown.Menu>
+          </Dropdown>
+          
         </div>
       </div>
       {/* Modal */}
