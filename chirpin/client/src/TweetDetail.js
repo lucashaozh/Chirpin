@@ -98,7 +98,7 @@ class TweetDetail extends React.Component{
 
     async addComment(){
         let newCom = {
-            content: document.getElementById('new-comment').value,
+            content: document.getElementById('new-comment'+this.state.tweetInfo.tid).value,
             username: getLoginInfo().username,
             tid: window.location.pathname.split('/')[2],
         };
@@ -119,7 +119,7 @@ class TweetDetail extends React.Component{
         let com_count = this.state.tweetInfo.commentCount+1
         this.setState({tweetInfo: {...this.state.tweetInfo, commentCount: com_count}});
         console.log(this.state.commentInfo);
-        document.getElementById('new-comment').value='';
+        document.getElementById('new-comment'+this.state.tweetInfo.tid).value='';
     }
 
     // async retweet(){

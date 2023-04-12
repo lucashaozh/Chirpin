@@ -166,7 +166,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
 
   const addCommentMain = () => {
     let newCom = {
-      content: document.getElementById('new-comment').value,
+      content: document.getElementById('new-comment'+tweetInfo.tid).value,
       username: getLoginInfo().username,
       tid: tweetInfo.tid,
     };
@@ -179,7 +179,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       body: JSON.stringify(newCom),
     }).then(com => com.json()).then(com_res =>
       console.log(com_res));
-    document.getElementById('new-comment').value = '';
+    document.getElementById('new-comment'+tweetInfo.tid).value = '';
     setCommentCount(commentCount + 1);
   }
 
@@ -237,7 +237,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                   </span>
                   <span className="m-1">
 
-                    <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target="#tweetCommentForm" data-bs-whatever="@mdo">
+                    <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target={"#tweetCommentForm"+tweetInfo.tid} data-bs-whatever="@mdo">
                       <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
                     </button>
                     <span className="ms-1 opacity-75">{commentCount}</span>
@@ -285,7 +285,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* comment form for tweet's comment*/}
-      <div className="modal fade" id="tweetCommentForm" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id={"tweetCommentForm"+tweetInfo.tid} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -293,7 +293,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <textarea className="form-control" id='new-comment' rows='5'></textarea>
+              <textarea className="form-control" id={'new-comment'+tweetInfo.tid} rows='5'></textarea>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
