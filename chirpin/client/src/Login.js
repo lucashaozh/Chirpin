@@ -104,7 +104,7 @@ class Login extends React.Component {
         return res.text();
       })
       .then(data => {
-        if (data == 'Login As Amin Successfully!\n') {
+        if (data == 'Login As Admin Successfully!\n') {
           this.setState({ login: true, username: username, mode: 'admin' });
           login(username, 'admin');
           this.props.onChangeLogin();
