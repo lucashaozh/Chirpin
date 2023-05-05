@@ -3,7 +3,6 @@ import UserListView from './User';
 import { TweetListView } from './Tweet';
 import { Editor } from '@tinymce/tinymce-react';
 import InfiniteScroll from 'react-infinite-scroll-component';
-import { userInfoExample, tweetInfoExample, tagsExample } from './Example';
 import { randomSelect } from './Utils';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faRefresh } from '@fortawesome/free-solid-svg-icons';
@@ -44,7 +43,7 @@ function NewPost() {
         username: getLoginInfo()['username'],
         tweet_content: editorRef.current.getContent(),
         tags: tags,
-        private:privacy
+        private: privacy
       }
 
       fetch('http://localhost:8000/new-tweet', {
@@ -112,11 +111,10 @@ function NewPost() {
 
   return (
     <div className='container-fluid'>
-      <div className='card p-2 m-2 mb-4'/*  style={{ borderRadius: "30px" }} */>
+      <div className='card p-2 m-2 mb-4'>
         <div className='card-body p-1 mx-1 mb-2 row'>
           <Editor
-            // tinymceScriptSrc={process.env.PUBLIC_URL + '/tinymce/tinymce.min.js'}
-            apiKey= {tinyMCEApiKey}
+            apiKey={tinyMCEApiKey}
             onInit={(evt, editor) => editorRef.current = editor}
             initialValue={initialContent}
             onFocus={handleFocus}
@@ -175,17 +173,17 @@ function NewPost() {
             })}
             <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-bs-target="#add-tag" data-bs-whatever="@mdo" onClick={() => { fetchAvailableTags(); }}>Add Tag</button>
           </div>
-          
+
           <Dropdown as={ButtonGroup}>
             {/* <Button varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={()=>{console.log(privacy)}}>New post</Button> */}
             <Button type="button" varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={postNewTweet}>New post</Button>
             <Dropdown.Toggle split variant="primary" id="dropdown-split-privacy" />
             <Dropdown.Menu>
-              <Dropdown.Item  onClick={() => {setPrivacy('false'); document.getElementById('privacy').innerHTML = "New Public Post" }}>Public</Dropdown.Item>
-              <Dropdown.Item  onClick={() => {setPrivacy('true');document.getElementById('privacy').innerHTML = "New Private Post";}}>Private</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setPrivacy('false'); document.getElementById('privacy').innerHTML = "New Public Post" }}>Public</Dropdown.Item>
+              <Dropdown.Item onClick={() => { setPrivacy('true'); document.getElementById('privacy').innerHTML = "New Private Post"; }}>Private</Dropdown.Item>
             </Dropdown.Menu>
           </Dropdown>
-          
+
         </div>
       </div>
       {/* Modal */}
@@ -197,7 +195,6 @@ function NewPost() {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              {/* <h4>Choose a tag</h4> */}
               {randomSelect(availableTags, 5).map((tag, index) => {
                 return (
                   <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
@@ -275,27 +272,6 @@ function Main() {
     }
   }, [viewMode]);
 
-  // const fetchMore = () => {
-  //     console.log("Fetch more data");
-  //     if (viewMode === "following") {
-  //         const { tweets, hasMore } = fetchFollowingsTweet();
-  //         if (tweets) {
-  //             setFollowingsTweets(followingsTweets.concat(tweets));
-  //             setDataLength(dataLength + tweets.length);
-  //         }
-  //         setHasMore(hasMore);
-  //     } else if (viewMode === "recommend") {
-  //         // fetch more recommended users and tweets (7 users, 13 tweets)
-  //         const { users, userHasMore } = fetchRecommendUsers();
-  //         const { tweets, tweetHasMore } = fetchRecommendTweets();
-  //         setHasMore(userHasMore || tweetHasMore);
-  //         if (tweets) { setRecommendTweets(recommendTweets.concat(tweets)); }
-  //         if (users) { setRecommendUsers(recommendUsers.concat(users)); }
-  //         let usersLength = (users) ? Math.ceil(users.length / 3) : 0;
-  //         let tweetsLength = (tweets) ? tweets.length : 0;
-  //         setDataLength(dataLength + tweetsLength + usersLength);
-  //     }
-  // }
 
   const changeFollowingMode = () => {
     setViewMode("following");
@@ -324,16 +300,6 @@ function Main() {
         <NewPost />
         <InfiniteScroll dataLength={dataLength} next={null} hasMore={false} loader={<h4>Loading...</h4>}
           endMessage={
-            // <div className="d-flex justify-content-center align-items-center">
-            //     <span className="mr-2">
-            //         <b>Yay! You have seen it all</b>
-            //     </span>
-            //     {viewMode === "recommend" &&
-            //         <button className="btn btn-primary">
-            //             <FontAwesomeIcon icon={faRefresh} className="mr-2" />
-            //         </button>
-            //     }
-            // </div>
             <div className="d-flex justify-content-end h-100">
               <p className="text-center mb-0 mx-auto">
                 <b>Yay! You have seen it all</b>
@@ -344,18 +310,6 @@ function Main() {
                 </button>
               )}
             </div>
-
-
-            // <p className="d-flex">
-            //     <span>
-            //         <b>Yay! You have seen it all</b>
-            //     </span>
-            //     <span>
-            //         {viewMode === "recommend" && <button className='btn btn-primary d-flex justify-content-end'>
-            //             <FontAwesomeIcon icon={faRefresh} className='mr-2' />
-            //         </button>}
-            //     </span>
-            // </p>
           }>
           {viewMode === "recommend" && <>
             <UserListView userInfos={recommendUsers} />

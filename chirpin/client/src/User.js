@@ -18,7 +18,6 @@ function UserCard({ userInfo }) {
 
   // variable that will not be changed in the card
   const username = userInfo["username"];
-  //const uid = userInfo["uid"];
   const portraitUrl = userInfo["portraitUrl"];
 
   const handleFollow = () => {
@@ -60,10 +59,8 @@ function UserCard({ userInfo }) {
   const handleFollowButton = () => {
     if (isFollowing) {
       handleUnfollow();
-      // setFollowerCount(followerCount - 1);
     } else {
       handleFollow();
-      // setFollowerCount(followerCount + 1);
     }
     setIsFollowing(!isFollowing);
   }
@@ -82,8 +79,6 @@ function UserCard({ userInfo }) {
             </div>
             <div className="col-8 ms-3">
               <h5 className="m-1">{username}</h5>
-              {/* <p className="mb-2 pb-1" style={{ color: "#2b2a2a" }}>Senior Journalist</p> */}
-              
               <div className="row d-flex justify-content-center rounded-3 py-1 m-1 my-2"
                 style={{ backgroundColor: "#efefef" }}>
                 <div className="col-md-6">

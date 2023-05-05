@@ -11,7 +11,6 @@ import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
 import ButtonGroup from 'react-bootstrap/ButtonGroup';
 
-// const tinyMCEApiKey = "bbhuxhok548nagj70vnpfkk2793rut8hifdudjna10nktqx2"
 export const tinyMCEApiKey = "sectfzujjivlo90kpiqptvlao0lrn8b79rf326hs1v6b9oyu"
 
 
@@ -20,7 +19,6 @@ function DisplayRichText({ content }) {
     <>
       <div className="w-100">
         <Editor
-          // tinymceScriptSrc={process.env.PUBLIC_URL + '/tinymce/tinymce.min.js'}
           apiKey={tinyMCEApiKey}
           value={content}
           disabled={true}
@@ -47,11 +45,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
   const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
   const [isReported, setIsReported] = useState(tweetInfo['isReported']);
-  // const [privacy, setPrivacy] = useState(tweetInfo['private']);
 
-
-  // const tweetUserInfo = tweetInfo['user'];
-  // console.log(tweetInfo)
   const [commentCount, setCommentCount] = useState(tweetInfo['commentCount']);
   const [retweetCount, setRetweetCount] = useState(tweetInfo['retweetCount']);
   const tweetContent = tweetInfo['content'];
@@ -74,25 +68,9 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
     setCommentCount(tweetInfo['commentCount']);
     setRetweetCount(tweetInfo['retweetCount']);
     setIsReported(tweetInfo['isReported']);
-    // setPrivacy(tweetInfo['private']);
-
   }, [tweetInfo]);
 
   const clickLikeTweet = () => {
-    // let updatedLikeInfo = { ...likeInfo };
-    // updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-    // if (updatedLikeInfo.bLikeByUser) {
-    //   updatedLikeInfo.likeCount += 1;
-    //   if (dislikeInfo.bDislikeByUser) {
-    //     let updatedDislikeInfo = { ...dislikeInfo };
-    //     updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-    //     updatedDislikeInfo.dislikeCount -= 1;
-    //     setDislikeInfo(updatedDislikeInfo);
-    //   }
-    // } else {
-    //   updatedLikeInfo.likeCount -= 1;
-    // }
-    // setLikeInfo(updatedLikeInfo);
     if (likeInfo.bLikeByUser) {
       updateTweetInfo("cancel-like");
     } else {
@@ -101,21 +79,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const clickDislikeTweet = () => {
-    // let updatedDislikeInfo = { ...dislikeInfo };
-    // updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-    // if (updatedDislikeInfo.bDislikeByUser) {
-    //   updatedDislikeInfo.dislikeCount += 1;
-    //   if (likeInfo.bLikeByUser) {
-    //     let updatedLikeInfo = { ...likeInfo };
-    //     updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-    //     updatedLikeInfo.likeCount -= 1;
-    //     setLikeInfo(updatedLikeInfo);
-    //   }
-    // } else {
-    //   updatedDislikeInfo.dislikeCount -= 1;
-    // }
-    // setDislikeInfo(updatedDislikeInfo);
-    // console.log(tweetInfo)
     if (dislikeInfo.bDislikeByUser) {
       updateTweetInfo("cancel-dislike");
     } else {
@@ -146,7 +109,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
   }
 
   const handleTweetReport = () => {
-    // console.log("Report tweet for user: " + tweetInfo['user']['username'] + " and tweet content " + tweetInfo['content']);
     fetch(BACK_END + 'tweet/' + tweetInfo['tid'] + "/" + getLoginInfo()['username'] + "/report", {
       method: 'PUT',
       headers: {
@@ -166,7 +128,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
 
   const addCommentMain = () => {
     let newCom = {
-      content: document.getElementById('new-comment'+tweetInfo.tid).value,
+      content: document.getElementById('new-comment' + tweetInfo.tid).value,
       username: getLoginInfo().username,
       tid: tweetInfo.tid,
     };
@@ -179,7 +141,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       body: JSON.stringify(newCom),
     }).then(com => com.json()).then(com_res =>
       console.log(com_res));
-    document.getElementById('new-comment'+tweetInfo.tid).value = '';
+    document.getElementById('new-comment' + tweetInfo.tid).value = '';
     setCommentCount(commentCount + 1);
   }
 
@@ -237,13 +199,13 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                   </span>
                   <span className="m-1">
 
-                    <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target={"#tweetCommentForm"+tweetInfo.tid} data-bs-whatever="@mdo">
+                    <button type="button" className="btn btn-outline-primary btn-floating" data-bs-toggle="modal" data-bs-target={"#tweetCommentForm" + tweetInfo.tid} data-bs-whatever="@mdo">
                       <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
                     </button>
                     <span className="ms-1 opacity-75">{commentCount}</span>
                   </span>
                   <span className="m-1">
-                    <a className="btn btn-outline-primary btn-floating" href={"#tweetForwardForm"+tweetInfo.tid} data-bs-toggle="modal" role='button'>
+                    <a className="btn btn-outline-primary btn-floating" href={"#tweetForwardForm" + tweetInfo.tid} data-bs-toggle="modal" role='button'>
                       <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
                     </a>
                     <span className="ms-1 opacity-75" id='retweetCount'>{retweetCount}</span>
@@ -253,11 +215,6 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
                       <FontAwesomeIcon icon={faWarning}></FontAwesomeIcon>
                     </button>
                   </span>
-                  {/* {privacy == 'true' &&
-                  <span className='m-1 success'>
-                    Private
-                  </span>
-                  } */}
                 </>
               }
             </div>
@@ -266,7 +223,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* Modal */}
-      <div className="modal fade" id={"report-popup"+tweetInfo['tid']} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal fade" id={"report-popup" + tweetInfo['tid']} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-dialog-centered">
           <div className="modal-content">
             <div className="modal-header">
@@ -285,7 +242,7 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
       </div>
 
       {/* comment form for tweet's comment*/}
-      <div className="modal fade" id={"tweetCommentForm"+tweetInfo.tid} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div className="modal fade" id={"tweetCommentForm" + tweetInfo.tid} tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -293,21 +250,18 @@ function TweetCard({ tweetInfo, addComment, isDetailPage = true }) {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body">
-              <textarea className="form-control" id={'new-comment'+tweetInfo.tid} rows='5'></textarea>
+              <textarea className="form-control" id={'new-comment' + tweetInfo.tid} rows='5'></textarea>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal"> Cancel </button>
-              <button type="button" onClick={isDetailPage? addComment: addCommentMain} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
+              <button type="button" onClick={isDetailPage ? addComment : addCommentMain} className="btn btn-primary" data-bs-dismiss="modal"> Send </button>
             </div>
           </div>
         </div>
       </div>
 
       {/* forward tweet */}
-      <ForwardForm tid={tweetInfo.tid} retweetCount={retweetCount} setRetweetCount={setRetweetCount}/>
-
-      {/* forward select tag*/}
-
+      <ForwardForm tid={tweetInfo.tid} retweetCount={retweetCount} setRetweetCount={setRetweetCount} />
     </div>
   )
 }
@@ -353,7 +307,7 @@ function ForwardForm(props) {
   const postRetweet = () => {
     if (editorRef.current) {
       console.log(editorRef.current.getContent());
-      
+
       let postBody = {
         username: getLoginInfo()['username'],
         tweet_content: editorRef.current.getContent(),
@@ -394,7 +348,6 @@ function ForwardForm(props) {
     }
     console.log(newTagsDom);
     let newTags = newTagsDom.value;
-    // console.log(newTags);
     // check if the tag is already in the list
     if (!availableTags.includes(newTags)) {
       // insert the new tag into the database
@@ -424,7 +377,7 @@ function ForwardForm(props) {
   }
   return (
     <div>
-      <div className="modal fade" id={"tweetForwardForm"+props.tid} aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
+      <div className="modal fade" id={"tweetForwardForm" + props.tid} aria-hidden="true" aria-labelledby="exampleModalToggleLabel" tabIndex="-1">
         <div className="modal-dialog">
           <div className="modal-content">
             <div className="modal-header">
@@ -492,26 +445,12 @@ function ForwardForm(props) {
                 })}
                 <div>
                   <div className="input-group m-2">
-                    <input type="text" id={"new-tag-retweet" + props.tid } className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
+                    <input type="text" id={"new-tag-retweet" + props.tid} className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
                     <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" onClick={addNewTags}>Add</button>
                   </div>
                 </div>
               </div>
             </div>
-            {/* <div className="modal-body">
-              <h4>Choose a tag</h4>
-              {randomSelect(availableTags, 5).map((tag, index) => {
-                return (
-                  <button type="button" className="btn btn-outline-primary mx-2 my-1" data-bs-dismiss="modal" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
-                );
-              })}
-              <div>
-                <div className="input-group m-2">
-                  <input type="text" id="new-tag" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
-                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" data-bs-dismiss="modal" onClick={addNewTags}>Add</button>
-                </div>
-              </div>
-            </div> */}
             <div className="modal-footer">
               <div>
                 {tags != undefined && tags.map((tag, index) => {
@@ -519,54 +458,22 @@ function ForwardForm(props) {
                     <span className="badge bg-primary my-1 mx-2" key={index}>{tag}</span>
                   );
                 })}
-                {/* <button type='button' className='btn btn-outline-primary mx-2' data-bs-toggle="modal" data-dismiss="modal" data-bs-target="#add-tag-retweet" data-bs-whatever="@mdo">Add Tag</button> */}
               </div>
               <div>
-              <Dropdown as={ButtonGroup}>
-                {/* <Button varient='primary' id='privacy' className="btn btn-primary mx-2" onClick={()=>{console.log(privacy)}}>New post</Button> */}
-                <Button type="button" varient='primary' id='retweet-privacy' className="btn btn-primary mx-2" onClick={postRetweet}>Send</Button>
-                <Dropdown.Toggle split variant="primary" id="retweet-dropdown-split-privacy" />
-                <Dropdown.Menu>
-                  {/* <Dropdown.Item  onClick={() => {console.log('click')}}>Public</Dropdown.Item> */}
-                  <Dropdown.Item  onClick={() => {setPrivacy('false'); document.getElementById('retweet-privacy').innerHTML = "Send Public"}}>Public</Dropdown.Item>
-                  <Dropdown.Item  onClick={() => {setPrivacy('true');document.getElementById('retweet-privacy').innerHTML = "Send Private"; console.log(privacy)}}>Private</Dropdown.Item>
-                </Dropdown.Menu>
-              </Dropdown>
+                <Dropdown as={ButtonGroup}>
+                  <Button type="button" varient='primary' id='retweet-privacy' className="btn btn-primary mx-2" onClick={postRetweet}>Send</Button>
+                  <Dropdown.Toggle split variant="primary" id="retweet-dropdown-split-privacy" />
+                  <Dropdown.Menu>
+                    <Dropdown.Item onClick={() => { setPrivacy('false'); document.getElementById('retweet-privacy').innerHTML = "Send Public" }}>Public</Dropdown.Item>
+                    <Dropdown.Item onClick={() => { setPrivacy('true'); document.getElementById('retweet-privacy').innerHTML = "Send Private"; console.log(privacy) }}>Private</Dropdown.Item>
+                  </Dropdown.Menu>
+                </Dropdown>
               </div>
-              {/* <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={postRetweet}> Send </button> */}
             </div>
           </div>
         </div>
       </div>
 
-      {/* modal for choosing tags*/}
-      {/* <div className="modal fade" id="add-tag-retweet" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2" tabindex="-1">
-        <div className="modal-dialog modal-dialog-centered">
-          <div className="modal-content">
-            <div className="modal-header">
-              <h1 className="modal-title fs-5" id="staticBackdropLabel">Please choose a tag or input new tags</h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" aria-label="Close"></button>
-            </div>
-            <div className="modal-body">
-              <h4>Choose a tag</h4>
-              {randomSelect(availableTags, 5).map((tag, index) => {
-                return (
-                  <button type="button" className="btn btn-outline-primary mx-2 my-1" key={index} onClick={() => setTags([...tags, tag])}>{tag}</button>
-                );
-              })}
-              <div>
-                <div className="input-group m-2">
-                  <input type="text" id="new-tag-retweet" className="form-control" placeholder="Input new tags" aria-label="Input new tags" aria-describedby="button-add" />
-                  <button className="btn btn-outline-primary" type="button" data-bs-target="#tweetForwardForm" data-bs-toggle="modal" onClick={addNewTags}>Add</button>
-                </div>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button type="button" id="close-modal" className="btn btn-secondary" data-bs-target="#tweetForwardForm" data-bs-toggle="modal-back" data-bs-dismiss="modal-back">Back</button>
-            </div>
-          </div>
-        </div>
-      </div> */}
     </div>
   )
 }
@@ -581,134 +488,5 @@ function TweetListView({ tweetInfos }) {
       </div >
     </>)
 }
-
-
-// function TweetCardDetail({ tweetInfo }) {
-//     const [likeInfo, setLikeInfo] = useState(tweetInfo['likeInfo']);
-//     const [dislikeInfo, setDislikeInfo] = useState(tweetInfo['dislikeInfo']);
-//     const [commentCount, setCommentCount] = useState(tweetInfo['commentCount']);
-//     const [retweetCount, setRetweetCount] = useState(tweetInfo['retweetCount']);
-//     const [tweetUserInfo, setTweetUserInfo] = useState(tweetInfo['user']);
-//     const [tweetContent, setTweetContent] = useState(tweetInfo['content']);
-//     const [timeInterval, setTimeInterval] = useState(timeDifference(tweetInfo['time']));
-//     const [portraitUrl, setPortraitUrl] = useState(tweetInfo['portraitUrl']);
-
-//     const clickLikeTweet = () => {
-//         let updatedLikeInfo = { ...likeInfo };
-//         updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-//         if (updatedLikeInfo.bLikeByUser) {
-//             updatedLikeInfo.likeCount += 1;
-//             if (dislikeInfo.bDislikeByUser) {
-//                 let updatedDislikeInfo = { ...dislikeInfo };
-//                 updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-//                 updatedDislikeInfo.dislikeCount -= 1;
-//                 setDislikeInfo(updatedDislikeInfo);
-//             }
-//         } else {
-//             updatedLikeInfo.likeCount -= 1;
-//         }
-//         setLikeInfo(updatedLikeInfo);
-//         updateTweetInfoToDB();
-//     }
-
-//     const clickDislikeTweet = () => {
-//         let updatedDislikeInfo = { ...dislikeInfo };
-//         updatedDislikeInfo.bDislikeByUser = !updatedDislikeInfo.bDislikeByUser;
-//         if (updatedDislikeInfo.bDislikeByUser) {
-//             updatedDislikeInfo.dislikeCount += 1;
-//             if (likeInfo.bLikeByUser) {
-//                 let updatedLikeInfo = { ...likeInfo };
-//                 updatedLikeInfo.bLikeByUser = !updatedLikeInfo.bLikeByUser;
-//                 updatedLikeInfo.likeCount -= 1;
-//                 setLikeInfo(updatedLikeInfo);
-//             }
-//         } else {
-//             updatedDislikeInfo.dislikeCount -= 1;
-//         }
-//         setDislikeInfo(updatedDislikeInfo);
-//         updateTweetInfoToDB();
-//     }
-
-//     const updateTweetInfoToDB = () => {
-//         console.log("Updated tweet info to DB");
-//     }
-
-//     return (
-//         <div className="card p-2 m-2 mb-4" style={{ borderRadius: "30px" }}>
-
-//             {/* user name and potrait */}
-//             <div class="card col-12 border-0">
-//                 <div class="card-body">
-//                     <div className="d-inline-block m-2 col-2"> 
-//                     {/* <Link to={'/' + this.props.name}> */}
-//                         <img class="img d-inline-block m-2 rounded-circle align-middle" style={{width:"100px", height: "100px"}} src={portraitUrl} alt="Card image cap"/>
-//                     {/* </Link> */}
-//                     </div>
-//                     <div className="d-inline-block m-2 col-2"> 
-//                     <h3 className="text-bold">{tweetUserInfo.username}</h3>
-//                     <p className="opacity-50 text-nowrap">{timeInterval}</p>
-//                     </div>
-//                 </div>
-//             </div>
-
-//             <div className="col-12">
-//                 <div className="row">
-//                     <div className="col-12 mb-2">
-//                         {/* rich text TODO: can we remove border, can we auto height?*/}
-//                         <div className="w-100 mceNonEditable">
-//                             <Editor
-//                                 apiKey= {tinyMCEApiKey}
-//                                 value={"lalallalla"}
-//                                 init={{
-//                                     height: 500,
-//                                     menubar: false,
-//                                     toolbar: false,
-//                                     readonly: true,
-//                                     noneditable_class: "mceNonEditable",
-//                                     plugins: [
-//                                         'advlist autolink lists link image charmap print preview anchor',
-//                                         'searchreplace visualblocks code fullscreen',
-//                                         'insertdatetime media table paste code help wordcount'
-//                                     ],
-//                                 }}
-//                             />
-//                         </div>
-//                     </div>
-//                     <div className="col-12">
-//                         {/* <span className="m-1">
-//                             <button type="button" className="btn btn-primary btn-floating">View Full Tweet</button>
-//                         </span> */}
-//                         <span className="m-1">
-//                             <button type="button" className={"btn btn-" + (likeInfo.bLikeByUser ? "" : "outline-") + "primary btn-floating"} onClick={clickLikeTweet}>
-//                                 <FontAwesomeIcon icon={faThumbsUp}></FontAwesomeIcon>
-//                             </button>
-//                             <span className="ms-1 opacity-75">{likeInfo.likeCount}</span>
-//                         </span>
-//                         <span className="m-1">
-//                             <button type="button" className={"btn btn-" + (dislikeInfo.bDislikeByUser ? "" : "outline-") + "primary btn-floating"} onClick={clickDislikeTweet}>
-//                                 <FontAwesomeIcon icon={faThumbsDown}></FontAwesomeIcon>
-//                             </button>
-//                             <span className="ms-1 opacity-75">{dislikeInfo.dislikeCount}</span>
-//                         </span>
-//                         <span className="m-1">
-//                             <button type="button" className="btn btn-outline-primary disabled btn-floating">
-//                                 <FontAwesomeIcon icon={faComment}></FontAwesomeIcon>
-//                             </button>
-//                             <span className="ms-1 opacity-75">{commentCount}</span>
-//                         </span>
-//                         <span className="m-1">
-//                             <button type="button" className="btn btn-outline-primary disabled btn-floating">
-//                                 <FontAwesomeIcon icon={faRetweet}></FontAwesomeIcon>
-//                             </button>
-//                             <span className="ms-1 opacity-75">{retweetCount}</span>
-//                         </span>
-//                     </div>
-//                 </div>
-//             </div>
-
-
-//         </div>
-//     )
-// }
 
 export { TweetListView, TweetCard };
