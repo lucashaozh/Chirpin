@@ -13,7 +13,6 @@ class Comment extends React.Component{
     }
     render(){
         return(
-            // <div data-bs-toggle="modal" data-bs-target="#commentForm" data-bs-whatever="@mdo"data-target="#GSCCModal">
             <div class="list-group-item d-flex"> 
                 <div data-bs-toggle="modal" data-bs-target={"#commentForm"+this.props.floor} data-bs-whatever="@mdo"data-target="#GSCCModal" onClick={()=>console.log(this.props.floor)}>
                     <FontAwesomeIcon icon={faStairs}></FontAwesomeIcon>
@@ -35,50 +34,6 @@ class Comment extends React.Component{
         )
     }
 }
-
-// class CommentList extends React.Component{
-//     constructor(props){
-//         super(props);
-//         this.state ={
-//             comments:commentExample
-//         }
-//         this.addReply = this.addReply.bind(this);
-//     }
-
-//     async addReply(clicked_floor){
-//         let newCom = {
-//             content: "Re floor "+clicked_floor+": "+document.getElementById('new-comment').value,
-//             username: getLoginInfo().username,
-//             tid:this.props.tid,
-//             floor_reply: clicked_floor
-//         };
-//         console.log(newCom);
-//         let com = await fetch(BACK_END + 'tweet/reply', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify(newCom),
-//         });
-//         let com_res = await com.json();
-//         console.log(com_res);
-//         let new_comments = this.state.comments;
-//         new_comments.push({floor: com_res.floor, username: com_res.username, content:com_res.content, potrait: com_res.potrait, time: "Just now"});
-//         this.setState({comments: new_comments});
-//         console.log(this.state.comments);
-//         document.getElementById('new-comment').value='';
-//     }
-
-//     render(){
-//         return(
-//             <div className="list-group w-auto">
-//                 {this.state.comments.map((comment,index)=>
-//                     <Comment addComment = {this.addComment.bind(this)} key={index} name={comment.username} content={comment.content} potrait={comment.potrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>
-//                 )}
-//             </div>
-//         )
-//     }
-// }
 
 {/** this is used to comment comment */}
 class CommentForm extends React.Component{

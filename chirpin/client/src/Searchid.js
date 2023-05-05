@@ -20,7 +20,7 @@ class SearchUserid extends React.Component{
             userList:[]
         };
     }
-
+    // Get the user with the specified ID
     async getAllUser() {
         let res = await fetch(BACK_END + "searchuserbyid/" + this.state.selfname + "/" + this.state.username, {
             method: 'GET',
@@ -43,8 +43,6 @@ class SearchUserid extends React.Component{
     render(){
         return(
         <>
-       
-        {/* <div>{this.state.tag}</div> */}
         <div id='scrollabletweets'style={{ height: "95vh", overflow: "auto" }}>
         <InfiniteScroll dataLength={this.state.userList.length} next={null} hasMore={false} scrollableTarget="scrollabletweets"
                         endMessage={<p style={{ textAlign: 'center' }}><b>No more Users</b></p>}>

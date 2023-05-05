@@ -130,12 +130,7 @@ class UpdateUser extends React.Component {
                         <input type="name" class="form-control" id="updateOldUsername" />
                         </div>
                     </div>
-                    {/* <div class="row mb-3">
-                        <label for="updateNewUsername" class="col-sm-2 col-form-label"> New Username: </label>
-                        <div class="col-sm-10">
-                        <input type="name" class="form-control" id="updateNewUsername" />
-                        </div>
-                    </div> */}
+              
                     <div class="row mb-3">
                         <label for="updatePassword" class="col-sm-2 col-form-label"> New Password: </label>
                         <div class="col-sm-10">
@@ -167,15 +162,6 @@ class DeleteUser extends React.Component {
         let l = await res.json();
         await this.setState({userList:l});
         console.log(this.state.userList);
-        // .then(res => {
-        //     if (res.status === 200) {
-        //     }
-        //     return res.text();
-        //   })
-        //   .then(data => {this.setState({userList:data});})
-        //   .catch(err => {
-        //     console.log(err);
-        //   });
       }
       componentDidMount(){
         this.getAllUser()

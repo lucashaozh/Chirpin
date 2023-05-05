@@ -13,7 +13,6 @@ import { timeDifference } from './Utils';
 
 const iconMap = {
     "like": faThumbsUp,
-    // "dislike": faThumbsDown,
     "comment": faComment,
     "retweet": faRetweet,
     "follow": faUser
@@ -113,7 +112,6 @@ class NotificationListView extends React.Component{
 class SingleNotification extends React.Component{
     constructor(props){
         super(props);
-        // console.log(this.props.portrait)
     }
     render(){
         return(

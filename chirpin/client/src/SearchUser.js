@@ -43,8 +43,6 @@ class SearchUser extends React.Component{
     render(){
         return(
         <>
-       
-        {/* <div>{this.state.tag}</div> */}
         <div id='scrollabletweets'style={{ height: "95vh", overflow: "auto" }}>
         <InfiniteScroll dataLength={this.state.userList.length} next={null} hasMore={false} scrollableTarget="scrollabletweets"
                         endMessage={<p style={{ textAlign: 'center' }}><b>No more Users</b></p>}>
