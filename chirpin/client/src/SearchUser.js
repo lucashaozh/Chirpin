@@ -20,7 +20,7 @@ class SearchUser extends React.Component{
             userList:[]
         };
     }
-
+    // get all the required users
     async getAllUser() {
         let res = await fetch(BACK_END + "searchuser/" + this.state.selfname + "/" + this.state.username, {
             method: 'GET',

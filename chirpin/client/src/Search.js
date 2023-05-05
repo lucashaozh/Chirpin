@@ -18,6 +18,7 @@ class Search extends React.Component{
         this.clickSearch = this.clickSearch.bind(this)
         this.onkeydown = this.onkeydown.bind(this)
     }
+    // Direct to the specific page after clicking the search button to search for something.
     async clickSearch(){
         var search=document.getElementById('search_input').value;
         if(this.state.viewMode == 'searchuser'){
@@ -68,7 +69,7 @@ class Trend extends React.Component{
         super(props);
         this.state = { trendList: []};
       }
-
+    // Get the hot topics
     async getTrend(){
         let res = await fetch(BACK_END + 'search/trend',{
           method:'GET',

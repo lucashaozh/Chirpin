@@ -19,7 +19,7 @@ class SearchTweet extends React.Component{
             tweetList:[]
         };
     }
-
+    // get all the required tweets
     async getAllTweets(){
         let res = await fetch(BACK_END + 'searchtag/'+this.state.tag,{
           method:'GET',

@@ -25,6 +25,7 @@ class Admin extends React.Component {
 
 class AddUser extends React.Component {
 
+    // To handle the action of creating a new user
     handleSubmit = (event) => {
         const username = document.getElementById("addUsername").value;
         const newpwd = document.getElementById("addPassword").value;
@@ -81,6 +82,7 @@ class AddUser extends React.Component {
 }
 
 class UpdateUser extends React.Component {
+    // To handle the action of updating a user
     handleUpdate(){
         const newObj = {
           username: document.querySelector("#updateOldUsername").value,
@@ -198,7 +200,7 @@ class DeleteUserCard extends React.Component {
         super(props);
         this.handleDelete=this.handleDelete.bind(this);   
       }
-
+    // To handle the action of deleting a user
     handleDelete(){
         fetch(BACK_END + 'user/' + this.props.name, {
                 method: 'DELETE',
