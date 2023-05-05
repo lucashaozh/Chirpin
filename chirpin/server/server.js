@@ -1114,7 +1114,6 @@ db.once('open', function () {
                 tweet.comments.push(new_comment);
                 tweet.save();
                 Notification.create({
-                    // nid: notificationID,
                     username: tweet.poster.username,
                     actor_id: user._id,
                     action: "comment",
@@ -1228,7 +1227,6 @@ db.once('open', function () {
                 }
                 tweet.save();
                 Notification.create({
-                    // nid: notificationID,
                     username: tweet.poster.username,
                     actor_id: user._id,
                     action: "comment",
@@ -1543,18 +1541,6 @@ db.once('open', function () {
         });
     });
 
-
-    //get all the accounts for testing
-    app.get('/acc', (req, res) => {
-        res.set('Content-Type', 'text/plain');
-        Account.find().then((users) => {
-            console.log(users);
-            res.send(users);
-        }).catch((err) => {
-            res.send(err);
-        });
-    });
-
     //get all users and sort by report_counter
     app.get('/reportusers', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -1565,22 +1551,10 @@ db.once('open', function () {
         });
     });
 
-    //delete an account for testing
-    app.delete('/acc/:username', (req, res) => {
-        res.set('Content-Type', 'text/plain');
-        let username = req.params['username'];
-        Account.deleteOne({ username: username }).then((acc) => {
-            console.log("Successfully delete user " + username);
-            res.status(204).send("Successfully delete user " + username);
-        }).catch((err) => {
-            res.send(err);
-        });
-    });
-
-
     /* -------------------------------------------------------------- */
     /* --------------------Search JIANG Hongxu------------------------*/
     /* ---------------------------------------------------------------*/
+
     //search for users (whose username contains the keywords)
     app.get('/searchuser/:selfname/:targetname', (req, res) => {
         res.set('Content-Type', 'text/plain');
@@ -1702,29 +1676,7 @@ db.once('open', function () {
                 res.send(err);
             })
     })
-    //create a tag for testing
-    app.get('/test/createtag', (req, res) => {
-        var t1 = new mongoose.Types.ObjectId();
-        var t2 = new mongoose.Types.ObjectId();
-        Tag.create({
-            tag: "tag3",
-            tid: [t1]
-        }).then(() => {
-            res.sendStatus(200);
-        }).catch((err) => {
-            console.error(err);
-        });
-    });
-    //get all the tags in tag db for testing
-    app.get('/tag', (req, res) => {
-        res.set('Content-Type', 'text/plain');
-        Tag.find().then((users) => {
-            console.log(users);
-            res.send(users);
-        }).catch((err) => {
-            res.send(err);
-        });
-    });
+    
 
     /* -------------------------------------------------------------- */
     /* ------------------------Chat DU Yunhao------------------------*/
