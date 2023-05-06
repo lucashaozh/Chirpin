@@ -44,7 +44,6 @@ function LoginRoute({ ifLogout, onChangeLogin }) {
 
 function AdminRoute(){
   const auth = getLoginInfo();
-  //return !auth ? <Navigate to='/login' /> : (auth['mode']==='user'?<Navigate to='/' />:<Navigate to='admin'/>);
   return !auth ? <Navigate to='/login'/> : (auth['mode']==='admin' ? <Outlet /> : <Navigate to='/login'/>);
 }
 

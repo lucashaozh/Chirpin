@@ -210,9 +210,6 @@ class DeleteUserCard extends React.Component {
     render(){
         return(<>
             <form className='row g-3 border-bottom' style={{padding: '20px'}}>
-                {/* <div class="col-auto" style={{width: '20%', textAlign: 'center'}}>
-                    <label for="uid" class="col-form-label"> {uid} </label>
-                </div> */}
                 <div class="col-auto" style={{width: '50%', textAlign: 'center'}}>
                     <Link to={'/'+this.props.name}><label for="gender" class="col-form-label"> {this.props.name} </label></Link>
                 </div>
@@ -239,9 +236,6 @@ function UserListView({ userInfos }) {
                     <h3 id="updateTtitle"> Delete User </h3>
                 </div>
                 <div className='row g-3 border-bottom' style={{padding: '20px'}}>
-                    {/* <div class="col-auto" style={{width: '20%', textAlign: 'center'}}>
-                        <h5> User ID </h5>
-                    </div> */}
                     <div class="col-auto" style={{width: '50%', textAlign: 'center'}}>
                         <h5> Username </h5>
                     </div>

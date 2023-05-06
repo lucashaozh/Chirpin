@@ -126,7 +126,6 @@ class TweetDetail extends React.Component{
                     <InfiniteScroll dataLength={this.state.commentInfo.length} next={null} hasMore={false} scrollableTarget="scrollableComment"
                             endMessage={<p style={{ textAlign: 'center' }}><b>No more comments</b></p>}>
                         <TweetCard tweetInfo={this.state.tweetInfo} addComment={this.addComment.bind(this)}/> 
-                        {/* <CommentList tid={window.location.pathname.split('/')[2]} commentInfo={this.state.commentInfo}/> */}
                         <div className="list-group w-auto">
                             {this.state.commentInfo.map((comment,index)=>
                                 <Comment addReply = {this.addReply.bind(this)} key={index} name={comment.username} content={comment.content} portrait={comment.portrait} time={comment.time} floor={comment.floor} tid={this.props.tid}/>

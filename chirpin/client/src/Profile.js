@@ -12,11 +12,6 @@ import { faThumbsUp, faThumbsDown, faComment, faRetweet, faWarning } from '@fort
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { BACK_END } from './App';
 import { useParams } from 'react-router-dom';
-// import femaleAvatar from './img/femaleAvatar.png';
-// import { useState, useRef } from 'react';
-// import UserListView from './User';
-// import { userInfoExample, tweetInfoExample } from './Example';
-// import cookie from 'react-cookies';
 
 class Profile extends React.Component {
 
@@ -127,19 +122,6 @@ class Profile extends React.Component {
         }
     }
 
-    // componentDidUpdate(prevProps) {
-    //     // Check if the username param has changed
-    //     console.log("componentDidUpdate");
-    //     const { match } = this.props;
-    //     const { username: prevUsername } = prevProps.match.params;
-    //     const { username } = match.params;
-    //     if (prevUsername !== username) {
-    //         // Set the new username in state and fetch new data
-    //         this.setState({ target: { username: username } });
-    //         // Code to fetch data with the new username
-    //         this.fetchInfo();
-    //     }
-    // }
 
     handleFollowClick = () => {
         if (this.state.follow === false) {
@@ -150,7 +132,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.follow = true;
                         document.getElementById("follow").innerText = "Unfollow";
@@ -171,7 +152,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.follow = false;
                         document.getElementById("follow").innerText = "Follow";
@@ -196,7 +176,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.block = true;
                         document.getElementById("block").innerText = "Unblock";
@@ -215,7 +194,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.block = false;
                         document.getElementById("block").innerText = "Block";
@@ -238,7 +216,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status)
                     if (data.status === 200) {
                         this.state.report = true;
                         document.getElementById("report").innerText = "Reported";
@@ -289,7 +266,6 @@ class Profile extends React.Component {
                     portrait: base64String,
                     about: document.getElementById("about").value
                 }
-                // console.log(userObj);
                 fetch(BACK_END + "profile/" + this.state.self['username'], {
                     method: 'PUT',
                     body: JSON.stringify(userObj),
@@ -298,7 +274,6 @@ class Profile extends React.Component {
                     }
                 }).then(
                     (data) => {
-                        // console.log(data.status);
                         if (data.status === 200) {
                             alert("Update Profile Successfully!");
                             window.location.reload(true);
@@ -322,7 +297,6 @@ class Profile extends React.Component {
                 portrait: "",
                 about: document.getElementById("about").value
             }
-            // console.log(userObj);
             fetch(BACK_END + "profile/" + this.state.self['username'], {
                 method: 'PUT',
                 body: JSON.stringify(userObj),
@@ -331,7 +305,6 @@ class Profile extends React.Component {
                 }
             }).then(
                 (data) => {
-                    // console.log(data.status);
                     if (data.status === 200) {
                         alert("Update Profile Successfully!");
                         window.location.reload(true);
@@ -378,7 +351,6 @@ class Profile extends React.Component {
                         <Col>
                             <div className='border' style={{ backgroundColor: 'rgb(169, 169, 169)', padding: '10px', position: 'relative' }}>
                                 <div style={{ display: 'inline-block' }}>
-                                    {/* <img src={femaleAvatar} alt='female avatar'></img> */}
                                     <img src={this.state.target.portrait} width={180} height={180} alt='avatar'></img>
                                 </div>
                                 <div style={{ display: 'inline-block' }}>
@@ -493,7 +465,6 @@ class Profile extends React.Component {
                                                                     Others
                                                                 </label>
                                                             </div>
-                                                            {/* <input type="text" className="form-control" id="gender" /> */}
                                                         </div>
                                                         <div className="mb-3">
                                                             <label htmlFor="interest" className="col-form-label"> Interests: </label>
@@ -634,7 +605,6 @@ class LikesList extends React.Component {
     async fetchInfo() {
         // fetch self information
         let username = getLoginInfo()['username'];
-        // console.log(username);
         let tweetrec = await fetch(BACK_END + "profile/" + username + "/likes", {
             method: 'GET',
             headers: {

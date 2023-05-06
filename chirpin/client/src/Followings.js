@@ -40,7 +40,6 @@ class Followings extends React.Component {
         let followings = await followingsrec.json();
         this.state.followings = await followings;
         this.setState((prevState) => ({ followings: followings }));
-        // console.log(this.state.followings);
     }
     
     componentWillMount(){
